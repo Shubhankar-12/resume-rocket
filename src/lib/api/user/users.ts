@@ -18,6 +18,16 @@ class UserAPI {
       },
     });
   }
+
+  static async uploadDoc(data: any, folderPath?: any) {
+    if (folderPath !== undefined) data.append("folder", folderPath);
+    return userService.post("/media/upload-doc", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ` + getCookie("token"),
+      },
+    });
+  }
 }
 
 export default UserAPI;

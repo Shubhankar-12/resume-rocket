@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileText, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { fileUploader } from "@/lib/utils";
+import { getCookie } from "cookies-next";
+import jwt from "jsonwebtoken";
+import ResumeAPI from "@/lib/api/user_resume/resume";
 
 export default function UploadResume() {
   const [file, setFile] = useState<File | null>(null);
@@ -21,6 +25,7 @@ export default function UploadResume() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isParsing, setIsParsing] = useState(false);
+  const [resumeAnalysis, setResumeAnalysis] = useState<any>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -31,7 +36,40 @@ export default function UploadResume() {
     setIsDragging(false);
   };
 
-  const handleDrop = async (e: React.DragEvent) => {
+  const handleUpload = async () => {
+    try {
+      const resp = await fileUploader(file, "/resumes");
+      console.log("response media", resp);
+      return resp;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getResumeAnalysis = async () => {
+    const token: any = await getCookie("token");
+    const decodedToken: any = jwt.decode(token);
+    if (decodedToken && decodedToken.user && decodedToken.user.id) {
+      try {
+        setIsParsing(true);
+        const resume = await handleUpload();
+        if (resume && resume.url) {
+          const resp = await ResumeAPI.createResume({
+            resume: resume,
+            user_id: decodedToken.user.id,
+          });
+          if (resp && resp.data && resp.data.body) {
+            setResumeAnalysis(resp.data.body);
+            setIsParsing(false);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 
@@ -43,7 +81,6 @@ export default function UploadResume() {
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       ) {
         setFile(droppedFile);
-        simulateUpload(droppedFile);
       }
     }
   };
@@ -52,7 +89,6 @@ export default function UploadResume() {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      simulateUpload(selectedFile);
     }
   };
 
@@ -85,6 +121,12 @@ export default function UploadResume() {
     setUploadProgress(0);
     setIsParsing(false);
   };
+
+  useEffect(() => {
+    if (file) {
+      getResumeAnalysis();
+    }
+  }, [file]);
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -203,7 +245,7 @@ export default function UploadResume() {
         </CardFooter>
       </Card>
 
-      {file && !isUploading && !isParsing && (
+      {resumeAnalysis && resumeAnalysis.extractedText && (
         <Card>
           <CardHeader>
             <CardTitle>Resume Preview</CardTitle>
@@ -218,80 +260,70 @@ export default function UploadResume() {
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <div className="text-sm">
                     <p className="text-muted-foreground">Name</p>
-                    <p>John Doe</p>
+                    <p>{resumeAnalysis.extractedText?.name || "-"}</p>
                   </div>
                   <div className="text-sm">
                     <p className="text-muted-foreground">Email</p>
-                    <p>john.doe@example.com</p>
+                    <p>{resumeAnalysis.extractedText?.email || "-"}</p>
                   </div>
                   <div className="text-sm">
                     <p className="text-muted-foreground">Phone</p>
-                    <p>(555) 123-4567</p>
+                    <p>{resumeAnalysis.extractedText?.phone || "-"}</p>
                   </div>
                   <div className="text-sm">
                     <p className="text-muted-foreground">Location</p>
-                    <p>San Francisco, CA</p>
+                    <p>{resumeAnalysis.extractedText?.location || "-"}</p>
                   </div>
                 </div>
               </div>
 
-              <div>
-                <h3 className="font-semibold">Experience</h3>
-                <div className="space-y-3 mt-2">
-                  <div className="p-3 border rounded-md">
-                    <div className="flex justify-between">
-                      <p className="font-medium">Senior Software Engineer</p>
-                      <p className="text-sm text-muted-foreground">
-                        2020 - Present
-                      </p>
+              {resumeAnalysis.extractedText?.experience &&
+                resumeAnalysis.extractedText?.experience.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold">Experience</h3>
+                    <div className="space-y-3 mt-2">
+                      {resumeAnalysis.extractedText?.experience.map(
+                        (exp: any, index: any) => (
+                          <div key={index} className="p-3 border rounded-md">
+                            <div className="flex justify-between">
+                              <p className="font-medium">{exp?.role || "-"}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {exp?.startDate} -{" "}
+                                {exp?.isPresent
+                                  ? "Present"
+                                  : exp?.endDate ?? "-"}
+                              </p>
+                            </div>
+                            <p className="text-sm">{exp?.companyName || "-"}</p>
+                            <ul className="text-sm mt-2 space-y-1 list-disc list-inside text-muted-foreground">
+                              {exp.tasks &&
+                                exp.tasks.length > 0 &&
+                                exp.tasks.map((task: any, index: any) => (
+                                  <li key={index}>{task || "-"}</li>
+                                ))}
+                            </ul>
+                          </div>
+                        )
+                      )}
                     </div>
-                    <p className="text-sm">TechCorp Inc.</p>
-                    <ul className="text-sm mt-2 space-y-1 list-disc list-inside text-muted-foreground">
-                      <li>Led development of cloud-based application</li>
-                      <li>Improved system performance by 40%</li>
-                      <li>Mentored junior developers</li>
-                    </ul>
                   </div>
-                  <div className="p-3 border rounded-md">
-                    <div className="flex justify-between">
-                      <p className="font-medium">Software Developer</p>
-                      <p className="text-sm text-muted-foreground">
-                        2017 - 2020
-                      </p>
-                    </div>
-                    <p className="text-sm">InnoSoft Solutions</p>
-                    <ul className="text-sm mt-2 space-y-1 list-disc list-inside text-muted-foreground">
-                      <li>Developed RESTful APIs for mobile applications</li>
-                      <li>Implemented CI/CD pipeline</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                )}
 
               <div>
                 <h3 className="font-semibold">Skills</h3>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    JavaScript
-                  </div>
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    React
-                  </div>
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    Node.js
-                  </div>
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    TypeScript
-                  </div>
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    AWS
-                  </div>
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    Docker
-                  </div>
-                  <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                    Git
-                  </div>
+                  {resumeAnalysis.extractedText?.skills &&
+                    resumeAnalysis.extractedText?.skills.length > 0 &&
+                    resumeAnalysis.extractedText?.skills.map(
+                      (skill: any, index: any) => (
+                        <div
+                          key={index}
+                          className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                        >
+                          {skill}
+                        </div>
+                      )
+                    )}
                 </div>
               </div>
             </div>
