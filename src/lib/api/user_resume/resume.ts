@@ -26,6 +26,20 @@ class ResumeAPI {
       },
     });
   }
+  static async createReport(data: any) {
+    return userService.post("/resume/report/create", data, {
+      headers: {
+        Authorization: `Bearer ` + getCookie("token"),
+      },
+    });
+  }
+  static async getResumeReport(id: any) {
+    return userService.get("/resume/report?resume_id=" + id, {
+      headers: {
+        Authorization: `Bearer ` + getCookie("token"),
+      },
+    });
+  }
 
   // /disble patch
   static async updateResume(data: any) {

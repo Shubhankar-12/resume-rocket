@@ -93,3 +93,37 @@ export interface Education {
   startDate: string;
   endDate: string;
 }
+
+export interface ReportType {
+  report_id: string;
+  resume_id: string;
+  overallGrade: string;
+  scoreOutOf100: number;
+  scoreBreakdown: ScoreBreakdown;
+  strengths: ActionableSuggestion[];
+  areasForImprovement: ActionableSuggestion[];
+  keywordAnalysis: KeywordAnalysis;
+  actionableSuggestions: ActionableSuggestion[];
+  status: string;
+  created_on: Date;
+  updated_on: Date;
+}
+
+export interface ActionableSuggestion {
+  _id: string;
+  title: string;
+  description: string;
+  block?: string;
+}
+
+export interface KeywordAnalysis {
+  presentKeywords: string[];
+  missingKeywords: string[];
+}
+
+export interface ScoreBreakdown {
+  atsCompatibility: number;
+  keywordMatch: number;
+  contentQuality: number;
+  formatting: number;
+}
