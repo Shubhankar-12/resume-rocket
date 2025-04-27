@@ -42,7 +42,6 @@ export default function MyResumesPage() {
   const [selectedResume, setSelectedResume] = useState<ResumeData | null>(null);
   const [isRecent, setIsRecent] = useState(false);
   const [isTailored, setIsTailored] = useState(false);
-  const [generatingReport, setGeneratingReport] = useState(false);
   const loader = useLoader();
 
   const handleResumeClick = (resume: ResumeData) => {

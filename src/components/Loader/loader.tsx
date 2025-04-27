@@ -54,7 +54,7 @@ export function FullPageLoader() {
                 />
               </svg>
 
-              <motion.div
+              {/* <motion.div
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                 animate={{
                   rotate: 360,
@@ -79,7 +79,7 @@ export function FullPageLoader() {
                     className="text-teal-600"
                   />
                 </svg>
-              </motion.div>
+              </motion.div> */}
 
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <motion.div
@@ -120,21 +120,21 @@ export function FullPageLoader() {
               )}
             </div>
 
-            <div className="flex space-x-4">
+            {/* <div className="flex space-x-4">
               <AnimatedCircle delay={0} />
               <AnimatedCircle delay={0.2} />
               <AnimatedCircle delay={0.4} />
               <AnimatedCircle delay={0.6} />
               <AnimatedCircle delay={0.8} />
-            </div>
+            </div> */}
           </div>
 
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+          {/* <div className="absolute bottom-8 left-0 right-0 flex justify-center">
             <div className="flex items-center space-x-2 rounded-full bg-background/90 px-4 py-2 shadow-lg">
               <CheckCircle className="h-4 w-4 text-teal-600" />
               <p className="text-sm">Optimizing your experience</p>
             </div>
-          </div>
+          </div> */}
         </motion.div>
       )}
     </AnimatePresence>
