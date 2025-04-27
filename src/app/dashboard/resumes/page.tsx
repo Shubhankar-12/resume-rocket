@@ -35,20 +35,55 @@ import ResumeCard from "@/components/Resumes/ResumeCard";
 import ResumePreview from "@/components/Resumes/ResumePreview";
 import { ResumeData } from "@/components/Resumes/types";
 import { format, set } from "date-fns";
+import { useLoader } from "@/hooks/useLoader";
 
 export default function MyResumesPage() {
   const router = useRouter();
   const [selectedResume, setSelectedResume] = useState<ResumeData | null>(null);
   const [isRecent, setIsRecent] = useState(false);
   const [isTailored, setIsTailored] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
+  const loader = useLoader();
 
   const handleResumeClick = (resume: ResumeData) => {
     setSelectedResume(resume);
   };
 
-  const handleAnalyzeClick = () => {
+  const fetchReport = async (resume_id: string) => {
+    try {
+      const resp = await ResumeAPI.getResumeReport(resume_id);
+      if (resp && resp.data && resp.data.body) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Error fetching report:", error);
+    }
+  };
+
+  const handleAnalyzeClick = async () => {
     if (selectedResume) {
-      router.push(`/dashboard/my-resumes/analysis/${selectedResume.resume_id}`);
+      loader.show("Generating report...");
+      const resume_id = selectedResume.resume_id;
+      const reportExists = await fetchReport(resume_id);
+      if (!reportExists) {
+        try {
+          const resp = await ResumeAPI.createReport({
+            resume_id: selectedResume.resume_id,
+          });
+          if (resp && resp.data && resp.data.body) {
+            loader.hide();
+            router.push(`/dashboard/grader/${resume_id}`);
+          } else {
+            console.error("Error creating report:", resp);
+            loader.hide();
+          }
+        } catch (error) {
+          console.error("Error creating report:", error);
+          loader.hide();
+        }
+      }
+      loader.hide();
+      router.push(`/dashboard/grader/${resume_id}`);
     }
   };
 

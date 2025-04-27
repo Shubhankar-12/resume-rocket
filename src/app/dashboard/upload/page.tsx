@@ -19,6 +19,7 @@ import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
 import ResumeAPI from "@/lib/api/user_resume/resume";
 import { useRouter } from "next/navigation";
+import { useLoader } from "@/hooks/useLoader";
 
 export default function UploadResume() {
   const [file, setFile] = useState<File | null>(null);
@@ -26,10 +27,10 @@ export default function UploadResume() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isParsing, setIsParsing] = useState(false);
-  const [generatingReport, setGeneratingReport] = useState(false);
   const [resumeAnalysis, setResumeAnalysis] = useState<any>(null);
   const [inActiveUpload, setInActiveUpload] = useState(false);
   const router = useRouter();
+  const loader = useLoader();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -82,16 +83,16 @@ export default function UploadResume() {
       return;
     }
     try {
-      setGeneratingReport(true);
+      loader.show("Generating report...");
       const resp = await ResumeAPI.createReport({
         resume_id: resumeAnalysis.resume_id,
       });
       if (resp && resp.data && resp.data.body) {
-        setGeneratingReport(false);
+        loader.hide();
         router.push(`/dashboard/grader/${resp.data.body.resume_id}`);
       }
     } catch (error) {
-      setGeneratingReport(false);
+      loader.hide();
       console.log(error);
     }
   };
@@ -149,7 +150,7 @@ export default function UploadResume() {
     setUploadProgress(0);
     setIsParsing(false);
     setResumeAnalysis(null);
-    setGeneratingReport(false);
+    loader.hide();
   };
 
   const handleCancel = async () => {
@@ -287,15 +288,11 @@ export default function UploadResume() {
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button disabled={!resumeAnalysis?.resume_id || generatingReport}>
-            {generatingReport ? (
-              <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
-                <span>Generating Report...</span>
-              </div>
-            ) : (
-              "Generate Report"
-            )}
+          <Button
+            disabled={!file || !resumeAnalysis?.resume_id}
+            onClick={handleAnalyzeResume}
+          >
+            Analyze Resume
           </Button>
         </CardFooter>
       </Card>
@@ -384,19 +381,8 @@ export default function UploadResume() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              className="w-full"
-              disabled={generatingReport}
-              onClick={handleAnalyzeResume}
-            >
-              {generatingReport ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
-                  <span>Generating Report...</span>
-                </div>
-              ) : (
-                "Generate Report"
-              )}
+            <Button className="w-full" onClick={handleAnalyzeResume}>
+              View Full Report
             </Button>
           </CardFooter>
         </Card>
