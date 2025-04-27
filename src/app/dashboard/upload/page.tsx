@@ -38,8 +38,10 @@ export default function UploadResume() {
 
   const handleUpload = async () => {
     try {
-      const resp = await fileUploader(file, "/resumes");
+      setIsParsing(true);
+      const resp = await fileUploader(file, "resumes");
       console.log("response media", resp);
+      setIsParsing(false);
       return resp;
     } catch (error) {
       console.log(error);
@@ -51,7 +53,7 @@ export default function UploadResume() {
     const decodedToken: any = jwt.decode(token);
     if (decodedToken && decodedToken.user && decodedToken.user.id) {
       try {
-        setIsParsing(true);
+        setIsUploading(true);
         const resume = await handleUpload();
         if (resume && resume.url) {
           const resp = await ResumeAPI.createResume({
@@ -60,7 +62,7 @@ export default function UploadResume() {
           });
           if (resp && resp.data && resp.data.body) {
             setResumeAnalysis(resp.data.body);
-            setIsParsing(false);
+            setIsUploading(false);
           }
         }
       } catch (error) {

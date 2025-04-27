@@ -26,6 +26,15 @@ class ResumeAPI {
       },
     });
   }
+
+  // /disble patch
+  static async updateResume(data: any) {
+    return userService.patch("/resume/disable", data, {
+      headers: {
+        Authorization: `Bearer ` + getCookie("token"),
+      },
+    });
+  }
 }
 
 export default ResumeAPI;
