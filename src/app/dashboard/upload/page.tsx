@@ -18,6 +18,7 @@ import { fileUploader } from "@/lib/utils";
 import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
 import ResumeAPI from "@/lib/api/user_resume/resume";
+import { useRouter } from "next/navigation";
 
 export default function UploadResume() {
   const [file, setFile] = useState<File | null>(null);
@@ -25,7 +26,10 @@ export default function UploadResume() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isParsing, setIsParsing] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
   const [resumeAnalysis, setResumeAnalysis] = useState<any>(null);
+  const [inActiveUpload, setInActiveUpload] = useState(false);
+  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -71,9 +75,31 @@ export default function UploadResume() {
     }
   };
 
+  const handleAnalyzeResume = async () => {
+    if (!resumeAnalysis || !resumeAnalysis.resume_id) {
+      // Call the API to analyze the resume
+      console.log("Resume analysis not available...");
+      return;
+    }
+    try {
+      setGeneratingReport(true);
+      const resp = await ResumeAPI.createReport({
+        resume_id: resumeAnalysis.resume_id,
+      });
+      if (resp && resp.data && resp.data.body) {
+        setGeneratingReport(false);
+        router.push(`/dashboard/grader/${resp.data.body.resume_id}`);
+      }
+    } catch (error) {
+      setGeneratingReport(false);
+      console.log(error);
+    }
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    if (inActiveUpload) return;
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFile = e.dataTransfer.files[0];
@@ -122,6 +148,25 @@ export default function UploadResume() {
     setIsUploading(false);
     setUploadProgress(0);
     setIsParsing(false);
+    setResumeAnalysis(null);
+    setGeneratingReport(false);
+  };
+
+  const handleCancel = async () => {
+    removeFile();
+    try {
+      setInActiveUpload(true);
+      const resp = await ResumeAPI.updateResume({
+        resume_id: resumeAnalysis.resume_id,
+      });
+      if (resp && resp.data && resp.data.body) {
+        setResumeAnalysis(resp.data.body);
+        setInActiveUpload(false);
+      }
+    } catch (error) {
+      setInActiveUpload(false);
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -178,6 +223,7 @@ export default function UploadResume() {
                 />
                 <Button
                   variant="outline"
+                  disabled={inActiveUpload}
                   onClick={() =>
                     document.getElementById("resume-upload")?.click()
                   }
@@ -238,11 +284,18 @@ export default function UploadResume() {
           )}
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => setFile(null)}>
+          <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button disabled={!file || isUploading || isParsing}>
-            Continue to Analysis
+          <Button disabled={!resumeAnalysis?.resume_id || generatingReport}>
+            {generatingReport ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
+                <span>Generating Report...</span>
+              </div>
+            ) : (
+              "Generate Report"
+            )}
           </Button>
         </CardFooter>
       </Card>
@@ -331,7 +384,20 @@ export default function UploadResume() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full">Analyze Resume</Button>
+            <Button
+              className="w-full"
+              disabled={generatingReport}
+              onClick={handleAnalyzeResume}
+            >
+              {generatingReport ? (
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
+                  <span>Generating Report...</span>
+                </div>
+              ) : (
+                "Generate Report"
+              )}
+            </Button>
           </CardFooter>
         </Card>
       )}
