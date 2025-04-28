@@ -4,7 +4,12 @@ import { ResumeData } from "./types";
 import { format } from "date-fns";
 
 interface ResumeCardProps {
-  resume: ResumeData;
+  resume: {
+    name: string;
+    created_on: Date;
+    category: string;
+    gradingScore: string;
+  };
   isSelected: boolean;
   onClick: () => void;
 }
@@ -27,9 +32,7 @@ export default function ResumeCard({
             <FileText className="h-4 w-4 text-teal-600" />
           </div>
           <div>
-            <div className="font-medium">
-              {resume.resume.name || "Untitled"}
-            </div>
+            <div className="font-medium">{resume.name || "Untitled"}</div>
             <div className="text-xs text-muted-foreground">
               {resume.created_on && format(resume.created_on, "dd MMM yyyy")}
             </div>
@@ -43,10 +46,10 @@ export default function ResumeCard({
       </div>
       <div className="mt-2 flex items-center justify-between">
         <Badge variant="outline" className="text-xs">
-          {resume?.extracted_resume?.category || "-"}
+          {resume?.category || "-"}
         </Badge>
         <div className="text-xs text-muted-foreground">
-          {resume.analysis.gradingScore}/100
+          {resume.gradingScore}/100
         </div>
       </div>
     </div>

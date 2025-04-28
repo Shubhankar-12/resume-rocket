@@ -19,63 +19,8 @@ import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
 import { useParams, useRouter } from "next/navigation";
 import { AnalysisItem } from "@/components/Resumes/types";
 import { useLoader } from "@/hooks/useLoader";
-
-{
-  /*
-  "resume_id": "680e6114f0c3ae31f84b4cc4",
-  "job_description": "We're on the hunt for an elite Full Stack Developer who can move fast, build scalable systems, and own the entire tech stack — from pixel-perfect frontends in React and Next.js to blazing-fast backends in Node.js and scalable databases like MongoDB and PostgreSQL. You’ll architect, code, ship, and iterate at lightning speed, working with bleeding-edge technologies like GraphQL, WebSockets, Docker, Kubernetes, and AWS. If you thrive in high-pressure environments, love solving complex problems, and have a deep obsession with code quality, system design, and performance, this is your battlefield. TypeScript mastery, microservices experience, and a hacker mentality are non-negotiable.",
-  "keyRequirements": {
-      "requiredSkills": [
-          "NodeJS",
-          "ReactJS",
-          "MongoDB",
-          "REST",
-          "Typescript"
-      ],
-      "experienceLevel": "Internship or Entry-level",
-      "education": "Bachelor's degree in Computer Science or related field",
-      "keyResponsibilities": [
-          "Develop and maintain web applications",
-          "Collaborate with cross-functional teams",
-          "Implement APIs and integrate with third-party services"
-      ]
-  },
-  "resumeMatchAnalysis": {
-      "overallMatch": 85,
-      "matchingSkills": [
-          "NodeJS",
-          "ReactJS",
-          "MongoDB"
-      ],
-      "missingSkills": [
-          "REST",
-          "Typescript"
-      ],
-      "experienceMatch": {
-          "isMatching": true,
-          "message": "The candidate has relevant internship experience in web development."
-      },
-      "educationMatch": {
-          "isMatching": true,
-          "message": "The candidate holds a Bachelor's degree in Computer Science."
-      },
-      "projectsMatch": {
-          "isMatching": false,
-          "message": "No projects directly related to the job description's key responsibilities were found.",
-          "relevantProjects": []
-      },
-      "certificationMatch": {
-          "isMatching": false,
-          "message": "No relevant certifications were found.",
-          "relevantCertifications": [],
-          "recommendedCertifications": [
-              "Certified Node.js Developer",
-              "ReactJS Certification"
-          ]
-      }
-  }
-*/
-}
+import { getCookie } from "cookies-next";
+import jwt from "jsonwebtoken";
 
 export default function JobDescriptionPage() {
   const [jobDescription, setJobDescription] = useState("");
@@ -128,21 +73,26 @@ export default function JobDescriptionPage() {
   };
 
   const generateTailoredResume = async () => {
-    try {
-      loader.show("Generating Tailored Resume...");
-      const resp = await TailoredResumeAPI.createResume({
-        resume_id: id as string,
-        job_description: jobDescription,
-      });
-      if (resp && resp.data && resp.data.body) {
+    const token: any = await getCookie("token");
+    const decodedToken: any = jwt.decode(token);
+    if (decodedToken && decodedToken.user && decodedToken.user.id) {
+      try {
+        loader.show("Generating Tailored Resume...");
+        const resp = await TailoredResumeAPI.createResume({
+          user_id: decodedToken.user.id,
+          resume_id: id as string,
+          job_description: jobDescription,
+        });
+        if (resp && resp.data && resp.data.body) {
+          loader.hide();
+          router.push(
+            `/dashboard/tailored-resume/${resp.data.body.tailored_resume_id}`
+          );
+        }
+      } catch (error) {
         loader.hide();
-        router.push(
-          `/dashboard/tailored-resume/${resp.data.body.tailored_resume_id}`
-        );
+        console.log("Error generating Tailored Resume: ", error);
       }
-    } catch (error) {
-      loader.hide();
-      console.log("Error generating Tailored Resume: ", error);
     }
   };
 

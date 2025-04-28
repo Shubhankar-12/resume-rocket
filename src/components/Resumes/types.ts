@@ -186,3 +186,61 @@ export interface AnalysisItem {
     };
   };
 }
+
+export interface TailoredResumeData {
+  user_id: string;
+  resume_id: string;
+  tailored_resume_id: string;
+  job_description: string;
+  category: string;
+  name: string;
+  summary: string;
+  email: string;
+  phone: string;
+  location: string;
+  skills: string[];
+  experience: {
+    _id: string;
+    companyName: string;
+    role: string;
+    startDate: string;
+    endDate: string;
+    isPresent: boolean;
+    location: string;
+    description: string;
+    tasks: string[];
+  }[];
+  education: {
+    _id: string;
+    schoolName: string;
+    degree: string;
+    subject: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+  }[];
+  projects: {
+    _id: string;
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    technologies: string[];
+    links: {
+      _id: string;
+      [key: string]: string;
+    }[];
+  }[];
+  certifications: {
+    _id: string;
+    name: string;
+    issuer: string;
+    date: string;
+    url: string;
+  }[];
+  languages: string[];
+  intrests: string[];
+  status: string;
+  created_on: string;
+  updated_on: string;
+}

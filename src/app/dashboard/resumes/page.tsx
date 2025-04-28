@@ -33,15 +33,18 @@ import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
 import ResumeCard from "@/components/Resumes/ResumeCard";
 import ResumePreview from "@/components/Resumes/ResumePreview";
-import { ResumeData } from "@/components/Resumes/types";
+import { ResumeData, TailoredResumeData } from "@/components/Resumes/types";
 import { format, set } from "date-fns";
 import { useLoader } from "@/hooks/useLoader";
+import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
+import TailoredResumePreview from "@/components/TailoredResumePreview";
 
 export default function MyResumesPage() {
   const router = useRouter();
   const [selectedResume, setSelectedResume] = useState<ResumeData | null>(null);
-  const [isRecent, setIsRecent] = useState(false);
-  const [isTailored, setIsTailored] = useState(false);
+  const [selectedTailoredResume, setSelectedTailoredResume] =
+    useState<TailoredResumeData | null>(null);
+  const [activeTab, setActiveTab] = useState("all");
   const loader = useLoader();
 
   const handleResumeClick = (resume: ResumeData) => {
@@ -101,7 +104,7 @@ export default function MyResumesPage() {
       const resp = await ResumeAPI.getAllResumes({
         search: "",
         user_id: decodedToken.user.id,
-        limit: isRecent ? 3 : undefined,
+        limit: activeTab === "recent" ? 3 : undefined,
       });
       if (resp && resp.data && resp.data.body) {
         setResumes(resp.data.body);
@@ -112,10 +115,42 @@ export default function MyResumesPage() {
     }
   };
 
+  const [tailoredResumes, setTailoredResumes] = useState<TailoredResumeData[]>(
+    []
+  );
+
+  const fetchAllTailoredResumes = async () => {
+    const token = getCookie("token") as string;
+    const decodedToken: any = await jwt.decode(token);
+    console.log("Decoded Token:", decodedToken);
+
+    if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
+      console.error("Invalid token or user ID not found");
+      return;
+    }
+
+    try {
+      const resp = await TailoredResumeAPI.getAllResumes({
+        search: "",
+        user_id: decodedToken.user.id,
+      });
+      if (resp && resp.data && resp.data.body) {
+        setTailoredResumes(resp.data.body);
+      }
+    } catch (error) {
+      console.error("Error fetching resumes:", error);
+    }
+  };
+
   useEffect(() => {
+    if (activeTab === "all" || activeTab === "recent") {
+      fetchAllResumes();
+    }
+    if (activeTab === "tailored") {
+      fetchAllTailoredResumes();
+    }
     setSelectedResume(null);
-    fetchAllResumes();
-  }, [isRecent, isTailored]);
+  }, [activeTab]);
 
   const handleResumeDownload = async () => {
     if (selectedResume) {
@@ -184,8 +219,7 @@ export default function MyResumesPage() {
                 defaultValue="all"
                 className="w-full"
                 onValueChange={(value) => {
-                  setIsRecent(value === "recent");
-                  setIsTailored(value === "tailored");
+                  setActiveTab(value);
                 }}
               >
                 <TabsList className="w-full">
@@ -201,16 +235,42 @@ export default function MyResumesPage() {
                 </TabsList>
                 <ScrollArea className="h-[calc(100vh-300px)] pr-4">
                   <div className="space-y-3 pt-3">
-                    {resumes.map((resume) => (
-                      <ResumeCard
-                        key={resume.resume_id}
-                        resume={resume}
-                        isSelected={
-                          selectedResume?.resume_id === resume.resume_id
-                        }
-                        onClick={() => handleResumeClick(resume)}
-                      />
-                    ))}
+                    {activeTab !== "tailored" &&
+                      resumes.map((resume) => (
+                        <ResumeCard
+                          key={resume.resume_id}
+                          resume={{
+                            name: resume?.resume?.name,
+                            created_on: resume.created_on,
+                            category: resume?.extracted_resume?.category || "-",
+                            gradingScore:
+                              resume?.analysis?.gradingScore.toString() || "-",
+                          }}
+                          isSelected={
+                            selectedResume?.resume_id === resume.resume_id
+                          }
+                          onClick={() => handleResumeClick(resume)}
+                        />
+                      ))}
+                    {activeTab === "tailored" &&
+                      tailoredResumes.map((resume) => (
+                        <ResumeCard
+                          key={resume.resume_id}
+                          resume={{
+                            name: resume?.name,
+                            created_on: resume.created_on
+                              ? new Date(resume.created_on)
+                              : new Date(),
+                            category: resume?.category || "-",
+                            gradingScore: "-",
+                          }}
+                          isSelected={
+                            selectedTailoredResume?.tailored_resume_id ===
+                            resume.tailored_resume_id
+                          }
+                          onClick={() => setSelectedTailoredResume(resume)}
+                        />
+                      ))}
                   </div>
                 </ScrollArea>
               </Tabs>
@@ -219,7 +279,7 @@ export default function MyResumesPage() {
         </div>
 
         <div className="lg:col-span-2">
-          {selectedResume ? (
+          {selectedResume && activeTab !== "tailored" && (
             <Card className="h-full">
               <CardHeader className="flex flex-row items-start justify-between">
                 <div>
@@ -303,7 +363,11 @@ export default function MyResumesPage() {
                 </Button>
               </CardFooter>
             </Card>
-          ) : (
+          )}
+          {selectedTailoredResume && activeTab === "tailored" && (
+            <TailoredResumePreview resumeData={selectedTailoredResume} />
+          )}
+          {!selectedResume && !selectedTailoredResume && (
             <Card className="flex h-full flex-col items-center justify-center p-6 text-center">
               <div className="mb-4 rounded-full bg-slate-100 p-3 dark:bg-slate-800">
                 <FileText className="h-8 w-8 text-teal-600" />

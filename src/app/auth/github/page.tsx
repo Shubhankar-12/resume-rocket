@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import GitHubCallbackPage from "./main";
 
-const page = () => {
+const Githubpage = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <GitHubCallbackPage />
@@ -9,4 +9,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Githubpage;

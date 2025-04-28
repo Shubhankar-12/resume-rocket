@@ -3,6 +3,17 @@ import { userService } from "../axios";
 import { getCookie } from "cookies-next";
 
 class TailoredResumeAPI {
+  static async getAllResumes(data: any) {
+    return userService.get(
+      "/tailored-resume/list?" + convertToSearchParams(data),
+      {
+        headers: {
+          Authorization: `Bearer ` + getCookie("token"),
+        },
+      }
+    );
+  }
+
   // /tailored-resume/create POST
   static async createResume(data: any) {
     return userService.post("/tailored-resume/create", data, {
