@@ -25,6 +25,7 @@ import {
   FileText,
 } from "lucide-react";
 import Link from "next/link";
+import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
 
 interface TailoredResumeData {
   resume_id: string;
@@ -92,170 +93,20 @@ export default function TailoredResumePage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("preview");
 
-  useEffect(() => {
-    const fetchResumeData = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // In a real application, you would fetch from your actual API endpoint
-        // For this example, we'll simulate an API call with the provided data
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
-
-        // Mock API response with the provided data
-        const mockApiResponse = {
-          resume_id: "680e6114f0c3ae31f84b4cc4",
-          tailored_resume_id: "680f0dea55aec7505439f734",
-          category: "Student",
-          name: "Shubh Shubhankar",
-          summary:
-            "Detail-oriented and innovative MERN Developer with hands-on experience in building scalable web applications and optimizing backend services. Proficient in integrating third-party APIs and enhancing user experience through efficient coding practices. Passionate about leveraging technology to solve complex problems and improve operational efficiency.",
-          email: "shubhankar719@gmail.com",
-          phone: "+91-8709641223",
-          location: "",
-          skills: [
-            "C++",
-            "CSS",
-            "JavaScript",
-            "NodeJS",
-            "ReactJS",
-            "MongoDB",
-            "Redux",
-            "NextJS",
-            "REST",
-            "NuxtJS",
-            "PayloadCMS",
-            "MySQL",
-            "GitHub",
-            "Typescript",
-            "AWS S3",
-            "SEO",
-          ],
-          experience: [
-            {
-              tasks: [
-                "Engineered backend APIs using Node.js, significantly enhancing platform connectivity and functionality.",
-                "Seamlessly integrated 500+ third-party apps, automating workflows and boosting efficiency.",
-              ],
-              _id: "680f0dea55aec7505439f735",
-              companyName: "Com.Bot",
-              role: "MERN Developer Intern",
-              startDate: "Nov'22",
-              endDate: "Feb'23",
-              isPresent: false,
-              location: "",
-              description:
-                "Contributed to the development of a robust backend infrastructure, improving application performance and user engagement.",
-            },
-            {
-              tasks: [
-                "Architected a high-performance startup landing page using Nuxt.js and PayloadCMS, achieving an 85+ Lighthouse score.",
-                "Designed and deployed scalable REST APIs using Node.js, Typescript, and MongoDB, integrating seamlessly with a Next.js-based admin panel.",
-              ],
-              _id: "680f0dea55aec7505439f736",
-              companyName: "Stylabs Technologies",
-              role: "Technical Intern",
-              startDate: "Feb'24",
-              endDate: "Aug'24",
-              isPresent: false,
-              location: "",
-              description:
-                "Focused on enhancing user experience and performance metrics through innovative web solutions.",
-            },
-            {
-              tasks: [
-                "Developed and optimized robust APIs to streamline data storage and manipulation with Node.js, Typescript, MongoDB, and Next.js.",
-                "Elevated website SEO, enhancing discoverability and performance across 30+ pages.",
-                "Built dynamic, CMS-powered landing pages using PayloadCMS, Next.js with Typescript, and AWS S3, enabling rapid content updates with full control over sections.",
-              ],
-              _id: "680f0dea55aec7505439f737",
-              companyName: "Stylabs Technologies",
-              role: "Junior Developer",
-              startDate: "Aug'24",
-              endDate: "",
-              isPresent: true,
-              location: "",
-              description:
-                "Currently enhancing web applications with a focus on performance, scalability, and user engagement.",
-            },
-          ],
-          education: [
-            {
-              _id: "680f0dea55aec7505439f738",
-              schoolName: "Vellore Institute of Technology, Bhopal",
-              degree: "B.Tech",
-              subject: "CSE Core",
-              location: "",
-              startDate: "2020",
-              endDate: "2024",
-            },
-            {
-              _id: "680f0dea55aec7505439f739",
-              schoolName: "Gyan Bharti School, Hissua, Nawada",
-              degree: "CBSE",
-              subject: "Class XII",
-              location: "",
-              startDate: "2018",
-              endDate: "2019",
-            },
-          ],
-          projects: [
-            {
-              technologies: [
-                "React",
-                "Redux",
-                "Firebase",
-                "Stripe",
-                "Typescript",
-                "Tailwind",
-              ],
-              _id: "680f0dea55aec7505439f73a",
-              title: "Crown Clothing App",
-              description:
-                "Developed and orchestrated the creation of a full-stack e-commerce app, focusing on user experience and seamless payment integration.",
-              startDate: "Feb'23",
-              endDate: "",
-              links: [
-                {
-                  _id: "680f0dea55aec7505439f73b",
-                  Website: "",
-                },
-              ],
-            },
-            {
-              technologies: ["React", "Material UI", "Axios", "Alan AI"],
-              _id: "680f0dea55aec7505439f73c",
-              title: "Filmpire",
-              description:
-                "Conceptualized and developed a React-based movie review and rating app, enhancing user interaction and engagement.",
-              startDate: "Nov'22",
-              endDate: "",
-              links: [
-                {
-                  _id: "680f0dea55aec7505439f73d",
-                  Website: "",
-                },
-              ],
-            },
-          ],
-          certifications: [],
-          languages: ["English", "Hindi"],
-          intrests: [],
-          status: "ENABLED",
-          created_on: "2025-04-28T05:11:06.236Z",
-          updated_on: "2025-04-28T05:11:06.236Z",
-        };
-
-        setResumeData(mockApiResponse);
-      } catch (err) {
-        console.error("Error fetching resume data:", err);
-        setError("Failed to load resume data. Please try again later.");
-      } finally {
+  const fetchResume = async () => {
+    try {
+      const resp = await TailoredResumeAPI.getTailoredResumeById(resumeId);
+      if (resp && resp.data && resp.data.body) {
+        setResumeData(resp.data.body);
         setIsLoading(false);
       }
-    };
+    } catch (error) {
+      console.log("Error fetch Tailored Resume:", error);
+    }
+  };
 
-    fetchResumeData();
+  useEffect(() => {
+    if (resumeId) fetchResume();
   }, [resumeId]);
 
   const handleDownload = () => {
@@ -398,8 +249,8 @@ export default function TailoredResumePage() {
                       Professional Experience
                     </h2>
                     <div className="space-y-6">
-                      {resumeData.experience.map((exp) => (
-                        <div key={exp._id} className="rounded-lg border p-4">
+                      {resumeData.experience.map((exp, index) => (
+                        <div key={index} className="rounded-lg border p-4">
                           <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
                             <h3 className="font-bold">{exp.role}</h3>
                             <div className="text-sm text-muted-foreground">
@@ -443,8 +294,8 @@ export default function TailoredResumePage() {
                       Education
                     </h2>
                     <div className="space-y-4">
-                      {resumeData.education.map((edu) => (
-                        <div key={edu._id} className="rounded-lg border p-4">
+                      {resumeData.education.map((edu, index) => (
+                        <div key={index} className="rounded-lg border p-4">
                           <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
                             <h3 className="font-bold">
                               {edu.degree}
@@ -478,11 +329,8 @@ export default function TailoredResumePage() {
                           Projects
                         </h2>
                         <div className="space-y-4">
-                          {resumeData.projects.map((project) => (
-                            <div
-                              key={project._id}
-                              className="rounded-lg border p-4"
-                            >
+                          {resumeData.projects.map((project, index) => (
+                            <div key={index} className="rounded-lg border p-4">
                               <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
                                 <h3 className="font-bold">{project.title}</h3>
                                 {project.startDate && (
@@ -573,9 +421,9 @@ export default function TailoredResumePage() {
                             Certifications
                           </h2>
                           <div className="space-y-2">
-                            {resumeData.certifications.map((cert) => (
+                            {resumeData.certifications.map((cert, index) => (
                               <div
-                                key={cert._id}
+                                key={index}
                                 className="rounded-lg border p-3"
                               >
                                 <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
@@ -587,7 +435,7 @@ export default function TailoredResumePage() {
                                   )}
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                  Issuer: {cert.issuer}
+                                  Issuer: {cert.issuer || cert.name}
                                 </div>
                                 {cert.url && (
                                   <a
@@ -676,7 +524,7 @@ export default function TailoredResumePage() {
                 <div>
                   <h2 className="mb-2 font-bold">Experience</h2>
                   {resumeData.experience.map((exp, index) => (
-                    <div key={exp._id} className="mb-4">
+                    <div key={index} className="mb-4">
                       <h3 className="font-medium">
                         {exp.role} at {exp.companyName}, {exp.startDate} -{" "}
                         {exp.isPresent ? "Present" : exp.endDate}
@@ -694,7 +542,7 @@ export default function TailoredResumePage() {
                 <div>
                   <h2 className="mb-2 font-bold">Education</h2>
                   {resumeData.education.map((edu, index) => (
-                    <div key={edu._id} className="mb-2">
+                    <div key={index} className="mb-2">
                       <p>
                         {edu.degree}
                         {edu.subject ? `, ${edu.subject}` : ""} -{" "}
@@ -708,7 +556,7 @@ export default function TailoredResumePage() {
                   <div>
                     <h2 className="mb-2 font-bold">Projects</h2>
                     {resumeData.projects.map((project, index) => (
-                      <div key={project._id} className="mb-3">
+                      <div key={index} className="mb-3">
                         <h3 className="font-medium">{project.title}</h3>
                         <p className="mt-1">{project.description}</p>
                         <p className="mt-1">

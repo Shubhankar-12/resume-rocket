@@ -448,7 +448,7 @@ export default function GraderPage() {
             </Button>
             <Button className="w-full sm:w-auto" variant="outline">
               <Link
-                href="/dashboard/job-description"
+                href={"/dashboard/job-description/" + id}
                 className="flex items-center"
               >
                 Tailor for Job Description

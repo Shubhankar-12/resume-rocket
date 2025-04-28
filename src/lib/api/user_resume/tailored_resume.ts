@@ -20,6 +20,13 @@ class TailoredResumeAPI {
       },
     });
   }
+  static async getTailoredResumeById(id: string) {
+    return userService.get("/tailored-resume?tailored_resume_id=" + id, {
+      headers: {
+        Authorization: `Bearer ` + getCookie("token"),
+      },
+    });
+  }
 }
 
 export default TailoredResumeAPI;

@@ -16,7 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { AnalysisItem } from "@/components/Resumes/types";
 import { useLoader } from "@/hooks/useLoader";
 
@@ -85,6 +85,7 @@ export default function JobDescriptionPage() {
   const [resumeAnalysis, setResumeAnalysis] = useState<AnalysisItem>();
   const loader = useLoader();
   const { id } = useParams();
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,6 +124,25 @@ export default function JobDescriptionPage() {
     } catch (error) {
       loader.hide();
       console.error("Error fetching resume match:", error);
+    }
+  };
+
+  const generateTailoredResume = async () => {
+    try {
+      loader.show("Generating Tailored Resume...");
+      const resp = await TailoredResumeAPI.createResume({
+        resume_id: id as string,
+        job_description: jobDescription,
+      });
+      if (resp && resp.data && resp.data.body) {
+        loader.hide();
+        router.push(
+          `/dashboard/tailored-resume/${resp.data.body.tailored_resume_id}`
+        );
+      }
+    } catch (error) {
+      loader.hide();
+      console.log("Error generating Tailored Resume: ", error);
     }
   };
 
@@ -433,7 +453,10 @@ export default function JobDescriptionPage() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col sm:flex-row gap-3">
-              <Button className="w-full sm:w-auto">
+              <Button
+                onClick={generateTailoredResume}
+                className="w-full sm:w-auto"
+              >
                 <FileText className="mr-2 h-4 w-4" />
                 Generate Tailored Resume
               </Button>
