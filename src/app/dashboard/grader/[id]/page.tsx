@@ -44,96 +44,6 @@ export default function GraderPage() {
         </p>
       </div>
 
-      {/* 
-      {
-        "keywordAnalysis": {
-            "presentKeywords": [
-                "Node.js",
-                "MongoDB",
-                "Next.js",
-                "REST",
-                "Typescript",
-                "APIs",
-                "SEO",
-                "CMS"
-            ],
-            "missingKeywords": [
-                "Agile",
-                "Scrum",
-                "Version Control",
-                "Software Development Life Cycle",
-                "Cloud Computing",
-                "DevOps"
-            ]
-        },
-        "overallGrade": "B+",
-        "scoreOutOf100": 82,
-        "scoreBreakdown": {
-            "atsCompatibility": 85,
-            "keywordMatch": 80,
-            "contentQuality": 75,
-            "formatting": 90
-        },
-        "strengths": [
-            {
-                "_id": "680e175265cb3a56c43cf197",
-                "title": "Strong Technical Skills",
-                "description": "Proficient in a wide range of technologies including MERN stack, which is highly relevant for web development roles."
-            },
-            {
-                "_id": "680e175265cb3a56c43cf198",
-                "title": "Relevant Experience",
-                "description": "Hands-on experience as a MERN Developer Intern and Technical Intern, showcasing practical application of skills."
-            },
-            {
-                "_id": "680e175265cb3a56c43cf199",
-                "title": "Performance Metrics",
-                "description": "Demonstrated ability to achieve high performance metrics, such as an 85+ Lighthouse score for web applications."
-            }
-        ],
-        "areasForImprovement": [
-            {
-                "_id": "680e175265cb3a56c43cf19a",
-                "title": "Expand Keyword Usage",
-                "description": "Incorporate more industry-specific keywords related to software development and project management to enhance keyword match."
-            },
-            {
-                "_id": "680e175265cb3a56c43cf19b",
-                "title": "Detailing Experience",
-                "description": "Provide more context and quantifiable achievements in the experience section to better highlight contributions."
-            },
-            {
-                "_id": "680e175265cb3a56c43cf19c",
-                "title": "Location Information",
-                "description": "Add location details for experience and education to provide a clearer picture of geographical context."
-            }
-        ],
-        "actionableSuggestions": [
-            {
-                "_id": "680e175265cb3a56c43cf19d",
-                "title": "Enhance Experience Descriptions",
-                "description": "Add specific metrics and outcomes to your experience descriptions to better illustrate your impact.",
-                "block": "<p>For example, instead of saying 'Developed and optimized robust APIs', you could say 'Developed and optimized robust APIs, resulting in a 30% increase in data retrieval speed.'</p>"
-            },
-            {
-                "_id": "680e175265cb3a56c43cf19e",
-                "title": "Include a Projects Section",
-                "description": "Consider adding a section for personal or academic projects that showcases your skills and initiative.",
-                "block": "<p><strong>Projects:</strong></p><ul><li><strong>Project Name:</strong> Description of the project, technologies used, and outcomes.</li></ul>"
-            },
-            {
-                "_id": "680e175265cb3a56c43cf19f",
-                "title": "Add Certifications",
-                "description": "If you have any relevant certifications, include them to further validate your skills.",
-                "block": "<p><strong>Certifications:</strong></p><ul><li>Certification Name - Issuing Organization</li></ul>"
-            }
-        ],
-        "resume_id": "680e022f0ef7ca7e1851c76c",
-        "created_on": "2025-04-27T11:38:58.692Z",
-        "updated_on": "2025-04-27T11:38:58.692Z",
-        "report_id": "680e175265cb3a56c43cf196"
-    }
-      */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-1 bg-gradient-to-br from-blue-500 to-teal-500 text-white">
           <CardHeader>
@@ -317,6 +227,187 @@ export default function GraderPage() {
                     )
                   )}
               </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      {/* Project Analysis */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Project Analysis</CardTitle>
+          <CardDescription>
+            Evaluation of your projects and portfolio work
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-2">Project Strengths</h3>
+              <ul className="space-y-2">
+                {reportData?.projectAnalysis?.strengths &&
+                  reportData.projectAnalysis.strengths.length > 0 &&
+                  reportData.projectAnalysis.strengths.map(
+                    (strength, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="mr-2 mt-1 h-2 w-2 rounded-full bg-green-500" />
+                        <div>
+                          <p className="font-medium">{strength.title || "-"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {strength.description || "-"}
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  )}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">
+                Areas for Project Improvement
+              </h3>
+              <ul className="space-y-2">
+                {reportData?.projectAnalysis?.areasForImprovement &&
+                  reportData.projectAnalysis.areasForImprovement.length > 0 &&
+                  reportData.projectAnalysis.areasForImprovement.map(
+                    (area, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="mr-2 mt-1 h-2 w-2 rounded-full bg-red-500" />
+                        <div>
+                          <p className="font-medium">{area.title || "-"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {area.description || "-"}
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  )}
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Certification Analysis */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Certification Analysis</CardTitle>
+          <CardDescription>
+            Evaluation of your professional certifications
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-2">Certification Strengths</h3>
+              <ul className="space-y-2">
+                {reportData?.certificationAnalysis?.strengths &&
+                  reportData.certificationAnalysis.strengths.length > 0 &&
+                  reportData.certificationAnalysis.strengths.map(
+                    (strength, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="mr-2 mt-1 h-2 w-2 rounded-full bg-green-500" />
+                        <div>
+                          <p className="font-medium">{strength.title || "-"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {strength.description || "-"}
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  )}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">
+                Areas for Certification Improvement
+              </h3>
+              <ul className="space-y-2">
+                {reportData?.certificationAnalysis?.areasForImprovement &&
+                  reportData.certificationAnalysis.areasForImprovement.length >
+                    0 &&
+                  reportData.certificationAnalysis.areasForImprovement.map(
+                    (area, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="mr-2 mt-1 h-2 w-2 rounded-full bg-red-500" />
+                        <div>
+                          <p className="font-medium">{area.title || "-"}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {area.description || "-"}
+                          </p>
+                        </div>
+                      </li>
+                    )
+                  )}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Recommended Certifications</h3>
+              <div className="flex flex-wrap gap-2">
+                {reportData?.certificationAnalysis?.recommendedCertifications &&
+                  reportData.certificationAnalysis.recommendedCertifications
+                    .length > 0 &&
+                  reportData.certificationAnalysis.recommendedCertifications.map(
+                    (cert, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-sm"
+                      >
+                        {cert || "-"}
+                      </div>
+                    )
+                  )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Interest Analysis */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Interest Analysis</CardTitle>
+          <CardDescription>
+            How your personal interests enhance your professional profile
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="text-sm font-medium">Relevance to Field</span>
+                <span className="text-sm font-medium">
+                  {reportData?.interestAnalysis?.relevance || "-"}%
+                </span>
+              </div>
+              {reportData?.interestAnalysis?.relevance && (
+                <Progress
+                  value={reportData.interestAnalysis.relevance}
+                  className="h-2"
+                />
+              )}
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Comments</h3>
+              <p className="text-sm text-muted-foreground">
+                {reportData?.interestAnalysis?.comments || "-"}
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Suggestions</h3>
+              <ul className="space-y-2">
+                {reportData?.interestAnalysis?.suggestions &&
+                  reportData.interestAnalysis.suggestions.length > 0 &&
+                  reportData.interestAnalysis.suggestions.map(
+                    (suggestion, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="mr-2 mt-1 h-2 w-2 rounded-full bg-blue-500" />
+                        <div>
+                          <p className="text-sm">{suggestion || "-"}</p>
+                        </div>
+                      </li>
+                    )
+                  )}
+              </ul>
             </div>
           </div>
         </CardContent>

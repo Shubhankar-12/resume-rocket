@@ -94,6 +94,27 @@ export interface Education {
   endDate: string;
 }
 
+export interface ProjectAnalysis {
+  strengths: AnalysisItem[];
+  areasForImprovement: AnalysisItem[];
+}
+
+export interface CertificationAnalysis {
+  strengths: AnalysisItem[];
+  areasForImprovement: AnalysisItem[];
+  recommendedCertifications: string[];
+}
+export interface AnalysisItem {
+  title: string;
+  description: string;
+}
+
+export interface InterestAnalysis {
+  relevance: number;
+  comments: string;
+  suggestions: string[];
+}
+
 export interface ReportType {
   report_id: string;
   resume_id: string;
@@ -104,6 +125,9 @@ export interface ReportType {
   areasForImprovement: ActionableSuggestion[];
   keywordAnalysis: KeywordAnalysis;
   actionableSuggestions: ActionableSuggestion[];
+  projectAnalysis: ProjectAnalysis;
+  certificationAnalysis: CertificationAnalysis;
+  interestAnalysis: InterestAnalysis;
   status: string;
   created_on: Date;
   updated_on: Date;
@@ -126,4 +150,39 @@ export interface ScoreBreakdown {
   keywordMatch: number;
   contentQuality: number;
   formatting: number;
+}
+
+export interface AnalysisItem {
+  resume_id: string;
+  job_description: string;
+  keyRequirements: {
+    requiredSkills: string[];
+    experienceLevel: string;
+    education: string;
+    keyResponsibilities: string[];
+  };
+  resumeMatchAnalysis: {
+    overallMatch: number;
+    matchingSkills: string[];
+    missingSkills: string[];
+    experienceMatch: {
+      isMatching: boolean;
+      message: string;
+    };
+    educationMatch: {
+      isMatching: boolean;
+      message: string;
+    };
+    projectsMatch: {
+      isMatching: boolean;
+      message: string;
+      relevantProjects: string[];
+    };
+    certificationMatch: {
+      isMatching: boolean;
+      message: string;
+      relevantCertifications: string[];
+      recommendedCertifications: string[];
+    };
+  };
 }
