@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +26,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
+
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 interface TailoredResumeData {
   resume_id: string;
@@ -109,9 +112,51 @@ export default function TailoredResumePage() {
     if (resumeId) fetchResume();
   }, [resumeId]);
 
-  const handleDownload = () => {
-    // In a real application, this would trigger a PDF download
-    alert("Downloading resume as PDF...");
+  const cardRef = useRef<HTMLDivElement>(null);
+  const atsCardRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPDF = async () => {
+    if (!cardRef.current) return;
+    const scrollArea = document.querySelector(".custom-scroll") as HTMLElement;
+    scrollArea?.classList.add("no-scroll");
+    const canvas = await html2canvas(cardRef.current, {
+      scale: 2, // Higher scale = better quality
+      useCORS: true,
+    });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`${resumeData?.name?.replaceAll(" ", "-")}-tailored-resume.pdf`);
+
+    scrollArea?.classList.remove("no-scroll");
+  };
+  const handleDownloadPDFATS = async () => {
+    if (!atsCardRef.current) return;
+    const scrollArea = document.querySelector(".custom-scroll") as HTMLElement;
+    scrollArea?.classList.add("no-scroll");
+
+    const canvas = await html2canvas(atsCardRef.current, {
+      scale: 2, // Higher scale = better quality
+      useCORS: true,
+    });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(
+      `${resumeData?.name?.replaceAll(" ", "-")}-tailored-resume${
+        activeTab === "ats" && "-ats"
+      }.pdf`
+    );
+
+    scrollArea?.classList.remove("no-scroll");
   };
 
   if (isLoading) {
@@ -158,7 +203,14 @@ export default function TailoredResumePage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleDownload}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              activeTab === "preview"
+                ? handleDownloadPDF()
+                : handleDownloadPDFATS();
+            }}
+          >
             <Download className="mr-2 h-4 w-4" />
             Download PDF
           </Button>
@@ -184,7 +236,7 @@ export default function TailoredResumePage() {
         </TabsList>
 
         <TabsContent value="preview" className="space-y-6">
-          <Card className="overflow-hidden">
+          <Card ref={cardRef} className="overflow-hidden">
             <CardContent className="p-0">
               <div className="bg-teal-600 p-8 text-white">
                 <h1 className="text-3xl font-bold">{resumeData.name}</h1>
@@ -210,7 +262,7 @@ export default function TailoredResumePage() {
                 </div>
               </div>
 
-              <ScrollArea className="h-[calc(100vh-300px)]">
+              <ScrollArea className="h-[calc(100vh-300px)] custom-scroll">
                 <div className="p-8">
                   {/* Summary Section */}
                   <div className="mb-6">
@@ -499,7 +551,7 @@ export default function TailoredResumePage() {
         </TabsContent>
 
         <TabsContent value="ats" className="space-y-6">
-          <Card>
+          <Card ref={atsCardRef}>
             <CardContent className="p-6">
               <div className="space-y-6">
                 <div className="text-center">

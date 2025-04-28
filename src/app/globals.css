@@ -78,3 +78,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* In your CSS */
+.no-scroll {
+  height: auto !important;
+  overflow: visible !important;
+}
