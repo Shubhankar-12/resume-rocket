@@ -14,17 +14,29 @@ import {
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Badge } from "./ui/badge";
 import { ScrollArea } from "./ui/scroll-area";
+import { Button } from "./ui/button";
+import { JobDescDialog } from "./JobDescDialog";
 
 interface Props {
   resumeData: TailoredResumeData;
 }
 
 const TailoredResumePreview: React.FC<Props> = ({ resumeData }) => {
+  const [showJobDescDialog, setShowJobDescDialog] = React.useState(false);
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-0">
         <div className="bg-teal-600 p-8 text-white">
-          <h1 className="text-3xl font-bold">{resumeData.name}</h1>
+          <div className="flex">
+            <h1 className="text-3xl font-bold">{resumeData.name}</h1>
+            <Button
+              className="ml-auto"
+              onClick={() => setShowJobDescDialog(true)}
+            >
+              <Briefcase className="mr-2 h-4 w-4" /> Job Description
+            </Button>
+          </div>
           <div className="mt-2 flex flex-wrap gap-4">
             {resumeData.email && (
               <div className="flex items-center gap-1">
@@ -313,6 +325,11 @@ const TailoredResumePreview: React.FC<Props> = ({ resumeData }) => {
           </div>
         </ScrollArea>
       </CardContent>
+      <JobDescDialog
+        open={showJobDescDialog}
+        setOpen={setShowJobDescDialog}
+        jobDesc={resumeData.job_description}
+      />
     </Card>
   );
 };

@@ -193,6 +193,7 @@ export interface TailoredResumeData {
   tailored_resume_id: string;
   job_description: string;
   category: string;
+  atsScore: number;
   name: string;
   summary: string;
   email: string;

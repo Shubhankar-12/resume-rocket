@@ -255,14 +255,16 @@ export default function MyResumesPage() {
                     {activeTab === "tailored" &&
                       tailoredResumes.map((resume) => (
                         <ResumeCard
-                          key={resume.resume_id}
+                          key={resume.tailored_resume_id}
                           resume={{
                             name: resume?.name,
                             created_on: resume.created_on
                               ? new Date(resume.created_on)
                               : new Date(),
                             category: resume?.category || "-",
-                            gradingScore: "-",
+                            gradingScore: resume?.atsScore
+                              ? resume.atsScore.toString()
+                              : "-",
                           }}
                           isSelected={
                             selectedTailoredResume?.tailored_resume_id ===

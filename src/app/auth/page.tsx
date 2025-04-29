@@ -118,14 +118,14 @@ export default function AuthPage() {
                     <Github className="mr-2 h-4 w-4" />
                     GitHub
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     onClick={() => handleOAuthLogin("google")}
                     disabled={isLoading}
                   >
                     <Mail className="mr-2 h-4 w-4" />
                     Google
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
