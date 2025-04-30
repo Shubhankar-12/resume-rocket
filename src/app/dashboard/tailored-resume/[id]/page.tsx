@@ -30,6 +30,7 @@ import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { TailoredResumeData } from "@/components/Resumes/types";
+import { usePdfExport } from "@/hooks/usePdfExport";
 
 export default function TailoredResumePage() {
   const params = useParams();
@@ -59,49 +60,65 @@ export default function TailoredResumePage() {
 
   const cardRef = useRef<HTMLDivElement>(null);
   const atsCardRef = useRef<HTMLDivElement>(null);
+  const { exportPageToPdf } = usePdfExport();
+
+  // const handleDownloadPDF = async () => {
+  //   if (!cardRef.current) return;
+  //   const scrollArea = document.querySelector(".custom-scroll") as HTMLElement;
+  //   scrollArea?.classList.add("no-scroll");
+  //   const canvas = await html2canvas(cardRef.current, {
+  //     scale: 2, // Higher scale = better quality
+  //     useCORS: true,
+  //   });
+  //   const imgData = canvas.toDataURL("image/png");
+
+  //   const pdf = new jsPDF("p", "mm", "a4");
+  //   const pdfWidth = pdf.internal.pageSize.getWidth();
+  //   const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  //   pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  //   pdf.save(`${resumeData?.name?.replaceAll(" ", "-")}-tailored-resume.pdf`);
+
+  //   scrollArea?.classList.remove("no-scroll");
+  // };
 
   const handleDownloadPDF = async () => {
-    if (!cardRef.current) return;
-    const scrollArea = document.querySelector(".custom-scroll") as HTMLElement;
-    scrollArea?.classList.add("no-scroll");
-    const canvas = await html2canvas(cardRef.current, {
-      scale: 2, // Higher scale = better quality
-      useCORS: true,
-    });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${resumeData?.name?.replaceAll(" ", "-")}-tailored-resume.pdf`);
-
-    scrollArea?.classList.remove("no-scroll");
-  };
-  const handleDownloadPDFATS = async () => {
-    if (!atsCardRef.current) return;
-    const scrollArea = document.querySelector(".custom-scroll") as HTMLElement;
-    scrollArea?.classList.add("no-scroll");
-
-    const canvas = await html2canvas(atsCardRef.current, {
-      scale: 2, // Higher scale = better quality
-      useCORS: true,
-    });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(
-      `${resumeData?.name?.replaceAll(" ", "-")}-tailored-resume${
-        activeTab === "ats" && "-ats"
-      }.pdf`
+    await exportPageToPdf(
+      "http://localhost:3000/preview-resume/" + resumeId,
+      "tailored_resume"
     );
+  };
 
-    scrollArea?.classList.remove("no-scroll");
+  // const handleDownloadPDFATS = async () => {
+  //   if (!atsCardRef.current) return;
+  //   const scrollArea = document.querySelector(".custom-scroll") as HTMLElement;
+  //   scrollArea?.classList.add("no-scroll");
+
+  //   const canvas = await html2canvas(atsCardRef.current, {
+  //     scale: 2, // Higher scale = better quality
+  //     useCORS: true,
+  //   });
+  //   const imgData = canvas.toDataURL("image/png");
+
+  //   const pdf = new jsPDF("p", "mm", "a4");
+  //   const pdfWidth = pdf.internal.pageSize.getWidth();
+  //   const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  //   pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  //   pdf.save(
+  //     `${resumeData?.name?.replaceAll(" ", "-")}-tailored-resume${
+  //       activeTab === "ats" && "-ats"
+  //     }.pdf`
+  //   );
+
+  //   scrollArea?.classList.remove("no-scroll");
+  // };
+
+  const handleDownloadPDFATS = async () => {
+    await exportPageToPdf(
+      "http://localhost:3000/ats-resume/" + resumeId + "?tab=ats",
+      "tailored_resume_ats"
+    );
   };
 
   if (isLoading) {
