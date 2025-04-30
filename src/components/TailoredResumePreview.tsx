@@ -16,6 +16,7 @@ import { Badge } from "./ui/badge";
 import { ScrollArea } from "./ui/scroll-area";
 import { Button } from "./ui/button";
 import { JobDescDialog } from "./JobDescDialog";
+import { useRouter } from "next/navigation";
 
 interface Props {
   resumeData: TailoredResumeData;
@@ -23,6 +24,7 @@ interface Props {
 
 const TailoredResumePreview: React.FC<Props> = ({ resumeData }) => {
   const [showJobDescDialog, setShowJobDescDialog] = React.useState(false);
+  const router = useRouter();
 
   return (
     <Card className="overflow-hidden">
@@ -32,9 +34,13 @@ const TailoredResumePreview: React.FC<Props> = ({ resumeData }) => {
             <h1 className="text-3xl font-bold">{resumeData.name}</h1>
             <Button
               className="ml-auto"
-              onClick={() => setShowJobDescDialog(true)}
+              onClick={() =>
+                router.push(
+                  `/dashboard/tailored-resume/${resumeData.tailored_resume_id}`
+                )
+              }
             >
-              <Briefcase className="mr-2 h-4 w-4" /> Job Description
+              <Briefcase className="mr-2 h-4 w-4" /> View Resume
             </Button>
           </div>
           <div className="mt-2 flex flex-wrap gap-4">
