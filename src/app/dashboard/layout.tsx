@@ -37,7 +37,7 @@ const navigation = [
   { name: "Cover Letters", href: "/dashboard/cover-letters", icon: Mail },
   { name: "GitHub Projects", href: "/dashboard/github", icon: Github },
   { name: "Upload Resume", href: "/dashboard/upload", icon: Upload },
-  { name: "Resume Grader", href: "/dashboard/grader", icon: BarChart3 },
+  // { name: "Resume Grader", href: "/dashboard/grader", iconass: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
