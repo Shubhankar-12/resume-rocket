@@ -1,0 +1,119 @@
+"use client";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Star, X } from "lucide-react";
+
+interface Repository {
+  id: number;
+  name: string;
+  description: string;
+  stars: number;
+  language: string;
+  languageColor: string;
+  topics: string[];
+  updated_at: string;
+}
+
+interface AIScore {
+  score: number;
+  relevance: string;
+  explanation: string;
+}
+
+interface SelectedProjectCardProps {
+  repository: Repository;
+  aiScore: AIScore;
+  onRemove: () => void;
+}
+
+export function SelectedProjectCard({
+  repository,
+  aiScore,
+  onRemove,
+}: SelectedProjectCardProps) {
+  const { name, description, stars, language, languageColor, topics } =
+    repository;
+  const { score, relevance, explanation } = aiScore;
+
+  // Determine badge color based on relevance
+  const relevanceBadgeVariant =
+    relevance === "High"
+      ? "default"
+      : relevance === "Medium"
+      ? "secondary"
+      : "outline";
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-lg">{name}</CardTitle>
+            <CardDescription className="line-clamp-2">
+              {description}
+            </CardDescription>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onRemove}
+            className="h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Remove project</span>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-wrap gap-1">
+          {topics.slice(0, 4).map((topic) => (
+            <Badge key={topic} variant="secondary" className="text-xs">
+              {topic}
+            </Badge>
+          ))}
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium">Relevance Score</div>
+            <div className="flex items-center gap-2">
+              <Badge variant={relevanceBadgeVariant}>{relevance}</Badge>
+              <span className="font-bold">{score}/100</span>
+            </div>
+          </div>
+          <Progress value={score} className="h-2" />
+        </div>
+
+        <div className="rounded-md bg-muted p-3">
+          <p className="text-sm">{explanation}</p>
+        </div>
+      </CardContent>
+      <CardFooter className="flex items-center justify-between pt-2">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4" />
+            <span>{stars}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div
+              className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: languageColor }}
+              aria-hidden="true"
+            ></div>
+            <span>{language}</span>
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}
