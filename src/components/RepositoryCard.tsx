@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Star } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { ChangeEvent } from "react";
 
 interface Repository {
   id: number;
@@ -20,12 +22,14 @@ interface Repository {
   languageColor: string;
   topics: string[];
   updated_at: string;
+  additional_comments?: string;
 }
 
 interface RepositoryCardProps {
   repository: Repository;
   isSelected: boolean;
   onToggleSelect: () => void;
+  onCommentChange?: (id: number, value: string) => void;
   disabled: boolean;
 }
 
@@ -33,9 +37,11 @@ export function RepositoryCard({
   repository,
   isSelected,
   onToggleSelect,
+  onCommentChange,
   disabled,
 }: RepositoryCardProps) {
   const {
+    id,
     name,
     description,
     stars,
@@ -43,6 +49,7 @@ export function RepositoryCard({
     languageColor,
     topics,
     updated_at,
+    additional_comments,
   } = repository;
 
   return (
@@ -70,7 +77,8 @@ export function RepositoryCard({
           />
         </div>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="space-y-2">
         <div className="flex flex-wrap gap-1">
           {topics.slice(0, 4).map((topic) => (
             <Badge key={topic} variant="secondary" className="text-xs">
@@ -83,7 +91,19 @@ export function RepositoryCard({
             </Badge>
           )}
         </div>
+
+        {isSelected && (
+          <Input
+            placeholder="Add a comment..."
+            value={additional_comments || ""}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onCommentChange?.(id, e.target.value)
+            }
+            className="text-sm"
+          />
+        )}
       </CardContent>
+
       <CardFooter className="flex items-center justify-between pt-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">

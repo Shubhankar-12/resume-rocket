@@ -13,15 +13,19 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Star, X } from "lucide-react";
 
-interface Repository {
+export interface SelectedProject {
+  topics: string[];
+  _id: string;
   id: number;
   name: string;
   description: string;
   stars: number;
   language: string;
   languageColor: string;
-  topics: string[];
-  updated_at: string;
+  additional_comments: string;
+  ai_score: number;
+  relevance: string;
+  reason: string;
 }
 
 interface AIScore {
@@ -31,19 +35,27 @@ interface AIScore {
 }
 
 interface SelectedProjectCardProps {
-  repository: Repository;
-  aiScore: AIScore;
+  repository: SelectedProject;
+
   onRemove: () => void;
 }
 
 export function SelectedProjectCard({
   repository,
-  aiScore,
+
   onRemove,
 }: SelectedProjectCardProps) {
-  const { name, description, stars, language, languageColor, topics } =
-    repository;
-  const { score, relevance, explanation } = aiScore;
+  const {
+    name,
+    description,
+    stars,
+    language,
+    languageColor,
+    topics,
+    ai_score,
+    reason,
+    relevance,
+  } = repository;
 
   // Determine badge color based on relevance
   const relevanceBadgeVariant =
@@ -88,14 +100,14 @@ export function SelectedProjectCard({
             <div className="text-sm font-medium">Relevance Score</div>
             <div className="flex items-center gap-2">
               <Badge variant={relevanceBadgeVariant}>{relevance}</Badge>
-              <span className="font-bold">{score}/100</span>
+              <span className="font-bold">{ai_score}/100</span>
             </div>
           </div>
-          <Progress value={score} className="h-2" />
+          <Progress value={ai_score} className="h-2" />
         </div>
 
         <div className="rounded-md bg-muted p-3">
-          <p className="text-sm">{explanation}</p>
+          <p className="text-sm">{reason || "No reason provided"}</p>
         </div>
       </CardContent>
       <CardFooter className="flex items-center justify-between pt-2">

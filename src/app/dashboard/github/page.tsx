@@ -17,225 +17,8 @@ import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
 import UserAPI from "@/lib/api/user/users";
 import { getLanguageColor } from "@/helpers/colors";
-
-// Mock GitHub repositories data
-const mockRepositories = [
-  {
-    id: 1,
-    name: "react-dashboard",
-    description:
-      "A responsive dashboard built with React, TypeScript, and Tailwind CSS",
-    stars: 124,
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    topics: ["react", "typescript", "tailwind", "dashboard"],
-    updated_at: "2023-10-15",
-  },
-  {
-    id: 2,
-    name: "next-ecommerce",
-    description:
-      "E-commerce platform built with Next.js, Prisma, and Stripe integration",
-    stars: 87,
-    language: "JavaScript",
-    languageColor: "#f1e05a",
-    topics: ["nextjs", "ecommerce", "stripe", "prisma"],
-    updated_at: "2023-11-02",
-  },
-  {
-    id: 3,
-    name: "node-api-starter",
-    description:
-      "RESTful API starter template with Node.js, Express, and MongoDB",
-    stars: 56,
-    language: "JavaScript",
-    languageColor: "#f1e05a",
-    topics: ["nodejs", "express", "mongodb", "api"],
-    updated_at: "2023-09-28",
-  },
-  {
-    id: 4,
-    name: "vue-task-manager",
-    description: "Task management application built with Vue.js and Vuex",
-    stars: 42,
-    language: "Vue",
-    languageColor: "#41b883",
-    topics: ["vue", "vuex", "task-manager"],
-    updated_at: "2023-08-17",
-  },
-  {
-    id: 5,
-    name: "python-data-analysis",
-    description:
-      "Data analysis and visualization tools using Python, Pandas, and Matplotlib",
-    stars: 35,
-    language: "Python",
-    languageColor: "#3572A5",
-    topics: ["python", "pandas", "data-analysis", "matplotlib"],
-    updated_at: "2023-10-05",
-  },
-  {
-    id: 6,
-    name: "react-native-fitness",
-    description: "Fitness tracking mobile app built with React Native and Expo",
-    stars: 29,
-    language: "JavaScript",
-    languageColor: "#f1e05a",
-    topics: ["react-native", "expo", "fitness", "mobile"],
-    updated_at: "2023-11-10",
-  },
-  {
-    id: 7,
-    name: "go-microservices",
-    description:
-      "Microservices architecture example using Go, gRPC, and Docker",
-    stars: 78,
-    language: "Go",
-    languageColor: "#00ADD8",
-    topics: ["go", "microservices", "grpc", "docker"],
-    updated_at: "2023-09-12",
-  },
-  {
-    id: 8,
-    name: "angular-crm",
-    description:
-      "Customer relationship management system built with Angular and Firebase",
-    stars: 31,
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    topics: ["angular", "firebase", "crm"],
-    updated_at: "2023-07-22",
-  },
-  {
-    id: 9,
-    name: "django-blog",
-    description: "Full-featured blog platform built with Django and PostgreSQL",
-    stars: 45,
-    language: "Python",
-    languageColor: "#3572A5",
-    topics: ["django", "blog", "postgresql"],
-    updated_at: "2023-10-30",
-  },
-  {
-    id: 10,
-    name: "flutter-weather-app",
-    description:
-      "Weather forecast application built with Flutter and OpenWeatherMap API",
-    stars: 38,
-    language: "Dart",
-    languageColor: "#00B4AB",
-    topics: ["flutter", "weather", "mobile", "api"],
-    updated_at: "2023-11-05",
-  },
-  {
-    id: 11,
-    name: "rust-cli-tools",
-    description: "Collection of command-line utilities built with Rust",
-    stars: 62,
-    language: "Rust",
-    languageColor: "#dea584",
-    topics: ["rust", "cli", "utilities"],
-    updated_at: "2023-08-28",
-  },
-  {
-    id: 12,
-    name: "svelte-portfolio",
-    description: "Personal portfolio website built with Svelte and TailwindCSS",
-    stars: 27,
-    language: "Svelte",
-    languageColor: "#ff3e00",
-    topics: ["svelte", "portfolio", "tailwindcss"],
-    updated_at: "2023-09-18",
-  },
-  {
-    id: 13,
-    name: "laravel-saas-boilerplate",
-    description:
-      "Software as a Service boilerplate built with Laravel and Vue.js",
-    stars: 93,
-    language: "PHP",
-    languageColor: "#4F5D95",
-    topics: ["laravel", "saas", "vue", "subscription"],
-    updated_at: "2023-10-22",
-  },
-  {
-    id: 14,
-    name: "kotlin-android-notes",
-    description:
-      "Note-taking Android application built with Kotlin and Room database",
-    stars: 41,
-    language: "Kotlin",
-    languageColor: "#A97BFF",
-    topics: ["kotlin", "android", "room", "notes"],
-    updated_at: "2023-11-08",
-  },
-  {
-    id: 15,
-    name: "express-auth-api",
-    description:
-      "Authentication API with JWT, OAuth, and role-based access control",
-    stars: 54,
-    language: "JavaScript",
-    languageColor: "#f1e05a",
-    topics: ["express", "authentication", "jwt", "oauth"],
-    updated_at: "2023-09-25",
-  },
-  {
-    id: 16,
-    name: "react-design-system",
-    description:
-      "Reusable component library and design system for React applications",
-    stars: 112,
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    topics: ["react", "design-system", "components", "storybook"],
-    updated_at: "2023-10-12",
-  },
-  {
-    id: 17,
-    name: "swift-ios-chat",
-    description:
-      "Real-time chat application for iOS built with Swift and Firebase",
-    stars: 37,
-    language: "Swift",
-    languageColor: "#ffac45",
-    topics: ["swift", "ios", "firebase", "chat"],
-    updated_at: "2023-08-05",
-  },
-  {
-    id: 18,
-    name: "graphql-apollo-server",
-    description:
-      "GraphQL server built with Apollo Server, Node.js, and MongoDB",
-    stars: 68,
-    language: "JavaScript",
-    languageColor: "#f1e05a",
-    topics: ["graphql", "apollo", "nodejs", "mongodb"],
-    updated_at: "2023-11-01",
-  },
-  {
-    id: 19,
-    name: "docker-compose-examples",
-    description:
-      "Collection of Docker Compose examples for various development stacks",
-    stars: 83,
-    language: "Docker",
-    languageColor: "#384d54",
-    topics: ["docker", "docker-compose", "devops"],
-    updated_at: "2023-09-30",
-  },
-  {
-    id: 20,
-    name: "machine-learning-projects",
-    description:
-      "Various machine learning projects using TensorFlow and scikit-learn",
-    stars: 59,
-    language: "Python",
-    languageColor: "#3572A5",
-    topics: ["machine-learning", "tensorflow", "scikit-learn", "data-science"],
-    updated_at: "2023-10-18",
-  },
-];
+import ProjectAnalysisAPI from "@/lib/api/project-analysis/project_analysis";
+import { useLoader } from "@/hooks/useLoader";
 
 interface Repository {
   id: number;
@@ -246,6 +29,31 @@ interface Repository {
   languageColor: string;
   topics: string[];
   updated_at: string;
+  additional_comments?: string;
+}
+
+export interface AnalysisType {
+  project_ids: number[];
+  status: string;
+  user_id: string;
+  role: string;
+  selected_project: SelectedProject[];
+  project_analysis_id: string;
+}
+
+export interface SelectedProject {
+  topics: string[];
+  _id: string;
+  id: number;
+  name: string;
+  description: string;
+  stars: number;
+  language: string;
+  languageColor: string;
+  additional_comments: string;
+  ai_score: number;
+  relevance: string;
+  reason: string;
 }
 
 // Mock AI-generated scores and explanations
@@ -389,6 +197,21 @@ export default function GitHubProjectSelection() {
   } | null>(null);
 
   const [githubRepos, setGithubRepos] = useState<Repository[]>([]);
+  const [analyzedProjects, setAnalyzedProjects] = useState<SelectedProject[]>(
+    []
+  );
+  const handleCommentChange = (id: number, value: string) => {
+    setGithubRepos((prev) =>
+      prev.map((repo) =>
+        repo.id === id ? { ...repo, additional_comments: value } : repo
+      )
+    );
+    setSelectedRepos((prev) =>
+      prev.map((repo) =>
+        repo.id === id ? { ...repo, additional_comments: value } : repo
+      )
+    );
+  };
 
   const getTotalPages = async () => {
     try {
@@ -401,6 +224,7 @@ export default function GitHubProjectSelection() {
       const resp = await fetch(`https://api.github.com/users/${user.username}`);
       const data = await resp.json();
       setTotalPages(Math.ceil(data.public_repos / itemsPerPage));
+      console.log("Total Pages:", data.public_repos);
     } catch (error) {
       console.error("Error fetching repositories:", error);
     }
@@ -456,6 +280,7 @@ export default function GitHubProjectSelection() {
                 : "#000000",
               topics: repo.topics || [],
               updated_at: repo.updated_at,
+              additional_comments: "",
             };
           })
           .filter((repo: any) =>
@@ -480,11 +305,6 @@ export default function GitHubProjectSelection() {
     }
   }, [user, currentPage, searchQuery]);
 
-  // Filter repositories based on search query
-  const filteredRepos = mockRepositories.filter((repo) =>
-    repo.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   // Handle repository selection
   const toggleRepoSelection = (repoId: number) => {
     if (selectedRepoIds.includes(repoId)) {
@@ -506,13 +326,43 @@ export default function GitHubProjectSelection() {
   }, [selectedRepos.length]);
 
   // Get selected repositories with AI scores
-  const selectedRepoIdsWithScores = mockRepositories
+  const selectedRepoIdsWithScores = selectedRepos
     .filter((repo) => selectedRepoIds.includes(repo.id))
-    .map((repo) => ({
+    ?.map((repo) => ({
       ...repo,
       aiScore: mockAIScores[repo.id as keyof typeof mockAIScores],
     }))
-    .sort((a, b) => b.aiScore.score - a.aiScore.score);
+    ?.sort((a, b) => b?.aiScore?.score - a?.aiScore?.score);
+
+  const loader = useLoader();
+  const handleAnalyzeClick = async () => {
+    const token = await getCookie("token");
+    if (!token) {
+      console.error("Token not found");
+      return;
+    }
+    const decodedToken: any = await jwt.decode(token);
+    if (!decodedToken || !decodedToken.user || !decodedToken.user.id) {
+      console.error("Invalid token or user ID not found");
+      return;
+    }
+    try {
+      loader.show("Creating Selected Projects Analysis...");
+      const resp = await ProjectAnalysisAPI.createProjectAnalysis({
+        user_id: decodedToken.user.id,
+        role: selectedRole,
+        projects: selectedRepoIdsWithScores,
+      });
+      if (resp && resp.data && resp.data.body) {
+        setAnalyzedProjects(resp.data.body.selected_project || []);
+        setActiveTab("selected");
+        loader.hide();
+      }
+    } catch (error) {
+      console.error("Error creating project analysis:", error);
+      loader.hide();
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -541,6 +391,7 @@ export default function GitHubProjectSelection() {
             <Button
               variant={selectedRepoIds.length > 0 ? "default" : "outline"}
               className="text-sm"
+              onClick={handleAnalyzeClick}
             >
               {selectedRepoIds.length > 0
                 ? `Analyze Selected ${selectedRepoIds.length} repositories`
@@ -559,7 +410,10 @@ export default function GitHubProjectSelection() {
           >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="repositories">All Repositories</TabsTrigger>
-              <TabsTrigger value="selected">
+              <TabsTrigger
+                value="selected"
+                disabled={analyzedProjects.length === 0}
+              >
                 Selected Projects Preview
               </TabsTrigger>
             </TabsList>
@@ -598,6 +452,7 @@ export default function GitHubProjectSelection() {
                         !selectedRepoIds.includes(repo.id) &&
                         selectedRepoIds.length >= 5
                       }
+                      onCommentChange={handleCommentChange}
                     />
                   ))
                 ) : (
@@ -612,7 +467,7 @@ export default function GitHubProjectSelection() {
                 )}
               </div>
 
-              {filteredRepos.length > itemsPerPage && (
+              {totalPages && (
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -622,7 +477,7 @@ export default function GitHubProjectSelection() {
             </TabsContent>
 
             <TabsContent value="selected" className="space-y-4">
-              {selectedRepoIds.length > 0 ? (
+              {analyzedProjects.length > 0 ? (
                 <div className="space-y-4">
                   {selectedRole && (
                     <Alert>
@@ -637,11 +492,10 @@ export default function GitHubProjectSelection() {
                     </Alert>
                   )}
 
-                  {selectedRepoIdsWithScores.map((repo) => (
+                  {analyzedProjects.map((repo) => (
                     <SelectedProjectCard
                       key={repo.id}
                       repository={repo}
-                      aiScore={repo.aiScore}
                       onRemove={() => toggleRepoSelection(repo.id)}
                     />
                   ))}
