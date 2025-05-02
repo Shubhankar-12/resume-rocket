@@ -1,30 +1,12 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  MapPin,
-  Mail,
-  Phone,
-  Briefcase,
-  GraduationCap,
-  Code,
-  Award,
-  Languages,
-} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { TailoredResumeData } from "@/components/Resumes/types";
-import { Badge } from "@/components/ui/badge";
 
-type Props = {
-  params: { id: string };
-};
+export interface ATSResumePageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
 
 async function getResume(id: string): Promise<TailoredResumeData | null> {
   try {
@@ -48,7 +30,7 @@ async function getResume(id: string): Promise<TailoredResumeData | null> {
   }
 }
 
-export default async function ATSResume({ params }: Props) {
+export default async function ATSResume({ params }: ATSResumePageProps) {
   const paramsData = await params;
 
   const resumeData: TailoredResumeData | null = await getResume(paramsData.id);

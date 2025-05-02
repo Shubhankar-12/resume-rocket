@@ -14,7 +14,7 @@ interface CoverLetterItem {
 }
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 async function getCoverLetter(id: string): Promise<CoverLetterItem | null> {

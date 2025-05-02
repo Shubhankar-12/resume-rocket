@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   MapPin,
   Mail,
@@ -18,12 +11,11 @@ import {
 } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { TailoredResumeData } from "@/components/Resumes/types";
 import { Badge } from "@/components/ui/badge";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 async function getResume(id: string): Promise<TailoredResumeData | null> {

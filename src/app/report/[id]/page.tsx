@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { ReportType } from "@/components/Resumes/types";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 async function getReport(id: string): Promise<ReportType | null> {
