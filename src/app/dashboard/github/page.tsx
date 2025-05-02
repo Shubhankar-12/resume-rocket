@@ -511,7 +511,6 @@ export default function GitHubProjectSelection() {
                   </div>
                 )}
               </div>
-
               {totalPages && (
                 <Pagination
                   currentPage={currentPage}
