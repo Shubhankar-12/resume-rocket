@@ -26,12 +26,7 @@ export interface SelectedProject {
   ai_score: number;
   relevance: string;
   reason: string;
-}
-
-interface AIScore {
-  score: number;
-  relevance: string;
-  explanation: string;
+  key_points: string[];
 }
 
 interface SelectedProjectCardProps {
@@ -109,6 +104,16 @@ export function SelectedProjectCard({
         <div className="rounded-md bg-muted p-3">
           <p className="text-sm">{reason || "No reason provided"}</p>
         </div>
+        {repository.key_points?.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm font-medium">Key Points</div>
+            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 pl-2">
+              {repository.key_points.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex items-center justify-between pt-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

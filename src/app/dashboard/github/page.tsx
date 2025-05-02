@@ -54,6 +54,7 @@ export interface SelectedProject {
   ai_score: number;
   relevance: string;
   reason: string;
+  key_points: string[];
 }
 
 // Mock AI-generated scores and explanations
