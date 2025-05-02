@@ -28,6 +28,13 @@ class UserAPI {
       },
     });
   }
+  static async connectWithGithub(data: any) {
+    return userService.patch("/user/connect-github", data, {
+      headers: {
+        Authorization: `Bearer ` + getCookie("token"),
+      },
+    });
+  }
 }
 
 export default UserAPI;

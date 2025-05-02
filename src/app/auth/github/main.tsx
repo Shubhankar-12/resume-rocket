@@ -16,6 +16,9 @@ import Link from "next/link";
 import AuthAPI from "@/lib/api";
 import { useDispatch } from "react-redux";
 import { login } from "@/lib/store/slices/authSlice";
+import { getCookie, setCookie } from "cookies-next";
+import UserAPI from "@/lib/api/user/users";
+import jwt from "jsonwebtoken";
 
 export default function GitHubCallbackPage() {
   const router = useRouter();
@@ -39,14 +42,67 @@ export default function GitHubCallbackPage() {
         console.log("GitHub authentication successful:", response.data);
 
         dispatch(login({ token: response.data.body.token.token })); // Assuming the token is in response.data.token
+        setStatus("success");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error during GitHub authentication:", error);
     }
   };
+  const UpdateUserWithGitHub = async () => {
+    if (!code) {
+      console.error("No code provided in the URL parameters.");
+      return;
+    }
+    try {
+      const response = await UserAPI.connectWithGithub({
+        code: code,
+        state: state,
+      });
+      if (response && response.data) {
+        console.log("GitHub authentication successful:", response.data);
+        await setCookie("token", response.data.body.token);
+
+        setStatus("success");
+        setTimeout(() => {
+          router.push("/dashboard/github");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error during Connect with GitHub:", error);
+    }
+  };
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const error = searchParams.get("error");
+  const token = getCookie("token");
+
+  useEffect(() => {
+    if (error) {
+      setStatus("error");
+      setErrorMessage("Authentication failed. Please try again.");
+      return;
+    }
+    if (token) {
+      const decodedToken: any = jwt.decode(token as string);
+      if (
+        decodedToken &&
+        decodedToken.user &&
+        decodedToken.user.provider === "github"
+      ) {
+        return;
+      }
+      if (!code) {
+        console.log("No code provided in the URL parameters.");
+        router.push("/dashboard/github");
+      } else {
+        UpdateUserWithGitHub();
+      }
+    }
+  }, [token, code, state, error]);
+
   useEffect(() => {
     if (error) {
       setStatus("error");
@@ -54,24 +110,10 @@ export default function GitHubCallbackPage() {
       return;
     }
 
-    if (code) {
-      authenticateWithGitHub()
-        .then(() => {
-          setStatus("success");
-          setTimeout(() => {
-            router.push("/dashboard");
-          }, 2000);
-        })
-        .catch((err) => {
-          console.error(err);
-          setStatus("error");
-          setErrorMessage("Authentication failed. Please try again.");
-        });
-    } else {
-      setStatus("error");
-      setErrorMessage("No code provided in the URL parameters.");
+    if (code && !token) {
+      authenticateWithGitHub();
     }
-  }, [code, state, error]);
+  }, [code, state, error, token]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">

@@ -4,13 +4,19 @@ import { use, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/pagination";
 import { TipsCard } from "@/components/TipsCard";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { SelectedProjectCard } from "@/components/SelectedProject";
-import { Search, Briefcase, CircleAlertIcon } from "lucide-react";
+import { Search, Briefcase, CircleAlertIcon, Github } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getCookie } from "cookies-next";
@@ -238,6 +244,8 @@ export default function GitHubProjectSelection() {
       return;
     }
     const decodedToken: any = await jwt.decode(token);
+    console.log("Decoded Token:", decodedToken);
+
     if (!decodedToken || !decodedToken.user || !decodedToken.user.id) {
       console.error("Invalid token or user ID not found");
       return;
@@ -364,6 +372,42 @@ export default function GitHubProjectSelection() {
       loader.hide();
     }
   };
+
+  const handleConnect = () => {
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&scope=user`;
+  };
+
+  if (!user || user?.provider !== "github") {
+    return (
+      <div className="container mx-auto py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Connect GitHub Account</CardTitle>
+            <CardDescription>
+              Link your GitHub account to analyze your repositories and find the
+              best projects to showcase on your resume
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center py-10">
+            <div className="rounded-full bg-muted p-6 mb-4">
+              <Github className="h-12 w-12" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">
+              Enhance Your Resume with GitHub Projects
+            </h3>
+            <p className="text-center text-muted-foreground max-w-md mb-6">
+              We'll analyze your repositories to find the most impressive
+              projects based on stars, activity, and technologies used.
+            </p>
+            <Button onClick={handleConnect} className="gap-2">
+              <Github className="h-4 w-4" />
+              Connect GitHub Account
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8">
