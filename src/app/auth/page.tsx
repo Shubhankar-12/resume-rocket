@@ -18,19 +18,56 @@ import {
 } from "@/components/ui/card";
 import { FileText, Github, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AuthAPI from "@/lib/api";
+import { setCookie } from "cookies-next";
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+  const [registerData, setRegisterData] = useState({
+    email: "",
+    password: "",
+    name: "",
+    confirmPassword: "",
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate authentication
-    setTimeout(() => {
+  const [error, setError] = useState<string>("");
+
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const resp = await AuthAPI.loginWithEmailPassword(loginData);
+      if (resp && resp.data && resp.data.body) {
+        setCookie("token", resp.data.body.token);
+        setIsLoading(false);
+        router.push("/dashboard");
+      }
+    } catch (error) {
       setIsLoading(false);
-      window.location.href = "/dashboard";
-    }, 1500);
+      console.log("Error during login:", error);
+    }
+  };
+  const handleRegister = async () => {
+    if (registerData.password !== registerData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const resp = await AuthAPI.registerWithEmail(registerData);
+      if (resp && resp.data && resp.data.body) {
+        setCookie("token", resp.data.body.token);
+        setIsLoading(false);
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Error during login:", error);
+    }
   };
 
   const handleOAuthLogin = (provider: string) => {
@@ -78,6 +115,10 @@ export default function AuthPage() {
                     id="email"
                     type="email"
                     placeholder="name@example.com"
+                    onChange={(e) =>
+                      setLoginData({ ...loginData, email: e.target.value })
+                    }
+                    value={loginData.email}
                   />
                 </div>
                 <div className="space-y-2">
@@ -90,7 +131,14 @@ export default function AuthPage() {
                       Forgot password?
                     </Link>
                   </div>
-                  <Input id="password" type="password" />
+                  <Input
+                    id="password"
+                    type="password"
+                    onChange={(e) =>
+                      setLoginData({ ...loginData, password: e.target.value })
+                    }
+                    value={loginData.password}
+                  />
                 </div>
                 <Button
                   className="w-full"
@@ -139,31 +187,69 @@ export default function AuthPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="first-name">First name</Label>
-                    <Input id="first-name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="last-name">Last name</Label>
-                    <Input id="last-name" />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    type="name"
+                    placeholder="name@example.com"
+                    onChange={(e) =>
+                      setRegisterData({ ...registerData, name: e.target.value })
+                    }
+                    value={registerData.name}
+                  />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="name@example.com"
+                    onChange={(e) =>
+                      setRegisterData({
+                        ...registerData,
+                        email: e.target.value,
+                      })
+                    }
+                    value={registerData.email}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" />
+                  <Input
+                    id="password"
+                    type="password"
+                    value={registerData.password}
+                    onChange={(e) => {
+                      setRegisterData({
+                        ...registerData,
+                        password: e.target.value,
+                      });
+                      setError("");
+                    }}
+                  />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="confirmPassword"
+                    value={registerData.confirmPassword}
+                    onChange={(e) => {
+                      setRegisterData({
+                        ...registerData,
+                        confirmPassword: e.target.value,
+                      });
+                      setError("");
+                    }}
+                  />
+                </div>
+                {/* Error message */}
+                {error && <p className="text-red-500">{error}</p>}
                 <Button
                   className="w-full"
-                  onClick={handleSubmit}
+                  onClick={handleRegister}
                   disabled={isLoading}
                 >
                   {isLoading ? "Creating account..." : "Create account"}
