@@ -19,7 +19,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background to-background/95">
+    <div className="flex w-svw overflow-x-hidden flex-col min-h-screen bg-gradient-to-b from-background to-background/95">
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg px-4 lg:px-8 h-16 flex items-center justify-between border-b">
         <Link href="/" className="flex items-center">
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
@@ -91,54 +91,57 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
       </header>
 
       {/* Mobile Menu */}
+      {/* Mobile Menu Component */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-background pt-16 px-4">
-          <nav className="flex flex-col gap-4 py-8">
-            <Link
-              href="#features"
-              className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Features
-            </Link>
-            <Link
-              href="#pricing"
-              className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="#testimonials"
-              className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Testimonials
-            </Link>
-            <Link
-              href="#faq"
-              className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              FAQ
-            </Link>
-          </nav>
-          <div className="flex flex-col gap-4 mt-4">
-            <Button
-              variant="outline"
-              asChild
-              className="w-full"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Link href="/auth">Log In</Link>
-            </Button>
-            <Button
-              asChild
-              className="w-full"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Link href="/auth">Sign Up</Link>
-            </Button>
+        <div className="md:hidden w-svw fixed inset-x-0 top-0 z-40  overflow-hidden bg-background pt-16">
+          <div className="px-4 w-full max-w-full">
+            <nav className="flex flex-col gap-4 py-8">
+              <Link
+                href="#features"
+                className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                href="#pricing"
+                className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link
+                href="#testimonials"
+                className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Testimonials
+              </Link>
+              <Link
+                href="#faq"
+                className="text-lg font-medium py-2 hover:text-primary transition-colors border-b"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                FAQ
+              </Link>
+            </nav>
+            <div className="flex w-full flex-col gap-4 mt-4 mb-8">
+              <Button
+                variant="outline"
+                asChild
+                className="w-full"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Link href="/auth">Log In</Link>
+              </Button>
+              <Button
+                asChild
+                className="w-full"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Link href="/auth">Sign Up</Link>
+              </Button>
+            </div>
           </div>
         </div>
       )}
