@@ -410,7 +410,11 @@ export default function JobDescriptionPage() {
                 <FileText className="mr-2 h-4 w-4" />
                 Generate Tailored Resume
               </Button>
-              <Button className="w-full sm:w-auto" variant="outline">
+              <Button
+                className="w-full sm:w-auto"
+                variant="outline"
+                onClick={() => router.push("/dashboard/cover-letters/new")}
+              >
                 Generate Cover Letter
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
