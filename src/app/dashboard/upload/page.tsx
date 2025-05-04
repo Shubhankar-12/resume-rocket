@@ -56,23 +56,55 @@ export default function UploadResume() {
   const getResumeAnalysis = async () => {
     const token: any = await getCookie("token");
     const decodedToken: any = jwt.decode(token);
-    if (decodedToken && decodedToken.user && decodedToken.user.id) {
-      try {
-        setIsUploading(true);
-        const resume = await handleUpload();
-        if (resume && resume.url) {
-          const resp = await ResumeAPI.createResume({
-            resume: resume,
-            user_id: decodedToken.user.id,
-          });
-          if (resp && resp.data && resp.data.body) {
-            setResumeAnalysis(resp.data.body);
-            setIsUploading(false);
-          }
-        }
-      } catch (error) {
-        console.log(error);
+
+    if (!decodedToken?.user?.id) {
+      console.error("Invalid user token");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+
+      // Upload the resume first
+      const resume = await handleUpload();
+
+      if (!resume?.url) {
+        throw new Error("Failed to upload resume");
       }
+
+      // Reset progress to 0 before starting analysis
+      setUploadProgress(0);
+
+      // Start the progress interval for the analysis phase
+      const interval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 95) {
+            return 95; // Cap at 95% until complete
+          }
+          return prev + 5;
+        });
+      }, 200);
+
+      // Call API to process the resume
+      const resp = await ResumeAPI.createResume({
+        resume: resume,
+        user_id: decodedToken.user.id,
+      });
+
+      // Clear interval and set final progress
+      clearInterval(interval);
+
+      if (resp?.data?.body) {
+        setUploadProgress(100);
+        setResumeAnalysis(resp.data.body);
+      } else {
+        throw new Error("Invalid response from server");
+      }
+    } catch (error) {
+      console.error("Resume analysis failed:", error);
+      setUploadProgress(0); // Reset progress on error
+    } finally {
+      setIsUploading(false);
     }
   };
 
