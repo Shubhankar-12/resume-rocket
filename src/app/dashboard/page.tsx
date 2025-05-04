@@ -15,6 +15,7 @@ import { StatsType } from "../types/DashboardTypes";
 import { cookies } from "next/headers";
 import { generateBucketUrl } from "@/helpers/utils";
 import { formatDistanceToNow } from "date-fns";
+export const dynamic = "force-dynamic";
 
 const getDashboardData = async (): Promise<StatsType | null> => {
   try {
@@ -197,7 +198,7 @@ export default async function Dashboard() {
                 <Button asChild variant="outline" className="w-full">
                   <Link
                     href={
-                      "/dashboard/grader?" +
+                      "/dashboard/grader/" +
                       dashboardData?.user_resumes?.user_resume_id
                     }
                   >
