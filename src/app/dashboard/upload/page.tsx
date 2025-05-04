@@ -153,29 +153,6 @@ export default function UploadResume() {
     }
   };
 
-  const simulateUpload = (file: File) => {
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          setIsParsing(true);
-
-          // Simulate parsing delay
-          setTimeout(() => {
-            setIsParsing(false);
-          }, 2000);
-
-          return 100;
-        }
-        return prev + 5;
-      });
-    }, 100);
-  };
-
   const removeFile = () => {
     setFile(null);
     setIsUploading(false);

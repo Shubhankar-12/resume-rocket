@@ -111,13 +111,15 @@ export default async function Dashboard() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <FileText className="mr-2 h-5 w-5 text-primary" />
-                Paste Job Description
+                Create Cover Letter
               </CardTitle>
-              <CardDescription>Tailor your resume to a job</CardDescription>
+              <CardDescription>
+                Create a cover letter for your resume
+              </CardDescription>
             </CardHeader>
             <CardFooter>
               <Button asChild className="w-full">
-                <Link href="/dashboard/job-description">
+                <Link href="/dashboard/cover-letters/new">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

@@ -183,7 +183,6 @@ export default function NewCoverLetterPage() {
                     {resume.extracted_resume?.name || "No name"}
                     <span className="ml-2 text-xs text-muted-foreground">
                       ({resume.extracted_resume?.category || "No category"})
-                      {resume.resume_id}
                     </span>
                   </SelectItem>
                 ))}
