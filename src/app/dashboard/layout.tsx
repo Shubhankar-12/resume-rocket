@@ -69,7 +69,9 @@ export default function DashboardLayout({
             <div className="flex items-center justify-between h-16 px-4 border-b">
               <Link href="/dashboard" className="flex items-center">
                 {isSidebarOpen ? (
-                  <h1 className="text-xl font-bold text-primary">ResumeAI</h1>
+                  <h1 className="text-xl font-bold text-primary">
+                    ResumeRocket
+                  </h1>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                     <span className="text-primary-foreground font-bold">R</span>
@@ -233,7 +235,9 @@ export default function DashboardLayout({
                   <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
               </Button>
-              <h1 className="text-xl font-semibold ml-2 md:hidden">ResumeAI</h1>
+              <h1 className="text-xl font-semibold ml-2 md:hidden">
+                ResumeRocket
+              </h1>
             </div>
             <div className="flex items-center space-x-2">
               <ModeToggle />

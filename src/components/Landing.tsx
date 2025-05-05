@@ -23,7 +23,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg px-4 lg:px-8 h-16 flex items-center justify-between border-b">
         <Link href="/" className="flex items-center">
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-            ResumeAI
+            ResumeRocket
           </span>
         </Link>
 
@@ -167,7 +167,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
                     Land Your Dream Job with AI-Powered Resume Optimization
                   </h1>
                   <p className="max-w-[600px] text-xl text-muted-foreground">
-                    ResumeAI analyzes, grades, and tailors your resume to
+                    ResumeRocket analyzes, grades, and tailors your resume to
                     specific job descriptions, helping you stand out to
                     recruiters and beat ATS systems.
                   </p>
@@ -214,7 +214,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-500"></div>
                 <Image
                   src="/dashboard.png"
-                  alt="ResumeAI Dashboard"
+                  alt="ResumeRocket Dashboard"
                   height={500}
                   width={500}
                   className="relative w-full h-auto shadow-lg rounded-xl border border-primary/10 transition-transform duration-300 group-hover:scale-[1.01]"
@@ -512,7 +512,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
                   What Our Users Say
                 </h2>
                 <p className="max-w-[900px] text-xl text-muted-foreground">
-                  Success stories from job seekers who used ResumeAI
+                  Success stories from job seekers who used ResumeRocket
                 </p>
               </div>
             </div>
@@ -522,12 +522,12 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
                 {
                   name: "Sarah Johnson",
                   title: "Software Engineer",
-                  text: "After using ResumeAI to optimize my resume, I started getting callbacks for interviews within days. The ATS optimization feature was a game-changer!",
+                  text: "After using ResumeRocket to optimize my resume, I started getting callbacks for interviews within days. The ATS optimization feature was a game-changer!",
                 },
                 {
                   name: "Michael Chen",
                   title: "Product Manager",
-                  text: "The job-specific tailoring feature helped me customize my resume for each application. I landed my dream job at a tech company after just 3 weeks of using ResumeAI.",
+                  text: "The job-specific tailoring feature helped me customize my resume for each application. I landed my dream job at a tech company after just 3 weeks of using ResumeRocket.",
                 },
                 {
                   name: "Emily Rodriguez",
@@ -586,7 +586,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
                   Frequently Asked Questions
                 </h2>
                 <p className="max-w-[900px] text-xl text-muted-foreground">
-                  Everything you need to know about ResumeAI
+                  Everything you need to know about ResumeRocket
                 </p>
               </div>
             </div>
@@ -594,14 +594,14 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
             <div className="mx-auto max-w-3xl space-y-4">
               {[
                 {
-                  question: "How does ResumeAI improve my resume?",
+                  question: "How does ResumeRocket improve my resume?",
                   answer:
-                    "ResumeAI uses advanced AI algorithms to analyze your resume against industry standards, job descriptions, and ATS requirements. It provides personalized recommendations to enhance content, formatting, and keyword optimization.",
+                    "ResumeRocket uses advanced AI algorithms to analyze your resume against industry standards, job descriptions, and ATS requirements. It provides personalized recommendations to enhance content, formatting, and keyword optimization.",
                 },
                 {
-                  question: "Can I use ResumeAI for different industries?",
+                  question: "Can I use ResumeRocket for different industries?",
                   answer:
-                    "Yes! ResumeAI is designed to work across all industries and job types. Our system recognizes industry-specific terminology and requirements to provide tailored recommendations.",
+                    "Yes! ResumeRocket is designed to work across all industries and job types. Our system recognizes industry-specific terminology and requirements to provide tailored recommendations.",
                 },
                 {
                   question: "How accurate is the ATS compatibility check?",
@@ -641,7 +641,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
                   </h2>
                   <p className="mx-auto max-w-[600px] text-xl text-muted-foreground">
                     Join thousands of job seekers who have optimized their
-                    resumes with ResumeAI.
+                    resumes with ResumeRocket.
                   </p>
                 </div>
                 <div className="mx-auto w-full max-w-sm space-y-3 mt-8">
@@ -675,7 +675,7 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
             <div className="space-y-4">
               <Link href="/" className="flex items-center">
                 <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                  ResumeAI
+                  ResumeRocket
                 </span>
               </Link>
               <p className="text-sm text-muted-foreground">
@@ -854,7 +854,8 @@ export default function Landing({ isLoggedIn }: { isLoggedIn: boolean }) {
           </div>
           <div className="mt-8 pt-6 border-t flex flex-col md:flex-row justify-between items-center">
             <p className="text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} ResumeAI. All rights reserved.
+              &copy; {new Date().getFullYear()} ResumeRocket. All rights
+              reserved.
             </p>
             <nav className="flex flex-wrap gap-4 mt-4 md:mt-0">
               <Link

@@ -9,7 +9,7 @@ import { LoaderProvider } from "@/components/Loader/loader-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ResumeAI - Resume Grader & Job Application Tailor",
+  title: "ResumeRocket - Resume Grader & Job Application Tailor",
   description:
     "Optimize your resume and job applications with AI-powered insights",
 };

@@ -84,12 +84,12 @@ export default function AuthPage() {
         className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center gap-2"
       >
         <FileText className="h-6 w-6 text-teal-600" />
-        <span className="text-xl font-bold">ResumeAI</span>
+        <span className="text-xl font-bold">ResumeRocket</span>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome to ResumeAI
+            Welcome to ResumeRocket
           </h1>
           <p className="text-sm text-muted-foreground">
             Sign in to your account or create a new one
