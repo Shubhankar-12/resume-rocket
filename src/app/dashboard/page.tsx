@@ -361,7 +361,14 @@ export default async function Dashboard() {
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full">
-                  <Link href="/dashboard/grader">Fix Issues Now</Link>
+                  <Link
+                    href={
+                      "/dashboard/grader/" +
+                      dashboardData?.user_resumes?.user_resume_id
+                    }
+                  >
+                    Fix Issues Now
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>

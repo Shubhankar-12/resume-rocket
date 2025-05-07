@@ -271,6 +271,7 @@ export default function GitHubProjectSelection() {
         console.error("Github user not found");
         return;
       }
+      loader.show("Fetching repositories...");
       const resp = await fetch(
         `${user.reposUrl}?sort=updated&direction=desc&per_page=${itemsPerPage}&page=${currentPage}`
       );
@@ -296,8 +297,10 @@ export default function GitHubProjectSelection() {
             repo.name.toLowerCase().includes(searchQuery.toLowerCase())
           )
       );
+      loader.hide();
     } catch (error) {
       console.error("Error fetching repositories:", error);
+      loader.hide();
     }
   };
 
