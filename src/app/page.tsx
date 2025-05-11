@@ -30,5 +30,5 @@ async function checkLoggedIn() {
 export default async function Page() {
   const loggedIn = await checkLoggedIn();
 
-  return <Landing isLoggedIn={Boolean(loggedIn)} />;
+  return <Landing isLoggedIn={Boolean(loggedIn) || false} />;
 }
