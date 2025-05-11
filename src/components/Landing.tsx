@@ -32,6 +32,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Image from "next/image";
 
 export default function RedesignedLanding({
   isLoggedIn,
@@ -89,21 +90,21 @@ export default function RedesignedLanding({
       title: "Software Engineer",
       company: "TechGiant Inc.",
       text: "After using ResumeRocket to optimize my resume, I started getting callbacks for interviews within days. The ATS optimization feature was a game-changer!",
-      image: "/test-1.png",
+      image: "/test-1.jpg",
     },
     {
       name: "Michael Chen",
       title: "Product Manager",
       company: "InnovateCorp",
       text: "The job-specific tailoring feature helped me customize my resume for each application. I landed my dream job at a tech company after just 3 weeks of using ResumeRocket.",
-      image: "/test-2.png",
+      image: "/test-2.jpg",
     },
     {
       name: "Emily Rodriguez",
       title: "Marketing Specialist",
       company: "BrandForward",
       text: "The cover letter generator saved me hours of work. Each letter was perfectly tailored to the job description and helped me stand out from other applicants.",
-      image: "/test-3.png",
+      image: "/test-3.jpg",
     },
   ];
 
@@ -412,7 +413,14 @@ export default function RedesignedLanding({
                         transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
                         className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-background flex items-center justify-center text-xs font-medium"
                       >
-                        <span>{i}</span>
+                        {/* <span>{i}</span> */}
+                        <Image
+                          src={`/user-${i + 1}.jpg`}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                          alt="user"
+                        />
                       </motion.div>
                     ))}
                   </div>
@@ -994,9 +1002,20 @@ export default function RedesignedLanding({
                           <div className="relative">
                             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur-sm opacity-70"></div>
                             <div className="relative rounded-full w-16 h-16 bg-muted flex items-center justify-center border-2 border-background">
-                              <span className="font-medium text-primary text-xl">
-                                {testimonial.name.charAt(0)}
-                              </span>
+                              {testimonial.image ? (
+                                <Image
+                                  src={`/user-${i + 1}.jpg`}
+                                  alt={testimonial.name}
+                                  width={40}
+                                  height={40}
+                                  className="rounded-full"
+                                  priority
+                                />
+                              ) : (
+                                <span className="font-medium text-primary text-xl">
+                                  {testimonial.name.charAt(0)}
+                                </span>
+                              )}
                             </div>
                           </div>
                           <div>
