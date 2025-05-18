@@ -414,13 +414,15 @@ export default function RedesignedLanding({
                         className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-background flex items-center justify-center text-xs font-medium"
                       >
                         {/* <span>{i}</span> */}
-                        <Image
-                          src={`/user-${i + 1}.jpg`}
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                          alt="user"
-                        />
+                        <div className="w-16 h-16 rounded-full overflow-hidden">
+                          <Image
+                            src={`/user-${i + 1}.jpg`}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                            alt="user"
+                          />
+                        </div>
                       </motion.div>
                     ))}
                   </div>
@@ -860,7 +862,7 @@ export default function RedesignedLanding({
                   </ul>
                 </div>
                 <Button className="mt-8 w-full hover-lift" variant="outline">
-                  <Link href="/signup" className="w-full">
+                  <Link href="/auth" className="w-full">
                     Get Started
                   </Link>
                 </Button>
@@ -914,7 +916,7 @@ export default function RedesignedLanding({
                   </ul>
                 </div>
                 <Button className="mt-8 bg-white text-primary hover:bg-white/90 w-full hover-lift">
-                  <Link href="/signup" className="w-full">
+                  <Link href="/auth" className="w-full">
                     Get Started
                   </Link>
                 </Button>
@@ -1003,14 +1005,16 @@ export default function RedesignedLanding({
                             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur-sm opacity-70"></div>
                             <div className="relative rounded-full w-16 h-16 bg-muted flex items-center justify-center border-2 border-background">
                               {testimonial.image ? (
-                                <Image
-                                  src={`/user-${i + 1}.jpg`}
-                                  alt={testimonial.name}
-                                  width={40}
-                                  height={40}
-                                  className="rounded-full"
-                                  priority
-                                />
+                                <div className="w-16 h-16 rounded-full overflow-hidden">
+                                  <Image
+                                    src={`/user-${i + 1}.jpg`}
+                                    alt={testimonial.name}
+                                    width={40}
+                                    height={40}
+                                    className="rounded-full"
+                                    priority
+                                  />
+                                </div>
                               ) : (
                                 <span className="font-medium text-primary text-xl">
                                   {testimonial.name.charAt(0)}
