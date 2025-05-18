@@ -10,6 +10,9 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 // import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
+import { getCookie } from "cookies-next";
+import jwt from "jsonwebtoken";
 
 // Define plan types
 interface Feature {
@@ -36,7 +39,7 @@ export default function PlansPage() {
   // Define the plans
   const plans: Plan[] = [
     {
-      id: "free",
+      id: "FREE",
       name: "Free",
       description: "Basic resume analysis for job seekers",
       monthlyPrice: 0,
@@ -55,7 +58,7 @@ export default function PlansPage() {
       ],
     },
     {
-      id: "basic",
+      id: "BASIC",
       name: "Basic",
       description: "Essential tools for serious job seekers",
       monthlyPrice: 199,
@@ -74,7 +77,7 @@ export default function PlansPage() {
       ],
     },
     {
-      id: "pro",
+      id: "PRO",
       name: "Pro",
       description: "Complete toolkit for career advancement",
       monthlyPrice: 499,
@@ -96,14 +99,25 @@ export default function PlansPage() {
   ];
 
   // Function to handle Razorpay payment
-  const handleSubscribe = (plan: Plan) => {
+  const handleSubscribe = async (plan: Plan) => {
     const price = yearly ? plan.yearlyPrice : plan.monthlyPrice;
+    console.log("PLAN", plan);
 
-    if (price === 0) {
-      console.log({
-        title: "Free Plan Selected",
-        description: "You've selected the free plan. No payment required.",
+    if (plan.id === "FREE") {
+      const freeRes = await PaymentSubcriptionAPI.createSubscription({
+        plan: plan.id,
       });
+      if (freeRes && freeRes.data && freeRes.data.body) {
+        console.log(freeRes.data.body);
+        alert("Subscribed Successfully");
+        return;
+      }
+    }
+
+    const token = await getCookie("token");
+    const decodedToken: any = await jwt.decode(token as string);
+    if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
+      console.error("Invalid token or user ID not found");
       return;
     }
 
@@ -122,16 +136,26 @@ export default function PlansPage() {
           yearly ? "Yearly" : "Monthly"
         } Subscription`,
         image: "/logo.png", // Add your logo URL
-        handler: (response: any) => {
+        handler: async (response: any) => {
           // Handle successful payment
+          if (response && response.razorpay_payment_id) {
+            const resp = await PaymentSubcriptionAPI.createSubscription({
+              plan: plan.id,
+            });
+            if (resp && resp.data && resp.data.body) {
+              console.log(resp.data.body);
+              alert("Subscribed Successfully");
+            }
+          }
+
           console.log({
             title: "Payment Successful!",
             description: `Your payment for the ${plan.name} plan was successful. Payment ID: ${response.razorpay_payment_id}`,
           });
         },
         prefill: {
-          name: "User Name", // Can be dynamically filled from user profile
-          email: "user@example.com",
+          name: decodedToken.user.name, // Can be dynamically filled from user profile
+          email: decodedToken.user.email,
           contact: "9999999999",
         },
         theme: {
