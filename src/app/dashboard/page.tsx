@@ -78,7 +78,7 @@ export default async function Dashboard() {
                   alt={dashboardData.name}
                 />
               ) : (
-                <AvatarFallback>
+                <AvatarFallback className="dark:text-white text-gray-800">
                   {dashboardData.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               )}
@@ -225,7 +225,7 @@ export default async function Dashboard() {
                       Resume not found
                     </span>
                   </div>
-                  <Progress value={75} className="h-2" />
+                  <Progress value={0} className="h-2" />
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     <div>
                       <p className="text-sm text-muted-foreground">

@@ -20,6 +20,7 @@ import { FileText, Github, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthAPI from "@/lib/api";
 import { setCookie } from "cookies-next";
+import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -51,6 +52,20 @@ export default function AuthPage() {
       console.log("Error during login:", error);
     }
   };
+
+  const createFreeSubscription = async () => {
+    try {
+      const resp = await PaymentSubcriptionAPI.createSubscription({
+        plan: "FREE",
+      });
+      if (resp && resp.data && resp.data.body) {
+        return resp.data.body;
+      }
+    } catch (error) {
+      console.log("Error during creating free subscription:", error);
+    }
+  };
+
   const handleRegister = async () => {
     if (registerData.password !== registerData.confirmPassword) {
       setError("Passwords do not match");
@@ -60,7 +75,9 @@ export default function AuthPage() {
       setIsLoading(true);
       const resp = await AuthAPI.registerWithEmail(registerData);
       if (resp && resp.data && resp.data.body) {
-        setCookie("token", resp.data.body.token);
+        await setCookie("token", resp.data.body.token);
+        // Create a free subscription after successful registration
+        await createFreeSubscription();
         setIsLoading(false);
         router.push("/dashboard");
       }
