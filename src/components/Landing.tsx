@@ -6,6 +6,7 @@ import {
   useScroll,
   useTransform,
   AnimatePresence,
+  useAnimation,
 } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
@@ -22,6 +23,9 @@ import {
   ChevronDown,
   Sparkles,
   FileUp,
+  Zap,
+  Target,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,50 +37,254 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Image from "next/image";
+import { ThemeToggle } from "./ThemeToggle";
 
-export default function RedesignedLanding({
-  isLoggedIn,
+// Floating Particles Component
+const FloatingParticles = () => {
+  const [particles, setParticles] = useState<
+    Array<{
+      id: number;
+      x: number;
+      y: number;
+      size: number;
+      duration: number;
+      delay: number;
+    }>
+  >([]);
+
+  useEffect(() => {
+    const newParticles = Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 2,
+      duration: Math.random() * 10 + 10,
+      delay: Math.random() * 5,
+    }));
+    setParticles(newParticles);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full bg-primary/10"
+          style={{
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            width: particle.size,
+            height: particle.size,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            x: [0, 15, -15, 0],
+            opacity: [0.3, 0.8, 0.3],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: particle.duration,
+            delay: particle.delay,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Enhanced Floating Elements
+const EnhancedFloatingElements = () => {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Primary floating element */}
+      <motion.div
+        className="absolute top-1/4 -right-20 w-80 h-80 rounded-full blur-3xl opacity-60 animate-morph"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)",
+        }}
+        animate={{
+          x: [0, 50, -30, 0],
+          y: [0, -30, 20, 0],
+          scale: [1, 1.1, 0.9, 1],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+        }}
+      />
+
+      {/* Secondary floating element */}
+      <motion.div
+        className="absolute top-3/4 -left-20 w-96 h-96 rounded-full blur-3xl opacity-50 animate-morph"
+        style={{
+          background:
+            "linear-gradient(225deg, rgba(236, 72, 153, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)",
+        }}
+        animate={{
+          x: [0, -40, 60, 0],
+          y: [0, 40, -20, 0],
+          scale: [1, 0.8, 1.2, 1],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+          delay: 5,
+        }}
+      />
+
+      {/* Tertiary floating element */}
+      <motion.div
+        className="absolute top-2/3 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-40 animate-morph"
+        style={{
+          background:
+            "linear-gradient(45deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)",
+        }}
+        animate={{
+          x: [0, 30, -50, 0],
+          y: [0, -50, 30, 0],
+          scale: [1, 1.3, 0.7, 1],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+          delay: 10,
+        }}
+      />
+
+      {/* Additional smaller elements */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-32 h-32 rounded-full blur-2xl opacity-20"
+          style={{
+            background: `linear-gradient(${
+              45 + i * 45
+            }deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)`,
+            left: `${10 + i * 12}%`,
+            top: `${15 + i * 8}%`,
+          }}
+          animate={{
+            x: [0, 20, -20, 0],
+            y: [0, -15, 15, 0],
+            scale: [1, 1.2, 0.8, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 15 + i * 2,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: i * 2,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Mouse Follower Component
+const MouseFollower = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const updateMousePosition = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+      setIsVisible(true);
+    };
+
+    const handleMouseLeave = () => setIsVisible(false);
+
+    window.addEventListener("mousemove", updateMousePosition);
+    window.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      window.removeEventListener("mousemove", updateMousePosition);
+      window.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return (
+    <motion.div
+      className="fixed pointer-events-none z-50 w-6 h-6 rounded-full bg-primary/20 blur-sm"
+      animate={{
+        x: mousePosition.x - 12,
+        y: mousePosition.y - 12,
+        opacity: isVisible ? 1 : 0,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 500,
+        damping: 28,
+      }}
+    />
+  );
+};
+
+export default function EnhancedLanding({
+  isLoggedIn = false,
 }: {
-  isLoggedIn: boolean;
+  isLoggedIn?: boolean;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef(null);
+  const controls = useAnimation();
+
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
+  // Enhanced scroll tracking
+  useEffect(() => {
+    const updateScrollY = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", updateScrollY);
+    return () => window.removeEventListener("scroll", updateScrollY);
+  }, []);
+
+  // Intersection observers with enhanced options
   const [featuresRef, featuresInView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
+    rootMargin: "-50px 0px",
   });
 
   const [pricingRef, pricingInView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
+    rootMargin: "-50px 0px",
   });
 
   const [testimonialsRef, testimonialsInView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
+    rootMargin: "-50px 0px",
   });
 
   const [faqRef, faqInView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
+    rootMargin: "-50px 0px",
   });
 
   const [ctaRef, ctaInView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
+    rootMargin: "-50px 0px",
   });
 
-  // Auto-rotate testimonials
+  // Auto-rotate testimonials with pause on hover
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % 3);
@@ -84,66 +292,77 @@ export default function RedesignedLanding({
     return () => clearInterval(interval);
   }, []);
 
+  // Enhanced testimonials data
   const testimonials = [
     {
       name: "Sarah Johnson",
       title: "Software Engineer",
       company: "TechGiant Inc.",
       text: "After using ResumeRocket to optimize my resume, I started getting callbacks for interviews within days. The ATS optimization feature was a game-changer!",
-      image: "/test-1.jpg",
+      image: "/placeholder.svg?height=64&width=64",
+      rating: 5,
     },
     {
       name: "Michael Chen",
       title: "Product Manager",
       company: "InnovateCorp",
       text: "The job-specific tailoring feature helped me customize my resume for each application. I landed my dream job at a tech company after just 3 weeks of using ResumeRocket.",
-      image: "/test-2.jpg",
+      image: "/placeholder.svg?height=64&width=64",
+      rating: 5,
     },
     {
       name: "Emily Rodriguez",
       title: "Marketing Specialist",
       company: "BrandForward",
       text: "The cover letter generator saved me hours of work. Each letter was perfectly tailored to the job description and helped me stand out from other applicants.",
-      image: "/test-3.jpg",
+      image: "/placeholder.svg?height=64&width=64",
+      rating: 5,
     },
   ];
 
+  // Enhanced features with new icons
   const features = [
     {
-      title: "Resume Grading",
+      title: "AI Resume Analysis",
       description:
-        "Get a comprehensive grade and analysis of your resume with actionable feedback to improve it.",
-      icon: <Award className="h-5 w-5 text-primary" />,
+        "Get comprehensive analysis with actionable feedback to improve your resume's impact and effectiveness.",
+      icon: <Zap className="h-5 w-5 text-primary" />,
+      gradient: "from-blue-500 to-purple-600",
     },
     {
       title: "ATS Optimization",
       description:
-        "Ensure your resume passes through Applicant Tracking Systems with keyword analysis and formatting suggestions.",
-      icon: <CheckCircle className="h-5 w-5 text-primary" />,
+        "Ensure your resume passes through Applicant Tracking Systems with advanced keyword analysis.",
+      icon: <Target className="h-5 w-5 text-primary" />,
+      gradient: "from-purple-500 to-pink-600",
     },
     {
       title: "Job-Specific Tailoring",
       description:
-        "Customize your resume for specific job descriptions to maximize your match score and stand out.",
-      icon: <Star className="h-5 w-5 text-primary" />,
+        "Customize your resume for specific job descriptions to maximize your match score and visibility.",
+      icon: <TrendingUp className="h-5 w-5 text-primary" />,
+      gradient: "from-pink-500 to-red-600",
     },
     {
       title: "Cover Letter Generator",
       description:
-        "Create personalized cover letters that complement your resume and address specific job requirements.",
+        "Create personalized cover letters that complement your resume and address specific requirements.",
       icon: <FileText className="h-5 w-5 text-primary" />,
+      gradient: "from-green-500 to-blue-600",
     },
     {
-      title: "GitHub Project Analyzer",
+      title: "GitHub Integration",
       description:
-        "Showcase your best coding projects by analyzing your GitHub repositories and highlighting relevant skills.",
+        "Showcase your best coding projects by analyzing repositories and highlighting relevant skills.",
       icon: <Github className="h-5 w-5 text-primary" />,
+      gradient: "from-indigo-500 to-purple-600",
     },
     {
-      title: "AI-Powered Suggestions",
+      title: "Smart Suggestions",
       description:
-        "Get intelligent recommendations to improve your resume content, formatting, and impact statements.",
+        "Get intelligent recommendations to improve content, formatting, and impact statements.",
       icon: <Sparkles className="h-5 w-5 text-primary" />,
+      gradient: "from-yellow-500 to-orange-600",
     },
   ];
 
@@ -175,223 +394,313 @@ export default function RedesignedLanding({
     },
   ];
 
+  // Enhanced animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12,
+      },
+    },
+  };
+
   return (
-    <div className="flex w-full  flex-col min-h-screen bg-gradient-to-b from-background to-background/95">
-      {/* Floating Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl opacity-60 animate-float"></div>
-        <div className="absolute top-3/4 -left-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl opacity-50 animate-float animation-delay-500"></div>
-        <div className="absolute top-2/3 right-1/4 w-64 h-64 bg-accent/5 rounded-full blur-3xl opacity-40 animate-float animation-delay-300"></div>
-      </div>
+    <div className="flex w-full flex-col min-h-screen bg-gradient-to-b from-background to-background/95 overflow-safe">
+      {/* Enhanced Floating Elements */}
+      <EnhancedFloatingElements />
+      <FloatingParticles />
+      <MouseFollower />
+      <ThemeToggle />
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl px-4 lg:px-8 h-20 flex items-center justify-between border-b">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center"
-        >
-          <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent gradient-animation">
-              ResumeRocket
-            </span>
-          </Link>
-        </motion.div>
-
-        {/* Desktop Navigation */}
-        <motion.nav
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="hidden md:flex gap-8"
-        >
-          <Link
-            href="#features"
-            className="text-sm font-medium hover:text-primary transition-colors-smooth relative group"
+      {/* Enhanced Header */}
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="sticky top-0 z-50 glass border-b mobile-safe"
+        style={{
+          backdropFilter: `blur(${Math.min(scrollY / 10, 20)}px)`,
+        }}
+      >
+        <div className="container mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center"
           >
-            <span>Features</span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          <Link
-            href="#pricing"
-            className="text-sm font-medium hover:text-primary transition-colors-smooth relative group"
-          >
-            <span>Pricing</span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          <Link
-            href="#testimonials"
-            className="text-sm font-medium hover:text-primary transition-colors-smooth relative group"
-          >
-            <span>Testimonials</span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          <Link
-            href="#faq"
-            className="text-sm font-medium hover:text-primary transition-colors-smooth relative group"
-          >
-            <span>FAQ</span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-          </Link>
-        </motion.nav>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="hidden md:flex items-center gap-4"
-        >
-          {!isLoggedIn ? (
-            <>
-              <Link
-                href="/auth"
-                className="text-sm font-medium hover:text-primary transition-colors-smooth"
+            <Link href="/" className="flex items-center">
+              <motion.span
+                className="text-2xl font-bold gradient-text"
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
               >
-                Log In
-              </Link>
-              <Button
-                asChild
-                className="relative overflow-hidden group hover-lift bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white"
-              >
-                <Link href="/auth">
-                  <span className="relative z-10">Sign Up Free</span>
-                </Link>
-              </Button>
-            </>
-          ) : (
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium hover:text-primary transition-colors-smooth"
-            >
-              Dashboard
+                ResumeRocket
+              </motion.span>
             </Link>
-          )}
-        </motion.div>
+          </motion.div>
 
-        {/* Mobile Menu Button */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="md:hidden p-2 rounded-md transition-transform-bounce hover:scale-110"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </motion.button>
-      </header>
+          {/* Enhanced Desktop Navigation */}
+          <motion.nav
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="hidden md:flex gap-8"
+          >
+            {["Features", "Pricing", "Testimonials", "FAQ"].map(
+              (item, index) => (
+                <motion.div key={item} variants={itemVariants}>
+                  <Link
+                    href={`#${item.toLowerCase()}`}
+                    className="text-sm font-medium hover:text-primary transition-all-smooth relative group"
+                  >
+                    <span>{item}</span>
+                    <motion.span
+                      className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                      initial={{ width: 0 }}
+                      whileHover={{ width: "100%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </Link>
+                </motion.div>
+              )
+            )}
+          </motion.nav>
 
-      {/* Mobile Menu */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="hidden md:flex items-center gap-4"
+          >
+            {!isLoggedIn ? (
+              <>
+                <motion.div variants={itemVariants}>
+                  <Link
+                    href="/auth"
+                    className="text-sm font-medium hover:text-primary transition-colors-smooth"
+                  >
+                    Log In
+                  </Link>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <Button
+                    asChild
+                    className="relative overflow-hidden group hover-lift bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white"
+                  >
+                    <Link href="/auth">
+                      <span className="relative z-10">Sign Up Free</span>
+                      <motion.div
+                        className="absolute inset-0 bg-white/20"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.6 }}
+                      />
+                    </Link>
+                  </Button>
+                </motion.div>
+              </>
+            ) : (
+              <motion.div variants={itemVariants}>
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium hover:text-primary transition-colors-smooth"
+                >
+                  Dashboard
+                </Link>
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Enhanced Mobile Menu Button */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="md:hidden p-2 rounded-md transition-transform-bounce"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <motion.div
+              animate={{ rotate: mobileMenuOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.div>
+          </motion.button>
+        </div>
+      </motion.header>
+
+      {/* Enhanced Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden w-full fixed inset-x-0 top-20 z-40 overflow-hidden bg-background border-b"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden fixed inset-x-0 top-20 z-40 glass border-b mobile-safe bg-white"
           >
-            <div className="px-4  w-full max-w-full">
-              <nav className="flex flex-col gap-4 py-8">
-                <Link
-                  href="#features"
-                  className="text-lg font-medium py-2 hover:text-primary transition-colors-smooth border-b animate-slide-in-right animation-delay-100"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="#pricing"
-                  className="text-lg font-medium py-2 hover:text-primary transition-colors-smooth border-b animate-slide-in-right animation-delay-200"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Pricing
-                </Link>
-                <Link
-                  href="#testimonials"
-                  className="text-lg font-medium py-2 hover:text-primary transition-colors-smooth border-b animate-slide-in-right animation-delay-300"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Testimonials
-                </Link>
-                <Link
-                  href="#faq"
-                  className="text-lg font-medium py-2 hover:text-primary transition-colors-smooth border-b animate-slide-in-right animation-delay-400"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  FAQ
-                </Link>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="px-4 py-8"
+            >
+              <nav className="flex flex-col gap-4">
+                {["Features", "Pricing", "Testimonials", "FAQ"].map(
+                  (item, index) => (
+                    <motion.div
+                      key={item}
+                      variants={itemVariants}
+                      custom={index}
+                    >
+                      <Link
+                        href={`#${item.toLowerCase()}`}
+                        className="text-lg font-medium py-2 hover:text-primary transition-colors-smooth border-b border-muted/50"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item}
+                      </Link>
+                    </motion.div>
+                  )
+                )}
               </nav>
-              <div className="flex w-full flex-col gap-4 mt-4 mb-8">
-                <Button
-                  variant="outline"
-                  asChild
-                  className="w-full animate-slide-in-left animation-delay-300"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Link href="/auth">Log In</Link>
-                </Button>
-                <Button
-                  asChild
-                  className="w-full animate-slide-in-left animation-delay-400 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Link href="/auth">Sign Up Free</Link>
-                </Button>
-              </div>
-            </div>
+              <motion.div
+                variants={containerVariants}
+                className="flex flex-col gap-4 mt-6"
+              >
+                <motion.div variants={itemVariants}>
+                  <Button
+                    variant="outline"
+                    asChild
+                    className="w-full hover-lift"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Link href="/auth">Log In</Link>
+                  </Button>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <Button
+                    asChild
+                    className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white hover-lift"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Link href="/auth">Sign Up Free</Link>
+                  </Button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <main className="flex-1 relative z-10">
-        {/* Hero Section */}
+        {/* Enhanced Hero Section */}
         <motion.section
           ref={heroRef}
-          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
-          className="w-full py-20 md:py-32 lg:py-40 xl:py-48 overflow-hidden relative"
+          // style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+          className="w-full pt-20 md:pt-32 lg:pt-40 xl:pt-48 overflow-hidden relative mobile-safe"
         >
           <div className="container px-4 md:px-6 relative">
             <div className="grid gap-12 lg:grid-cols-[1fr_500px] lg:gap-16 xl:grid-cols-[1fr_600px] relative">
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
                 className="flex flex-col justify-center space-y-8"
               >
-                <Badge className="w-fit bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-300">
-                  <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse-soft"></span>
-                  <span className="font-medium">
-                    Trusted by 10,000+ job seekers
-                  </span>
-                </Badge>
-
-                <div className="space-y-6">
-                  <h1 className="text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight">
-                    <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent gradient-animation">
-                      Land Your Dream Job
+                <motion.div variants={itemVariants}>
+                  <Badge className="w-fit bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-300 animate-pulse-glow">
+                    <motion.span
+                      className="flex h-2 w-2 rounded-full bg-primary mr-2"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                      }}
+                    />
+                    <span className="font-medium dark:text-white text-black">
+                      Trusted by 10,000+ job seekers
                     </span>
+                  </Badge>
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="space-y-6">
+                  <h1 className="text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight mobile-text-scale">
+                    <motion.span
+                      className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"
+                      style={{ backgroundSize: "200% 200%" }}
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                      }}
+                      transition={{
+                        duration: 5,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                      }}
+                    >
+                      Land Your Dream Job
+                    </motion.span>
                     <br />
                     <span>with AI-Powered Resume Optimization</span>
                   </h1>
-                  <p className="max-w-[600px] text-xl md:text-2xl text-muted-foreground">
+                  <motion.p
+                    variants={itemVariants}
+                    className="max-w-[600px] text-xl md:text-2xl text-muted-foreground"
+                  >
                     ResumeRocket analyzes, grades, and tailors your resume to
                     specific job descriptions, helping you stand out to
                     recruiters and beat ATS systems.
-                  </p>
-                </div>
+                  </motion.p>
+                </motion.div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
+                <motion.div
+                  variants={itemVariants}
+                  className="flex flex-col sm:flex-row gap-4"
+                >
                   <Button
                     asChild
                     size="lg"
-                    className="group relative overflow-hidden bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white text-lg h-14 px-8"
+                    className="group relative overflow-hidden bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white text-lg h-14 px-8 hover-lift"
                   >
                     <Link href="/auth">
                       <span className="relative z-10 flex items-center">
                         Get Started Free
-                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                        <motion.div
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Number.POSITIVE_INFINITY,
+                          }}
+                        >
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </motion.div>
                       </span>
+                      <motion.div
+                        className="absolute inset-0 bg-white/20"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.6 }}
+                      />
                     </Link>
                   </Button>
                   <Button
@@ -401,106 +710,187 @@ export default function RedesignedLanding({
                   >
                     <Link href="/dashboard">View Demo</Link>
                   </Button>
-                </div>
+                </motion.div>
 
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
+                <motion.div
+                  variants={containerVariants}
+                  className="flex items-center space-x-4 text-sm text-muted-foreground mt-2"
+                >
                   <div className="flex -space-x-3">
                     {[1, 2, 3, 4].map((i) => (
                       <motion.div
                         key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                        className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-background flex items-center justify-center text-xs font-medium"
+                        variants={itemVariants}
+                        custom={i}
+                        whileHover={{ scale: 1.1, zIndex: 10 }}
+                        className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-background flex items-center justify-center text-xs font-medium relative"
                       >
-                        {/* <span>{i}</span> */}
-                        <div className="w-16 h-16 rounded-full overflow-hidden">
-                          <Image
-                            src={`/user-${i + 1}.jpg`}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                            alt="user"
-                          />
-                        </div>
+                        <Image
+                          src={`/placeholder.svg?height=40&width=40`}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                          alt={`User ${i}`}
+                        />
                       </motion.div>
                     ))}
                   </div>
-                  <span>
+                  <motion.span variants={itemVariants}>
                     Join 10,000+ professionals who transformed their career
-                  </span>
-                </div>
+                  </motion.span>
+                </motion.div>
               </motion.div>
 
+              {/* Enhanced Hero Image */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                initial={{ opacity: 0, scale: 0.8, rotateY: 15 }}
+                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
                 className="mx-auto aspect-video relative sm:w-full lg:order-last group"
               >
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-secondary/15 to-accent/10 rounded-xl blur opacity-70 group-hover:opacity-100 transition duration-500 animate-glow"></div>
-                <div className="relative w-full h-auto shadow-2xl rounded-xl border border-primary/10 transition-transform duration-500 group-hover:scale-[1.02] overflow-hidden">
+                <motion.div
+                  className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-secondary/15 to-accent/10 rounded-xl blur opacity-70"
+                  animate={{
+                    opacity: [0.7, 1, 0.7],
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                />
+                <motion.div
+                  className="relative w-full h-auto shadow-2xl rounded-xl border border-primary/10 overflow-hidden"
+                  whileHover={{ scale: 1.02, rotateY: -2 }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="aspect-video bg-gradient-to-br from-background to-muted flex items-center justify-center p-8">
-                    <div className="w-full h-full bg-background rounded-lg shadow-lg p-6 flex flex-col">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.8 }}
+                      className="w-full h-full bg-background rounded-lg shadow-lg p-6 flex flex-col"
+                    >
+                      {/* Mock Resume Interface */}
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 rounded-full bg-red-500"></div>
                           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                           <div className="w-3 h-3 rounded-full bg-green-500"></div>
                         </div>
-                        <div className="h-6 w-24 bg-muted rounded-md"></div>
+                        <motion.div
+                          className="h-6 w-24 bg-muted rounded-md"
+                          animate={{ opacity: [0.5, 1, 0.5] }}
+                          transition={{
+                            duration: 2,
+                            repeat: Number.POSITIVE_INFINITY,
+                          }}
+                        />
                       </div>
                       <div className="flex-1 flex flex-col gap-4">
-                        <div className="h-8 w-3/4 bg-primary/10 rounded-md"></div>
+                        <motion.div
+                          className="h-8 w-3/4 bg-primary/10 rounded-md"
+                          initial={{ width: 0 }}
+                          animate={{ width: "75%" }}
+                          transition={{ duration: 1, delay: 1 }}
+                        />
                         <div className="flex gap-4">
-                          <div className="h-24 w-24 bg-secondary/10 rounded-md"></div>
+                          <motion.div
+                            className="h-24 w-24 bg-secondary/10 rounded-md"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.5, delay: 1.2 }}
+                          />
                           <div className="flex-1 flex flex-col gap-2">
-                            <div className="h-4 w-full bg-muted rounded-md"></div>
-                            <div className="h-4 w-3/4 bg-muted rounded-md"></div>
-                            <div className="h-4 w-1/2 bg-muted rounded-md"></div>
+                            {[100, 75, 50].map((width, i) => (
+                              <motion.div
+                                key={i}
+                                className="h-4 bg-muted rounded-md"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${width}%` }}
+                                transition={{
+                                  duration: 0.8,
+                                  delay: 1.4 + i * 0.2,
+                                }}
+                              />
+                            ))}
                           </div>
                         </div>
-                        <div className="h-4 w-full bg-muted rounded-md"></div>
-                        <div className="h-4 w-5/6 bg-muted rounded-md"></div>
-                        <div className="h-4 w-4/6 bg-muted rounded-md"></div>
+                        {[100, 85, 65].map((width, i) => (
+                          <motion.div
+                            key={i}
+                            className="h-4 bg-muted rounded-md"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${width}%` }}
+                            transition={{ duration: 0.6, delay: 2 + i * 0.1 }}
+                          />
+                        ))}
                         <div className="mt-auto flex justify-end">
-                          <div className="h-10 w-32 bg-primary/20 rounded-md"></div>
+                          <motion.div
+                            className="h-10 w-32 bg-primary/20 rounded-md"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.4, delay: 2.5 }}
+                          />
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Floating elements */}
+                {/* Enhanced Floating Cards */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.8 }}
-                  className="absolute -bottom-6 -left-6 bg-background rounded-lg shadow-xl p-4 border border-primary/10"
+                  initial={{ opacity: 0, y: 20, x: -20 }}
+                  animate={{ opacity: 1, y: 0, x: 0 }}
+                  transition={{ duration: 0.5, delay: 1.2 }}
+                  className="absolute -bottom-6 -left-6 bg-background rounded-lg shadow-xl p-4 border border-primary/10 hover-lift"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <motion.div
+                      className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center"
+                      animate={{ rotate: [0, 360] }}
+                      transition={{
+                        duration: 3,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                      }}
+                    >
                       <CheckCircle className="h-5 w-5 text-primary" />
-                    </div>
+                    </motion.div>
                     <div>
                       <div className="font-medium">Resume Score</div>
-                      <div className="text-sm text-muted-foreground">
+                      <motion.div
+                        className="text-sm text-muted-foreground"
+                        animate={{ opacity: [0.7, 1, 0.7] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                        }}
+                      >
                         92% Match
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 1 }}
-                  className="absolute -top-6 -right-6 bg-background rounded-lg shadow-xl p-4 border border-primary/10"
+                  initial={{ opacity: 0, y: -20, x: 20 }}
+                  animate={{ opacity: 1, y: 0, x: 0 }}
+                  transition={{ duration: 0.5, delay: 1.4 }}
+                  className="absolute -top-6 -right-6 bg-background rounded-lg shadow-xl p-4 border border-primary/10 hover-lift"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                    <motion.div
+                      className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center"
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                      }}
+                    >
                       <Star className="h-5 w-5 text-secondary" />
-                    </div>
+                    </motion.div>
                     <div>
                       <div className="font-medium">ATS Optimized</div>
                       <div className="text-sm text-muted-foreground">
@@ -512,30 +902,43 @@ export default function RedesignedLanding({
               </motion.div>
             </div>
 
-            {/* Scroll indicator */}
+            {/* Enhanced Scroll Indicator */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.5,
-                delay: 1.2,
-                repeat: Number.POSITIVE_INFINITY,
-                repeatType: "reverse",
+                delay: 2,
               }}
               className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
             >
               <span className="text-sm text-muted-foreground mb-2">
                 Scroll to explore
               </span>
-              <ChevronDown className="h-6 w-6 text-primary" />
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              >
+                <ChevronDown className="h-6 w-6 text-primary" />
+              </motion.div>
             </motion.div>
           </div>
         </motion.section>
 
-        {/* Brands Section */}
-        <section className="w-full py-12 bg-muted/30">
+        {/* Enhanced Brands Section */}
+        {/* <section className="w-full py-12 bg-muted/30 mobile-safe">
           <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center justify-center space-y-4 text-center"
+            >
               <p className="text-sm text-muted-foreground">
                 TRUSTED BY LEADING COMPANIES
               </p>
@@ -544,41 +947,50 @@ export default function RedesignedLanding({
                   (brand, i) => (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5, delay: 0.1 * i }}
+                      viewport={{ once: true }}
+                      whileHover={{ scale: 1.1 }}
                       className="flex items-center justify-center"
                     >
-                      <div className="text-xl md:text-2xl font-semibold text-muted-foreground/70">
+                      <div className="text-xl md:text-2xl font-semibold text-muted-foreground/70 hover:text-muted-foreground transition-colors-smooth">
                         {brand}
                       </div>
                     </motion.div>
                   )
                 )}
               </div>
-            </div>
+            </motion.div>
           </div>
-        </section>
+        </section> */}
 
-        {/* Features Section */}
+        {/* Enhanced Features Section */}
         <section
           ref={featuresRef}
           id="features"
-          className="w-full py-24 md:py-32 lg:py-40 relative overflow-hidden"
+          className="w-full pt-12 md:pt-24 lg:pt-32 relative overflow-hidden mobile-safe"
         >
           <div className="container px-4 md:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={featuresInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate={featuresInView ? "visible" : "hidden"}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
             >
-              <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
-                <FileText className="mr-2 h-4 w-4 text-primary" />
-                <span className="font-medium">Features</span>
-              </Badge>
-              <div className="space-y-3 max-w-3xl">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+              <motion.div variants={itemVariants}>
+                <Badge className="bg-primary/10 text-primary hover:bg-primary/20 animate-bounce-in">
+                  <FileText className="mr-2 h-4 w-4 text-primary" />
+                  <span className="font-medium dark:text-white text-black">
+                    Features
+                  </span>
+                </Badge>
+              </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className="space-y-3 max-w-3xl"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mobile-text-scale">
                   <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                     Powerful Resume Tools
                   </span>
@@ -587,33 +999,50 @@ export default function RedesignedLanding({
                   Everything you need to create, optimize, and tailor your
                   resume for job success
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate={featuresInView ? "visible" : "hidden"}
+              className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+            >
               {features.map((feature, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={featuresInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.1 * i }}
-                  className="bg-background rounded-xl p-6 shadow-lg border border-muted hover:shadow-xl transition-all duration-300 hover:border-primary/20 hover:-translate-y-1 group"
+                  variants={itemVariants}
+                  custom={i}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="bg-background rounded-xl p-6 shadow-lg border border-muted hover:shadow-xl transition-all duration-300 hover:border-primary/20 group relative overflow-hidden"
                 >
-                  <div className="rounded-full bg-primary/10 p-3 w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-300">
-                    {feature.icon}
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+                  />
+                  <div className="relative z-10">
+                    <motion.div
+                      className="rounded-full bg-primary/10 p-3 w-12 h-12 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-300"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      {feature.icon}
+                    </motion.div>
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {feature.description}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
 
+            {/* Enhanced Feature Showcase */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={featuresInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
               className="mt-20 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-8 md:p-12 relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-grid-white/10 bg-grid-pattern"></div>
@@ -621,7 +1050,9 @@ export default function RedesignedLanding({
                 <div className="space-y-6">
                   <Badge className="bg-secondary/10 text-secondary hover:bg-secondary/20">
                     <Sparkles className="mr-2 h-4 w-4 text-secondary" />
-                    <span className="font-medium">AI-Powered</span>
+                    <span className="font-medium dark:text-white text-black">
+                      AI-Powered
+                    </span>
                   </Badge>
                   <h3 className="text-3xl md:text-4xl font-bold">
                     See how your resume stacks up against the competition
@@ -636,21 +1067,38 @@ export default function RedesignedLanding({
                       "ATS compatibility",
                       "Industry-specific suggestions",
                     ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-2">
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={featuresInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.5, delay: 0.8 + i * 0.1 }}
+                        className="flex items-center gap-2"
+                      >
                         <CheckCircle className="h-5 w-5 text-primary" />
                         <span>{item}</span>
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
-                  <Button className="mt-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white">
+                  <Button className="mt-4 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white hover-lift">
                     <Link href="/auth" className="flex items-center">
                       Try it Free
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </div>
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl blur-xl opacity-50"></div>
+                <motion.div
+                  className="relative"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl blur-xl opacity-50"
+                    animate={{ opacity: [0.5, 0.8, 0.5] }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                    }}
+                  />
                   <div className="relative bg-background rounded-xl shadow-xl border border-primary/10 overflow-hidden">
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-6">
@@ -658,68 +1106,59 @@ export default function RedesignedLanding({
                         <Badge>92% Match</Badge>
                       </div>
                       <div className="space-y-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">
-                              Keyword Optimization
-                            </span>
-                            <span className="text-sm font-medium">95%</span>
+                        {[
+                          { label: "Keyword Optimization", value: 95 },
+                          { label: "ATS Compatibility", value: 88 },
+                          { label: "Content Quality", value: 92 },
+                        ].map((item, i) => (
+                          <div key={i} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">{item.label}</span>
+                              <span className="text-sm font-medium">
+                                {item.value}%
+                              </span>
+                            </div>
+                            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                              <motion.div
+                                className="h-full bg-primary rounded-full"
+                                initial={{ width: 0 }}
+                                animate={
+                                  featuresInView
+                                    ? { width: `${item.value}%` }
+                                    : {}
+                                }
+                                transition={{ duration: 1, delay: 1 + i * 0.2 }}
+                              />
+                            </div>
                           </div>
-                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full"
-                              style={{ width: "95%" }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">ATS Compatibility</span>
-                            <span className="text-sm font-medium">88%</span>
-                          </div>
-                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full"
-                              style={{ width: "88%" }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Content Quality</span>
-                            <span className="text-sm font-medium">92%</span>
-                          </div>
-                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full"
-                              style={{ width: "92%" }}
-                            ></div>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section className="w-full py-24 bg-muted/30">
+        {/* Enhanced How It Works Section */}
+        <section className="w-full py-24 bg-muted/30 mobile-safe">
           <div className="container px-4 md:px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
             >
               <Badge className="bg-accent/10 text-accent hover:bg-accent/20">
                 <FileText className="mr-2 h-4 w-4 text-accent" />
-                <span className="font-medium">How It Works</span>
+                <span className="font-medium dark:text-white text-black">
+                  How It Works
+                </span>
               </Badge>
               <div className="space-y-3 max-w-3xl">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mobile-text-scale">
                   <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
                     Simple 3-Step Process
                   </span>
@@ -731,8 +1170,14 @@ export default function RedesignedLanding({
             </motion.div>
 
             <div className="grid gap-12 md:grid-cols-3 relative">
-              {/* Connecting line */}
-              <div className="hidden md:block absolute top-24 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent"></div>
+              {/* Enhanced connecting line */}
+              <motion.div
+                className="hidden md:block absolute top-24 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+                viewport={{ once: true }}
+              />
 
               {[
                 {
@@ -741,6 +1186,7 @@ export default function RedesignedLanding({
                   description:
                     "Upload your existing resume or create a new one using our templates.",
                   icon: <FileUp className="h-6 w-6 text-primary" />,
+                  color: "primary",
                 },
                 {
                   step: "02",
@@ -748,6 +1194,7 @@ export default function RedesignedLanding({
                   description:
                     "Our AI analyzes your resume against job descriptions and industry standards.",
                   icon: <Sparkles className="h-6 w-6 text-secondary" />,
+                  color: "secondary",
                 },
                 {
                   step: "03",
@@ -755,23 +1202,36 @@ export default function RedesignedLanding({
                   description:
                     "Receive tailored suggestions and implement them with one click.",
                   icon: <CheckCircle className="h-6 w-6 text-accent" />,
+                  color: "accent",
                 },
               ].map((item, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 * i }}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 * i }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -10 }}
                   className="flex flex-col items-center text-center relative"
                 >
-                  <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-lg border border-muted z-10 mb-6">
+                  <motion.div
+                    className="w-16 h-16 rounded-full bg-background flex items-center justify-center shadow-lg border border-muted z-10 mb-6"
+                    whileHover={{ scale: 1.1, rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
                       {item.icon}
                     </div>
-                  </div>
-                  <div className="text-4xl font-bold text-primary/20 mb-2">
+                  </motion.div>
+                  <motion.div
+                    className="text-4xl font-bold text-primary/20 mb-2"
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+                    viewport={{ once: true }}
+                  >
                     {item.step}
-                  </div>
+                  </motion.div>
                   <h3 className="text-xl font-bold mb-2">{item.title}</h3>
                   <p className="text-muted-foreground">{item.description}</p>
                 </motion.div>
@@ -780,28 +1240,32 @@ export default function RedesignedLanding({
           </div>
         </section>
 
-        {/* Pricing Section */}
+        {/* Enhanced Pricing Section */}
         <section
           ref={pricingRef}
           id="pricing"
-          className="w-full py-24 md:py-32 lg:py-40 relative overflow-hidden"
+          className="w-full py-24 md:py-32 lg:py-40 relative overflow-hidden mobile-safe"
         >
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/5 rounded-full blur-3xl animate-float animation-delay-300"></div>
-
           <div className="container px-4 md:px-6 relative">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={pricingInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate={pricingInView ? "visible" : "hidden"}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
             >
-              <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
-                <Award className="mr-2 h-4 w-4 text-primary" />
-                <span className="font-medium">Pricing</span>
-              </Badge>
-              <div className="space-y-3 max-w-3xl">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+              <motion.div variants={itemVariants}>
+                <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
+                  <Award className="mr-2 h-4 w-4 text-primary" />
+                  <span className="font-medium dark:text-white text-black">
+                    Pricing
+                  </span>
+                </Badge>
+              </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className="space-y-3 max-w-3xl"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mobile-text-scale">
                   <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                     Simple, Transparent Pricing
                   </span>
@@ -809,24 +1273,29 @@ export default function RedesignedLanding({
                 <p className="text-xl text-muted-foreground">
                   Choose the plan that's right for your job search needs
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
 
-            <Tabs
-              defaultValue="monthly"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={pricingInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5 }}
               className="w-full max-w-md mx-auto mb-12"
             >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                <TabsTrigger value="yearly">Yearly (Save 20%)</TabsTrigger>
-              </TabsList>
-            </Tabs>
+              <Tabs defaultValue="monthly">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                  <TabsTrigger value="yearly">Yearly (Save 20%)</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </motion.div>
 
             <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
               <motion.div
-                initial={{ opacity: 0, x: -30 }}
+                initial={{ opacity: 0, x: -50 }}
                 animate={pricingInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 className="flex flex-col p-8 bg-background shadow-xl rounded-2xl border border-muted justify-between transition-all duration-300 hover:shadow-2xl hover:border-primary/20 group"
               >
                 <div>
@@ -843,22 +1312,23 @@ export default function RedesignedLanding({
                   </p>
                   <div className="h-px w-full bg-muted my-6"></div>
                   <ul className="mt-6 space-y-4">
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5 text-primary" />
-                      <span>Basic resume analysis</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5 text-primary" />
-                      <span>Limited ATS compatibility check</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5 text-primary" />
-                      <span>1 resume upload</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5 text-primary" />
-                      <span>Basic formatting suggestions</span>
-                    </li>
+                    {[
+                      "Basic resume analysis",
+                      "Limited ATS compatibility check",
+                      "1 resume upload",
+                      "Basic formatting suggestions",
+                    ].map((feature, i) => (
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={pricingInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.3, delay: 0.1 * i }}
+                        className="flex items-center"
+                      >
+                        <CheckCircle className="mr-3 h-5 w-5 text-primary" />
+                        <span>{feature}</span>
+                      </motion.li>
+                    ))}
                   </ul>
                 </div>
                 <Button className="mt-8 w-full hover-lift" variant="outline">
@@ -869,14 +1339,19 @@ export default function RedesignedLanding({
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, x: 30 }}
+                initial={{ opacity: 0, x: 50 }}
                 animate={pricingInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 className="flex flex-col p-8 bg-gradient-to-br from-primary to-secondary shadow-xl rounded-2xl border-2 border-primary justify-between relative overflow-hidden group"
               >
-                <div className="absolute top-0 right-0 rounded-bl-2xl bg-background text-primary px-4 py-1 font-bold">
+                <motion.div
+                  className="absolute top-0 right-0 rounded-bl-2xl bg-background text-primary px-4 py-1 font-bold"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                >
                   Popular
-                </div>
+                </motion.div>
                 <div>
                   <Badge className="bg-white/20 text-white mb-4">Pro</Badge>
                   <h3 className="text-2xl font-bold text-white">Pro Plan</h3>
@@ -889,30 +1364,25 @@ export default function RedesignedLanding({
                   </p>
                   <div className="h-px w-full bg-white/20 my-6"></div>
                   <ul className="mt-6 space-y-4 text-white">
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5" />
-                      <span>Unlimited resume analyses</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5" />
-                      <span>Advanced ATS optimization</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5" />
-                      <span>Job-specific tailoring</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5" />
-                      <span>Cover letter generation</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5" />
-                      <span>GitHub project analysis</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="mr-3 h-5 w-5" />
-                      <span>Priority support</span>
-                    </li>
+                    {[
+                      "Unlimited resume analyses",
+                      "Advanced ATS optimization",
+                      "Job-specific tailoring",
+                      "Cover letter generation",
+                      "GitHub project analysis",
+                      "Priority support",
+                    ].map((feature, i) => (
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={pricingInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.3, delay: 0.2 + 0.1 * i }}
+                        className="flex items-center"
+                      >
+                        <CheckCircle className="mr-3 h-5 w-5" />
+                        <span>{feature}</span>
+                      </motion.li>
+                    ))}
                   </ul>
                 </div>
                 <Button className="mt-8 bg-white text-primary hover:bg-white/90 w-full hover-lift">
@@ -939,35 +1409,49 @@ export default function RedesignedLanding({
                   "Cancel anytime",
                   "24/7 support",
                 ].map((item, i) => (
-                  <Badge key={i} variant="outline" className="bg-background">
-                    <CheckCircle className="mr-1 h-3 w-3 text-primary" />
-                    {item}
-                  </Badge>
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={pricingInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.3, delay: 0.6 + i * 0.1 }}
+                  >
+                    <Badge variant="outline" className="bg-background">
+                      <CheckCircle className="mr-1 h-3 w-3 text-primary" />
+                      {item}
+                    </Badge>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Testimonials Section */}
+        {/* Enhanced Testimonials Section */}
         <section
           ref={testimonialsRef}
           id="testimonials"
-          className="w-full py-24 md:py-32 lg:py-40 bg-muted/30"
+          className="w-full py-24 md:py-32 lg:py-40 bg-muted/30 mobile-safe"
         >
           <div className="container px-4 md:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate={testimonialsInView ? "visible" : "hidden"}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
             >
-              <Badge className="bg-secondary/10 text-secondary hover:bg-secondary/20">
-                <Star className="mr-2 h-4 w-4 text-secondary" />
-                <span className="font-medium">Testimonials</span>
-              </Badge>
-              <div className="space-y-3 max-w-3xl">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+              <motion.div variants={itemVariants}>
+                <Badge className="bg-secondary/10 text-secondary hover:bg-secondary/20">
+                  <Star className="mr-2 h-4 w-4 text-secondary" />
+                  <span className="font-medium dark:text-white text-black">
+                    Testimonials
+                  </span>
+                </Badge>
+              </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className="space-y-3 max-w-3xl"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mobile-text-scale">
                   <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
                     What Our Users Say
                   </span>
@@ -975,81 +1459,95 @@ export default function RedesignedLanding({
                 <p className="text-xl text-muted-foreground">
                   Success stories from job seekers who used ResumeRocket
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
 
             <div className="relative">
               <div className="max-w-4xl mx-auto">
                 <div className="relative h-[400px] md:h-[300px] overflow-hidden">
-                  {testimonials.map((testimonial, i) => (
+                  <AnimatePresence mode="wait">
                     <motion.div
-                      key={i}
-                      initial={{ opacity: 0 }}
-                      animate={{
-                        opacity: activeTestimonial === i ? 1 : 0,
-                        x:
-                          activeTestimonial === i
-                            ? 0
-                            : activeTestimonial > i
-                            ? -100
-                            : 100,
-                      }}
-                      transition={{ duration: 0.5 }}
-                      className={`absolute inset-0 ${
-                        activeTestimonial === i ? "z-10" : "z-0"
-                      }`}
+                      key={activeTestimonial}
+                      initial={{ opacity: 0, x: 100 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -100 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="absolute inset-0"
                     >
-                      <div className="bg-background rounded-2xl shadow-xl p-8 md:p-10 border border-muted h-full flex flex-col">
+                      <motion.div
+                        className="bg-background rounded-2xl shadow-xl p-8 md:p-10 border border-muted h-full flex flex-col hover-lift"
+                        whileHover={{ scale: 1.02 }}
+                      >
                         <div className="flex items-center gap-4 mb-6">
-                          <div className="relative">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur-sm opacity-70"></div>
-                            <div className="relative rounded-full w-16 h-16 bg-muted flex items-center justify-center border-2 border-background">
-                              {testimonial.image ? (
-                                <div className="w-16 h-16 rounded-full overflow-hidden">
-                                  <Image
-                                    src={`/user-${i + 1}.jpg`}
-                                    alt={testimonial.name}
-                                    width={40}
-                                    height={40}
-                                    className="rounded-full"
-                                    priority
-                                  />
-                                </div>
-                              ) : (
-                                <span className="font-medium text-primary text-xl">
-                                  {testimonial.name.charAt(0)}
-                                </span>
-                              )}
+                          <motion.div
+                            className="relative"
+                            whileHover={{ scale: 1.1 }}
+                          >
+                            <motion.div
+                              className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full blur-sm opacity-70"
+                              animate={{ rotate: [0, 360] }}
+                              transition={{
+                                duration: 8,
+                                repeat: Number.POSITIVE_INFINITY,
+                                ease: "linear",
+                              }}
+                            />
+                            <div className="relative rounded-full w-16 h-16 bg-muted flex items-center justify-center border-2 border-background overflow-hidden">
+                              <Image
+                                src={
+                                  testimonials[activeTestimonial].image ||
+                                  "/placeholder.svg"
+                                }
+                                alt={testimonials[activeTestimonial].name}
+                                width={64}
+                                height={64}
+                                className="rounded-full"
+                              />
                             </div>
-                          </div>
+                          </motion.div>
                           <div>
                             <h3 className="font-bold text-xl">
-                              {testimonial.name}
+                              {testimonials[activeTestimonial].name}
                             </h3>
                             <p className="text-muted-foreground">
-                              {testimonial.title} at {testimonial.company}
+                              {testimonials[activeTestimonial].title} at{" "}
+                              {testimonials[activeTestimonial].company}
                             </p>
                           </div>
                         </div>
-                        <div className="flex mb-6">
+                        <motion.div
+                          className="flex mb-6"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.3 }}
+                        >
                           {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
+                            <motion.div
                               key={star}
-                              className="h-5 w-5 fill-secondary text-secondary"
-                            />
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ delay: 0.4 + star * 0.1 }}
+                            >
+                              <Star className="h-5 w-5 fill-secondary text-secondary" />
+                            </motion.div>
                           ))}
-                        </div>
-                        <p className="text-lg md:text-xl italic flex-1">
-                          "{testimonial.text}"
-                        </p>
-                      </div>
+                        </motion.div>
+                        <motion.p
+                          className="text-lg md:text-xl italic flex-1"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 }}
+                        >
+                          "{testimonials[activeTestimonial].text}"
+                        </motion.p>
+                      </motion.div>
                     </motion.div>
-                  ))}
+                  </AnimatePresence>
                 </div>
 
                 <div className="flex justify-center mt-8 gap-2">
                   {testimonials.map((_, i) => (
-                    <button
+                    <motion.button
                       key={i}
                       onClick={() => setActiveTestimonial(i)}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
@@ -1057,13 +1555,20 @@ export default function RedesignedLanding({
                           ? "bg-primary scale-125"
                           : "bg-muted"
                       }`}
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
                       aria-label={`View testimonial ${i + 1}`}
                     />
                   ))}
                 </div>
               </div>
 
-              <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
+              >
                 {[
                   { label: "Active Users", value: "10,000+" },
                   { label: "Resumes Optimized", value: "50,000+" },
@@ -1075,39 +1580,56 @@ export default function RedesignedLanding({
                     initial={{ opacity: 0, y: 20 }}
                     animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: 0.1 * i }}
+                    whileHover={{ scale: 1.05 }}
                     className="text-center"
                   >
-                    <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                    <motion.div
+                      className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+                      initial={{ scale: 0 }}
+                      animate={testimonialsInView ? { scale: 1 } : {}}
+                      transition={{
+                        duration: 0.6,
+                        delay: 0.2 + i * 0.1,
+                        type: "spring",
+                      }}
+                    >
                       {stat.value}
-                    </div>
+                    </motion.div>
                     <div className="text-muted-foreground mt-2">
                       {stat.label}
                     </div>
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* FAQ Section */}
+        {/* Enhanced FAQ Section */}
         <section
           ref={faqRef}
           id="faq"
-          className="w-full py-24 md:py-32 lg:py-40"
+          className="w-full py-24 md:py-32 lg:py-40 mobile-safe"
         >
           <div className="container px-4 md:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={faqInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate={faqInView ? "visible" : "hidden"}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
             >
-              <Badge className="bg-accent/10 text-accent hover:bg-accent/20">
-                <span className="font-medium">FAQ</span>
-              </Badge>
-              <div className="space-y-3 max-w-3xl">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">
+              <motion.div variants={itemVariants}>
+                <Badge className="bg-accent/10 text-accent hover:bg-accent/20">
+                  <span className="font-medium dark:text-white text-black">
+                    FAQ
+                  </span>
+                </Badge>
+              </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className="space-y-3 max-w-3xl"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mobile-text-scale">
                   <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
                     Frequently Asked Questions
                   </span>
@@ -1115,10 +1637,15 @@ export default function RedesignedLanding({
                 <p className="text-xl text-muted-foreground">
                   Everything you need to know about ResumeRocket
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
 
-            <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={faqInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+              className="max-w-3xl mx-auto"
+            >
               <Accordion type="single" collapsible className="w-full">
                 {faqs.map((faq, i) => (
                   <motion.div
@@ -1129,9 +1656,9 @@ export default function RedesignedLanding({
                   >
                     <AccordionItem
                       value={`item-${i}`}
-                      className="border-b border-muted py-2"
+                      className="border-b border-muted py-2 hover:bg-muted/20 transition-colors duration-300 rounded-lg px-4"
                     >
-                      <AccordionTrigger className="text-lg font-medium hover:text-primary transition-colors">
+                      <AccordionTrigger className="text-lg font-medium hover:text-primary transition-colors hover:no-underline">
                         {faq.question}
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
@@ -1141,7 +1668,7 @@ export default function RedesignedLanding({
                   </motion.div>
                 ))}
               </Accordion>
-            </div>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -1162,67 +1689,111 @@ export default function RedesignedLanding({
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* Enhanced CTA Section */}
         <section
           ref={ctaRef}
-          className="w-full py-24 md:py-32 lg:py-40 bg-muted/30"
+          className="w-full py-24 md:py-32 lg:py-40 bg-muted/30 mobile-safe"
         >
           <div className="container grid items-center justify-center gap-6 px-4 text-center md:px-6 relative">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/5 rounded-full blur-3xl animate-float animation-delay-300"></div>
-
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={ctaInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.6 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate={ctaInView ? "visible" : "hidden"}
               className="mx-auto max-w-3xl relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/20 to-accent/10 rounded-3xl blur-2xl opacity-70"></div>
-              <div className="relative bg-background rounded-3xl border border-primary/10 p-8 md:p-12 shadow-2xl">
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/20 to-accent/10 rounded-3xl blur-2xl opacity-70"
+                animate={{
+                  scale: [1, 1.05, 1],
+                  opacity: [0.7, 0.9, 0.7],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.div
+                variants={itemVariants}
+                className="relative bg-background rounded-3xl border border-primary/10 p-8 md:p-12 shadow-2xl"
+              >
                 <div className="space-y-6">
-                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 mx-auto">
-                    <Sparkles className="mr-2 h-4 w-4 text-primary" />
-                    <span className="font-medium">Limited Time Offer</span>
-                  </Badge>
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent pb-2">
+                  <motion.div variants={itemVariants}>
+                    <Badge className="bg-primary/10 text-primary hover:bg-primary/20 mx-auto">
+                      <Sparkles className="mr-2 h-4 w-4 text-primary" />
+                      <span className="font-medium dark:text-white text-black">
+                        Limited Time Offer
+                      </span>
+                    </Badge>
+                  </motion.div>
+                  <motion.h2
+                    variants={itemVariants}
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent pb-2 mobile-text-scale"
+                  >
                     Ready to land your dream job?
-                  </h2>
-                  <p className="mx-auto max-w-[600px] text-xl text-muted-foreground">
+                  </motion.h2>
+                  <motion.p
+                    variants={itemVariants}
+                    className="mx-auto max-w-[600px] text-xl text-muted-foreground"
+                  >
                     Join thousands of job seekers who have optimized their
                     resumes with ResumeRocket. Get started today and receive a{" "}
                     <span className="font-bold">free resume review</span>.
-                  </p>
+                  </motion.p>
                 </div>
-                <div className="mx-auto w-full max-w-sm space-y-3 mt-8">
+                <motion.div
+                  variants={itemVariants}
+                  className="mx-auto w-full max-w-sm space-y-3 mt-8"
+                >
                   <Button
                     asChild
                     size="lg"
-                    className="w-full text-lg shadow-lg group overflow-hidden relative bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white h-14"
+                    className="w-full text-lg shadow-lg group overflow-hidden relative bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white h-14 hover-lift"
                   >
                     <Link href="/auth">
                       <span className="relative z-10 flex items-center justify-center">
                         Get Started Free
-                        <ChevronRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                        <motion.div
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Number.POSITIVE_INFINITY,
+                          }}
+                        >
+                          <ChevronRight className="ml-1 h-5 w-5" />
+                        </motion.div>
                       </span>
+                      <motion.div
+                        className="absolute inset-0 bg-white/20"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.6 }}
+                      />
                     </Link>
                   </Button>
                   <p className="text-sm text-muted-foreground">
                     No credit card required. Start with our free plan today.
                   </p>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-background/80 backdrop-blur-sm border-t py-12 px-4 md:px-6">
+      {/* Enhanced Footer */}
+      <footer className="bg-background/80 backdrop-blur-sm border-t py-12 px-4 md:px-6 mobile-safe">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="space-y-4"
+            >
               <Link href="/" className="flex items-center">
-                <span className="text-xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent gradient-animation">
+                <span className="text-xl font-bold gradient-text">
                   ResumeRocket
                 </span>
               </Link>
@@ -1230,211 +1801,129 @@ export default function RedesignedLanding({
                 AI-powered resume optimization to help you land your dream job.
               </p>
               <div className="flex space-x-4">
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors-smooth"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="transition-transform-bounce hover:scale-110"
+                {[
+                  {
+                    icon: "facebook",
+                    path: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",
+                  },
+                  {
+                    icon: "linkedin",
+                    path: "M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z M2 9h4v12H2z M4 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4z",
+                  },
+                  {
+                    icon: "twitter",
+                    path: "M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z",
+                  },
+                ].map((social, i) => (
+                  <motion.a
+                    key={social.icon}
+                    href="#"
+                    className="text-muted-foreground hover:text-primary transition-colors-smooth"
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors-smooth"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="transition-transform-bounce hover:scale-110"
-                  >
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors-smooth"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="transition-transform-bounce hover:scale-110"
-                  >
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                  </svg>
-                </a>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d={social.path}></path>
+                    </svg>
+                  </motion.a>
+                ))}
               </div>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold mb-3">Product</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#features"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#pricing"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#testimonials"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Testimonials
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#faq"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    FAQ
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold mb-3">Resources</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Career Tips
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Resume Templates
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Help Center
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold mb-3">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
-                  >
-                    Press Kit
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            </motion.div>
+
+            {[
+              {
+                title: "Product",
+                links: ["Features", "Pricing", "Testimonials", "FAQ"],
+              },
+              {
+                title: "Resources",
+                links: [
+                  "Blog",
+                  "Career Tips",
+                  "Resume Templates",
+                  "Help Center",
+                ],
+              },
+              {
+                title: "Company",
+                links: ["About Us", "Careers", "Contact", "Press Kit"],
+              },
+            ].map((section, i) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * (i + 1) }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-sm font-semibold mb-3">{section.title}</h3>
+                <ul className="space-y-2">
+                  {section.links.map((link, j) => (
+                    <motion.li
+                      key={link}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.1 * j }}
+                      viewport={{ once: true }}
+                    >
+                      <Link
+                        href={`#${link.toLowerCase().replace(" ", "")}`}
+                        className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
+                      >
+                        {link}
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
           </div>
-          <div className="mt-12 pt-6 border-t flex flex-col md:flex-row justify-between items-center">
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="mt-12 pt-6 border-t flex flex-col md:flex-row justify-between items-center"
+          >
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} ResumeRocket. All rights
               reserved.
             </p>
             <nav className="flex flex-wrap gap-4 mt-4 md:mt-0">
-              <Link
-                href="#"
-                className="text-xs text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors-smooth"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                href="#"
-                className="text-xs text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors-smooth"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="#"
-                className="text-xs text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors-smooth"
-              >
-                Cookie Policy
-              </Link>
-              <Link
-                href="#"
-                className="text-xs text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors-smooth"
-              >
-                Contact Us
-              </Link>
+              {[
+                "Terms of Service",
+                "Privacy Policy",
+                "Cookie Policy",
+                "Contact Us",
+              ].map((link, i) => (
+                <motion.div
+                  key={link}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.1 * i }}
+                  viewport={{ once: true }}
+                >
+                  <Link
+                    href="#"
+                    className="text-xs text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors-smooth"
+                  >
+                    {link}
+                  </Link>
+                </motion.div>
+              ))}
             </nav>
-          </div>
+          </motion.div>
         </div>
       </footer>
     </div>

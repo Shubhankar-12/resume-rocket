@@ -174,7 +174,7 @@ export default function AuthPage() {
                     </span>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex justify-evenly space-x-4">
                   <Button
                     variant="outline"
                     onClick={() => handleOAuthLogin("github")}
@@ -281,7 +281,7 @@ export default function AuthPage() {
                     </span>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex justify-evenly space-x-4">
                   <Button
                     variant="outline"
                     onClick={() => handleOAuthLogin("github")}
@@ -289,14 +289,6 @@ export default function AuthPage() {
                   >
                     <Github className="mr-2 h-4 w-4" />
                     GitHub
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleOAuthLogin("google")}
-                    disabled={isLoading}
-                  >
-                    <Mail className="mr-2 h-4 w-4" />
-                    Google
                   </Button>
                 </div>
               </CardContent>
