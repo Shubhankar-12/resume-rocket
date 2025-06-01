@@ -20,6 +20,7 @@ import jwt from "jsonwebtoken";
 import ResumeAPI from "@/lib/api/user_resume/resume";
 import { useRouter } from "next/navigation";
 import { useLoader } from "@/hooks/useLoader";
+import { LimitExceededModal } from "@/components/LimitExceedsModal";
 
 export default function UploadResume() {
   const [file, setFile] = useState<File | null>(null);
@@ -29,6 +30,20 @@ export default function UploadResume() {
   const [isParsing, setIsParsing] = useState(false);
   const [resumeAnalysis, setResumeAnalysis] = useState<any>(null);
   const [inActiveUpload, setInActiveUpload] = useState(false);
+  const [limitExceededData, setLimitExceededData] = useState<{
+    isOpen: boolean;
+    limitType: string;
+    currentPlan: "FREE" | "BASIC" | "PRO";
+    currentUsage: number;
+    maxLimit: number;
+  }>({
+    isOpen: false,
+    limitType: "",
+    currentPlan: "FREE",
+    currentUsage: 0,
+    maxLimit: 1,
+  });
+
   const router = useRouter();
   const loader = useLoader();
 
@@ -100,8 +115,19 @@ export default function UploadResume() {
       } else {
         throw new Error("Invalid response from server");
       }
-    } catch (error) {
-      console.error("Resume analysis failed:", error);
+    } catch (error: any) {
+      console.log(JSON.stringify(error.response?.data, null, 2));
+      if (error.response?.status === 403) {
+        // Handle limit exceeded case
+        const errorData = error.response.data;
+        setLimitExceededData({
+          isOpen: true,
+          limitType: "resume_upload",
+          currentPlan: errorData.plan || "FREE",
+          currentUsage: errorData.currentUsage || 0,
+          maxLimit: errorData.limit || 1,
+        });
+      }
       setUploadProgress(0); // Reset progress on error
     } finally {
       setIsUploading(false);
@@ -187,6 +213,16 @@ export default function UploadResume() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <LimitExceededModal
+        isOpen={limitExceededData.isOpen}
+        onClose={() =>
+          setLimitExceededData({ ...limitExceededData, isOpen: false })
+        }
+        limitType={"resume_upload"}
+        currentPlan={limitExceededData.currentPlan}
+        currentUsage={limitExceededData.currentUsage}
+        maxLimit={limitExceededData.maxLimit}
+      />
       <div>
         <h1 className="text-2xl font-bold">Upload Your Resume</h1>
         <p className="text-muted-foreground">
@@ -280,7 +316,7 @@ export default function UploadResume() {
                 </div>
               )}
 
-              {!isUploading && !isParsing && (
+              {!isUploading && !isParsing && !limitExceededData.isOpen && (
                 <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
                   <p className="text-green-600 dark:text-green-400 font-medium">
                     Resume uploaded successfully!
