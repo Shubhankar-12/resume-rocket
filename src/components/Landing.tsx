@@ -299,7 +299,7 @@ export default function EnhancedLanding({
       title: "Software Engineer",
       company: "TechGiant Inc.",
       text: "After using ResumeRocket to optimize my resume, I started getting callbacks for interviews within days. The ATS optimization feature was a game-changer!",
-      image: "/placeholder.svg?height=64&width=64",
+      image: "/test-1.jpg",
       rating: 5,
     },
     {
@@ -307,7 +307,7 @@ export default function EnhancedLanding({
       title: "Product Manager",
       company: "InnovateCorp",
       text: "The job-specific tailoring feature helped me customize my resume for each application. I landed my dream job at a tech company after just 3 weeks of using ResumeRocket.",
-      image: "/placeholder.svg?height=64&width=64",
+      image: "/test-2.jpg",
       rating: 5,
     },
     {
@@ -315,7 +315,7 @@ export default function EnhancedLanding({
       title: "Marketing Specialist",
       company: "BrandForward",
       text: "The cover letter generator saved me hours of work. Each letter was perfectly tailored to the job description and helped me stand out from other applicants.",
-      image: "/placeholder.svg?height=64&width=64",
+      image: "/test-3.jpg",
       rating: 5,
     },
   ];
@@ -726,10 +726,11 @@ export default function EnhancedLanding({
                         className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-background flex items-center justify-center text-xs font-medium relative"
                       >
                         <Image
-                          src={`/placeholder.svg?height=40&width=40`}
+                          src={`/user-${i}.jpg`}
                           width={40}
                           height={40}
-                          className="rounded-full"
+                          objectFit="contain"
+                          className="w-full h-full rounded-full object-cover"
                           alt={`User ${i}`}
                         />
                       </motion.div>
@@ -1193,16 +1194,16 @@ export default function EnhancedLanding({
                   title: "AI Analysis",
                   description:
                     "Our AI analyzes your resume against job descriptions and industry standards.",
-                  icon: <Sparkles className="h-6 w-6 text-secondary" />,
-                  color: "secondary",
+                  icon: <Sparkles className="h-6 w-6 text-primary" />,
+                  color: "primary",
                 },
                 {
                   step: "03",
                   title: "Get Optimized",
                   description:
                     "Receive tailored suggestions and implement them with one click.",
-                  icon: <CheckCircle className="h-6 w-6 text-accent" />,
-                  color: "accent",
+                  icon: <CheckCircle className="h-6 w-6 text-primary" />,
+                  color: "primary",
                 },
               ].map((item, i) => (
                 <motion.div
@@ -1501,7 +1502,7 @@ export default function EnhancedLanding({
                                 alt={testimonials[activeTestimonial].name}
                                 width={64}
                                 height={64}
-                                className="rounded-full"
+                                className="rounded-full object-cover w-full h-full"
                               />
                             </div>
                           </motion.div>
@@ -1528,7 +1529,7 @@ export default function EnhancedLanding({
                               animate={{ scale: 1 }}
                               transition={{ delay: 0.4 + star * 0.1 }}
                             >
-                              <Star className="h-5 w-5 fill-secondary text-secondary" />
+                              <Star className="h-5 w-5 fill-[#FFD700] text-secondary" />
                             </motion.div>
                           ))}
                         </motion.div>
