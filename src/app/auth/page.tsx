@@ -208,8 +208,8 @@ export default function AuthPage() {
                   <Label htmlFor="name">Full Name</Label>
                   <Input
                     id="name"
-                    type="name"
-                    placeholder="name@example.com"
+                    type="text"
+                    placeholder="John Doe"
                     onChange={(e) =>
                       setRegisterData({ ...registerData, name: e.target.value })
                     }
