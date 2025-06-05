@@ -26,6 +26,7 @@ import {
   Zap,
   Target,
   TrendingUp,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -225,6 +226,22 @@ const MouseFollower = () => {
     />
   );
 };
+interface Feature {
+  name: string;
+  included: boolean;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: Feature[];
+  popular?: boolean;
+  icon: React.ElementType;
+  color: string;
+}
 
 export default function EnhancedLanding({
   isLoggedIn = false,
@@ -235,16 +252,68 @@ export default function EnhancedLanding({
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef(null);
-  const controls = useAnimation();
+  const [billingInterval, setBillingInterval] = useState("monthly");
 
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const plans: Plan[] = [
+    {
+      id: "FREE",
+      name: "Free",
+      description: "Basic resume analysis for job seekers",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      icon: Sparkles,
+      color: "bg-gradient-to-br from-blue-400 to-blue-600",
+      features: [
+        { name: "1 Resume Upload", included: true },
+        { name: "Basic ATS Check", included: true },
+        { name: "Limited Resume Analysis", included: true },
+        { name: "Email Support", included: true },
+        { name: "Cover Letter Generation", included: false },
+        { name: "GitHub Project Analysis", included: false },
+        { name: "Job-Specific Tailoring", included: false },
+        { name: "Priority Support", included: false },
+      ],
+    },
+    {
+      id: "BASIC",
+      name: "Basic",
+      description: "Essential tools for serious job seekers",
+      monthlyPrice: 199,
+      yearlyPrice: 1899, // 20 % OF (199 * 12 = 2398)
+      icon: Shield,
+      color: "bg-gradient-to-br from-emerald-400 to-emerald-600",
+      features: [
+        { name: "5 Resume Uploads", included: true },
+        { name: "Advanced ATS Check", included: true },
+        { name: "Full Resume Analysis", included: true },
+        { name: "Email Support", included: true },
+        { name: "Cover Letter Generation", included: true },
+        { name: "GitHub Project Analysis", included: false },
+        { name: "Job-Specific Tailoring", included: false },
+        { name: "Priority Support", included: false },
+      ],
+    },
+    {
+      id: "PRO",
+      name: "Pro",
+      description: "Complete toolkit for career advancement",
+      monthlyPrice: 499,
+      yearlyPrice: 4799,
+      icon: Zap,
+      color: "bg-gradient-to-br from-purple-400 to-purple-600",
+      popular: true,
+      features: [
+        { name: "Unlimited Resume Uploads", included: true },
+        { name: "Advanced ATS Check", included: true },
+        { name: "Full Resume Analysis", included: true },
+        { name: "Email Support", included: true },
+        { name: "Cover Letter Generation", included: true },
+        { name: "GitHub Project Analysis", included: true },
+        { name: "Job-Specific Tailoring", included: true },
+        { name: "Priority Support", included: true },
+      ],
+    },
+  ];
 
   // Enhanced scroll tracking
   useEffect(() => {
@@ -420,7 +489,7 @@ export default function EnhancedLanding({
   };
 
   return (
-    <div className="flex w-full flex-col min-h-screen bg-gradient-to-b from-background to-background/95 overflow-safe">
+    <div className="flex w-full flex-col min-h-screen bg-gradient-to-b from-background to-background/95 ">
       {/* Enhanced Floating Elements */}
       <EnhancedFloatingElements />
       <FloatingParticles />
@@ -1242,6 +1311,7 @@ export default function EnhancedLanding({
         </section>
 
         {/* Enhanced Pricing Section */}
+        {/* Enhanced Pricing Section */}
         <section
           ref={pricingRef}
           id="pricing"
@@ -1283,7 +1353,11 @@ export default function EnhancedLanding({
               transition={{ duration: 0.5 }}
               className="w-full max-w-md mx-auto mb-12"
             >
-              <Tabs defaultValue="monthly">
+              <Tabs
+                defaultValue="monthly"
+                value={billingInterval}
+                onValueChange={setBillingInterval}
+              >
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="monthly">Monthly</TabsTrigger>
                   <TabsTrigger value="yearly">Yearly (Save 20%)</TabsTrigger>
@@ -1291,107 +1365,139 @@ export default function EnhancedLanding({
               </Tabs>
             </motion.div>
 
-            <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={pricingInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="flex flex-col p-8 bg-background shadow-xl rounded-2xl border border-muted justify-between transition-all duration-300 hover:shadow-2xl hover:border-primary/20 group"
-              >
-                <div>
-                  <Badge className="bg-muted mb-4">Free</Badge>
-                  <h3 className="text-2xl font-bold group-hover:text-primary transition-colors duration-300">
-                    Free Plan
-                  </h3>
-                  <div className="mt-4 text-primary">
-                    <span className="text-5xl font-extrabold">$0</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                  <p className="mt-2 text-muted-foreground">
-                    Perfect for getting started with resume optimization
-                  </p>
-                  <div className="h-px w-full bg-muted my-6"></div>
-                  <ul className="mt-6 space-y-4">
-                    {[
-                      "Basic resume analysis",
-                      "Limited ATS compatibility check",
-                      "1 resume upload",
-                      "Basic formatting suggestions",
-                    ].map((feature, i) => (
-                      <motion.li
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={pricingInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.3, delay: 0.1 * i }}
-                        className="flex items-center"
-                      >
-                        <CheckCircle className="mr-3 h-5 w-5 text-primary" />
-                        <span>{feature}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-                <Button className="mt-8 w-full hover-lift" variant="outline">
-                  <Link href="/auth" className="w-full">
-                    Get Started
-                  </Link>
-                </Button>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={pricingInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="flex flex-col p-8 bg-gradient-to-br from-primary to-secondary shadow-xl rounded-2xl border-2 border-primary justify-between relative overflow-hidden group"
-              >
+            <div className="grid gap-8 lg:grid-cols-3 max-w-7xl mx-auto">
+              {plans.map((plan, index) => (
                 <motion.div
-                  className="absolute top-0 right-0 rounded-bl-2xl bg-background text-primary px-4 py-1 font-bold"
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                  key={plan.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={pricingInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className={`flex flex-col p-8 shadow-xl rounded-2xl border justify-between transition-all duration-300 hover:shadow-2xl group relative overflow-hidden ${
+                    plan.popular
+                      ? "bg-gradient-to-br from-primary to-secondary border-2 border-primary"
+                      : "bg-background border-muted hover:border-primary/20"
+                  }`}
                 >
-                  Popular
-                </motion.div>
-                <div>
-                  <Badge className="bg-white/20 text-white mb-4">Pro</Badge>
-                  <h3 className="text-2xl font-bold text-white">Pro Plan</h3>
-                  <div className="mt-4 text-white">
-                    <span className="text-5xl font-extrabold">$9.99</span>
-                    <span className="text-white/70">/month</span>
-                  </div>
-                  <p className="mt-2 text-white/80">
-                    Everything you need for a successful job search
-                  </p>
-                  <div className="h-px w-full bg-white/20 my-6"></div>
-                  <ul className="mt-6 space-y-4 text-white">
-                    {[
-                      "Unlimited resume analyses",
-                      "Advanced ATS optimization",
-                      "Job-specific tailoring",
-                      "Cover letter generation",
-                      "GitHub project analysis",
-                      "Priority support",
-                    ].map((feature, i) => (
-                      <motion.li
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={pricingInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.3, delay: 0.2 + 0.1 * i }}
-                        className="flex items-center"
+                  {plan.popular && (
+                    <motion.div
+                      className="absolute top-0 right-0 rounded-bl-2xl bg-background text-primary px-4 py-1 font-bold"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                      }}
+                    >
+                      Popular
+                    </motion.div>
+                  )}
+
+                  <div>
+                    <Badge
+                      className={
+                        plan.popular
+                          ? "bg-white/20 text-white mb-4"
+                          : "bg-muted mb-4"
+                      }
+                    >
+                      {plan.name}
+                    </Badge>
+                    <h3
+                      className={`text-2xl font-bold transition-colors duration-300 ${
+                        plan.popular ? "text-white" : "group-hover:text-primary"
+                      }`}
+                    >
+                      {plan.name} Plan
+                    </h3>
+                    <div
+                      className={`mt-4 ${
+                        plan.popular ? "text-white" : "text-primary"
+                      }`}
+                    >
+                      <span className="text-5xl font-extrabold">
+                        ₹
+                        {billingInterval === "monthly"
+                          ? plan.monthlyPrice
+                          : Math.floor(plan.yearlyPrice / 12)}
+                      </span>
+                      <span
+                        className={
+                          plan.popular
+                            ? "text-white/70"
+                            : "text-muted-foreground"
+                        }
                       >
-                        <CheckCircle className="mr-3 h-5 w-5" />
-                        <span>{feature}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-                <Button className="mt-8 bg-white text-primary hover:bg-white/90 w-full hover-lift">
-                  <Link href="/auth" className="w-full">
-                    Get Started
-                  </Link>
-                </Button>
-              </motion.div>
+                        /month
+                      </span>
+                    </div>
+                    {billingInterval === "yearly" && plan.yearlyPrice > 0 && (
+                      <p
+                        className={`text-sm mt-1 ${
+                          plan.popular
+                            ? "text-white/80"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        Billed annually: ₹{plan.yearlyPrice}
+                      </p>
+                    )}
+                    <p
+                      className={`mt-2 ${
+                        plan.popular ? "text-white/80" : "text-muted-foreground"
+                      }`}
+                    >
+                      {plan.description}
+                    </p>
+                    <div
+                      className={`h-px w-full my-6 ${
+                        plan.popular ? "bg-white/20" : "bg-muted"
+                      }`}
+                    ></div>
+                    <ul
+                      className={`mt-6 space-y-4 ${
+                        plan.popular ? "text-white" : ""
+                      }`}
+                    >
+                      {plan.features.map((feature, i) => (
+                        <motion.li
+                          key={i}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={pricingInView ? { opacity: 1, x: 0 } : {}}
+                          transition={{ duration: 0.3, delay: 0.1 * i }}
+                          className={`flex items-center ${
+                            !feature.included ? "opacity-50" : ""
+                          }`}
+                        >
+                          {feature.included ? (
+                            <CheckCircle
+                              className={`mr-3 h-5 w-5 ${
+                                plan.popular ? "text-white" : "text-primary"
+                              }`}
+                            />
+                          ) : (
+                            <X className="mr-3 h-5 w-5 text-muted-foreground" />
+                          )}
+                          <span>{feature.name}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Button
+                    className={`mt-8 w-full hover-lift ${
+                      plan.popular
+                        ? "bg-white text-primary hover:bg-white/90"
+                        : plan.id === "FREE"
+                        ? "variant-outline"
+                        : ""
+                    }`}
+                    variant={plan.id === "FREE" ? "outline" : "default"}
+                  >
+                    <Link href="/auth" className="w-full">
+                      {plan.id === "FREE" ? "Get Started" : "Choose Plan"}
+                    </Link>
+                  </Button>
+                </motion.div>
+              ))}
             </div>
 
             <motion.div
@@ -1857,7 +1963,12 @@ export default function EnhancedLanding({
               },
               {
                 title: "Company",
-                links: ["About Us", "Careers", "Contact", "Press Kit"],
+                links: [
+                  "Privacy Policy",
+                  "Contact Us",
+                  "Refund Policy",
+                  "Terms and Conditions",
+                ],
               },
             ].map((section, i) => (
               <motion.div
@@ -1878,7 +1989,11 @@ export default function EnhancedLanding({
                       viewport={{ once: true }}
                     >
                       <Link
-                        href={`#${link.toLowerCase().replace(" ", "")}`}
+                        href={
+                          section.title === "Company"
+                            ? `/${link.toLowerCase().replaceAll(" ", "-")}`
+                            : `#${link.toLowerCase().replace(" ", "")}`
+                        }
                         className="text-sm text-muted-foreground hover:text-primary transition-colors-smooth"
                       >
                         {link}
