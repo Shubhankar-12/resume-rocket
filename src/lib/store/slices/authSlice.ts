@@ -7,12 +7,14 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     token: null as string | null,
+    isLoggedIn: false,
   },
 
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.isLoggedIn = false;
       deleteCookie("token");
     },
 
@@ -29,6 +31,7 @@ const authSlice = createSlice({
       state.user = tokenPayload.user;
 
       state.token = action.payload.token;
+      state.isLoggedIn = true;
 
       setCookie("token", action.payload.token, {
         // httpOnly: true,

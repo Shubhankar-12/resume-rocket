@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,9 +21,18 @@ import { useRouter } from "next/navigation";
 import AuthAPI from "@/lib/api";
 import { setCookie } from "cookies-next";
 import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store/store";
 
 export default function AuthPage() {
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/dashboard");
+    }
+  }, [isLoggedIn]);
   const router = useRouter();
   const [loginData, setLoginData] = useState({
     email: "",
