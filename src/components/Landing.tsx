@@ -657,25 +657,40 @@ export default function EnhancedLanding({
                 variants={containerVariants}
                 className="flex flex-col gap-4 mt-6"
               >
-                <motion.div variants={itemVariants}>
-                  <Button
-                    variant="outline"
-                    asChild
-                    className="w-full hover-lift"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Link href="/auth">Log In</Link>
-                  </Button>
-                </motion.div>
-                <motion.div variants={itemVariants}>
-                  <Button
-                    asChild
-                    className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white hover-lift"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Link href="/auth">Sign Up Free</Link>
-                  </Button>
-                </motion.div>
+                {!isLoggedIn ? (
+                  <>
+                    <motion.div variants={itemVariants}>
+                      <Button
+                        variant="outline"
+                        asChild
+                        className="w-full hover-lift"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link href="/auth">Log In</Link>
+                      </Button>
+                    </motion.div>
+                    <motion.div variants={itemVariants}>
+                      <Button
+                        asChild
+                        className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white hover-lift"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link href="/auth">Sign Up Free</Link>
+                      </Button>
+                    </motion.div>
+                  </>
+                ) : (
+                  <motion.div variants={itemVariants}>
+                    <Button
+                      variant="outline"
+                      asChild
+                      className="w-full hover-lift"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link href="/dashboard">Dashboard</Link>
+                    </Button>
+                  </motion.div>
+                )}
               </motion.div>
             </motion.div>
           </motion.div>
