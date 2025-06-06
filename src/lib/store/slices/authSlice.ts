@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import jwt from "jsonwebtoken";
 import { setCookie, deleteCookie, getCookie } from "cookies-next";
 
 const authSlice = createSlice({
@@ -21,25 +21,27 @@ const authSlice = createSlice({
     // },
     login: (state, action) => {
       console.log("Login action", action.payload);
-      if (!action.payload.token) {
+      if (!action.payload) {
         // Redirect to login
         return;
       }
-      let tokenPayload = JSON.parse(
-        Buffer.from(action.payload.token.split(".")[1], "base64").toString()
-      );
-      state.user = tokenPayload.user;
+      const decodedToken: any = jwt.decode(action.payload);
+      if (!decodedToken || !decodedToken.user) {
+        console.error("Invalid token payload", action.payload);
+        return;
+      }
 
-      state.token = action.payload.token;
+      state.user = decodedToken.user;
+
+      state.token = action.payload;
       state.isLoggedIn = true;
-
-      setCookie("token", action.payload.token, {
+      console.log("Login state", state);
+      setCookie("token", action.payload, {
         // httpOnly: true,
         // sameSite: "strict",
         // secure: true,
         maxAge: 60 * 60 * 24 * 7,
       });
-      console.log(state.token, "state");
     },
 
     setSliceToken: (state, action) => {
@@ -51,7 +53,9 @@ const authSlice = createSlice({
       let tokenPayload = JSON.parse(
         Buffer.from(action.payload.split(".")[1], "base64").toString()
       );
-      state.user = tokenPayload.employee;
+      console.log("tokenPayload", tokenPayload);
+
+      state.user = tokenPayload.user;
 
       state.token = action.payload;
     },
