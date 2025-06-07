@@ -41,7 +41,7 @@ export default function GitHubCallbackPage() {
       if (response && response.data) {
         console.log("GitHub authentication successful:", response.data);
 
-        dispatch(login({ token: response.data.body.token.token })); // Assuming the token is in response.data.token
+        dispatch(login(response.data.body.token.token)); // Assuming the token is in response.data.token
         setStatus("success");
         setTimeout(() => {
           router.push("/dashboard");
