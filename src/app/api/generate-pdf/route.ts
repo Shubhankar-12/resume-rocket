@@ -9,6 +9,25 @@ type RequestPayload = {
   fileName?: string;
 };
 
+function getChromeExecutablePath() {
+  if (process.env.VERCEL) {
+    // Vercel provides Chrome at this path
+    return "/opt/render/chrome/chrome";
+  } else if (process.platform === "linux") {
+    // Common Linux paths
+    // eslint-disable-next-line no-undef
+    return process.env.GOOGLE_CHROME_PATH || "/usr/bin/google-chrome-stable";
+  } else if (process.platform === "darwin") {
+    // macOS
+    return "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+  } else if (process.platform === "win32") {
+    // Windows
+    return "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+  }
+  // Let Puppeteer find Chrome automatically
+  return undefined;
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const { url, fileName }: RequestPayload = await request.json();
@@ -46,6 +65,7 @@ async function generatePdf(url: string): Promise<Buffer> {
   try {
     browser = await puppeteer.launch({
       headless: true,
+      executablePath: getChromeExecutablePath(),
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
