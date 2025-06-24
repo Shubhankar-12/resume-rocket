@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
-import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer";
 import { PDFDocument } from "pdf-lib";
 
 export const maxDuration = 60; // Max execution time in seconds
@@ -39,63 +38,78 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 }
 
+/**
+ * Generate a PDF from a URL
+ */
 async function generatePdf(url: string): Promise<Buffer> {
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath:
-      (await chromium.executablePath) || "/usr/bin/chromium-browser", // fallback for local dev
-    headless: chromium.headless,
-  });
-
-  const page = await browser.newPage();
-
-  await page.setViewport({ width: 1280, height: 1024 });
-
-  await page.goto(url, {
-    waitUntil: "networkidle2",
-    timeout: 30000,
-  });
-
-  await page.evaluate(() => {
-    const images = document.querySelectorAll('img[loading="lazy"]');
-    images.forEach((img) => img.setAttribute("loading", "eager"));
-
-    document.fonts.ready;
-
-    return new Promise<void>((resolve) => {
-      if (document.readyState === "complete") resolve();
-      else window.addEventListener("load", () => resolve());
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
-  });
 
-  const totalHeight = await page.evaluate(() => {
-    return Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.offsetHeight,
-      document.body.clientHeight,
-      document.documentElement.clientHeight
-    );
-  });
+    const page = await browser.newPage();
 
-  const pdfBuffer = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: {
-      top: "20px",
-      right: "20px",
-      bottom: "20px",
-      left: "20px",
-    },
-    preferCSSPageSize: true,
-    height: `${totalHeight + 100}px`,
-  });
+    await page.setViewport({ width: 1280, height: 1024 });
 
-  await browser.close();
-  return Buffer.from(pdfBuffer);
+    await page.goto(url, {
+      waitUntil: "networkidle2",
+      timeout: 30000,
+    });
+
+    await page.evaluate(() => {
+      const images = document.querySelectorAll('img[loading="lazy"]');
+      images.forEach((img) => {
+        img.setAttribute("loading", "eager");
+      });
+
+      document.fonts.ready;
+
+      return new Promise<void>((resolve) => {
+        if (document.readyState === "complete") {
+          resolve();
+        } else {
+          window.addEventListener("load", () => resolve());
+        }
+      });
+    });
+
+    const totalHeight = await page.evaluate(() => {
+      return Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+    });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "20px",
+        right: "20px",
+        bottom: "20px",
+        left: "20px",
+      },
+      preferCSSPageSize: true,
+      height: `${totalHeight + 100}px`,
+    });
+
+    return Buffer.from(pdfBuffer);
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
 }
 
+/**
+ * Optional post-processing to ensure text remains selectable
+ */
 async function makeTextSelectable(pdfBuffer: Buffer): Promise<Buffer> {
   try {
     const pdfDoc = await PDFDocument.load(pdfBuffer);
@@ -107,7 +121,7 @@ async function makeTextSelectable(pdfBuffer: Buffer): Promise<Buffer> {
   }
 }
 
-// Optional test route
+// test route
 export async function GET() {
-  return NextResponse.json({ message: "Hello from PDF generator" });
+  return NextResponse.json({ message: "Hello" });
 }
