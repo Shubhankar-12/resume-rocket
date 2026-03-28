@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,45 +19,34 @@ import {
 import { FileText, Github, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthAPI from "@/lib/api";
-import { getCookie, setCookie } from "cookies-next";
 import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
-import jwt from "jsonwebtoken";
-import UserAPI from "@/lib/api/user/users";
+import { useDispatch } from "react-redux";
+import { login } from "@/lib/store/slices/authSlice";
 
 export default function AuthPage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const checkLogin = async () => {
-    const token = getCookie("token");
-    if (!token) {
-      setIsLoggedIn(false);
-      return;
-    }
-    const decodedToken: any = jwt.decode(token as string);
-    if (!decodedToken || !decodedToken.user) {
-      setIsLoggedIn(false);
-      return;
-    } else {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  useEffect(() => {
+    async function checkAuth() {
       try {
-        const resp = await UserAPI.getUser(decodedToken.user.id);
-        if (resp && resp.data && resp.data.body) {
-          setIsLoggedIn(true);
+        const res = await fetch("/api/me");
+        if (res.ok) {
+          const data = await res.json();
+          dispatch(login(data.data.token));
           router.push("/dashboard");
         } else {
           setIsLoggedIn(false);
         }
-      } catch (error) {
-        console.error("Error decoding token:", error);
+      } catch {
+        // Not logged in, stay on auth page
         setIsLoggedIn(false);
       }
     }
-  };
-
-  useEffect(() => {
-    checkLogin();
+    checkAuth();
   }, []);
-
-  const router = useRouter();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -76,7 +65,7 @@ export default function AuthPage() {
       setIsLoading(true);
       const resp = await AuthAPI.loginWithEmailPassword(loginData);
       if (resp && resp.data && resp.data.body) {
-        setCookie("token", resp.data.body.token);
+        dispatch(login(resp.data.body.token));
         setIsLoading(false);
         router.push("/dashboard");
       }
@@ -130,7 +119,7 @@ export default function AuthPage() {
       setIsLoading(true);
       const resp = await AuthAPI.registerWithEmail(registerData);
       if (resp && resp.data && resp.data.body) {
-        await setCookie("token", resp.data.body.token);
+        dispatch(login(resp.data.body.token));
         // Create a free subscription after successful registration
         await createFreeSubscription();
         setIsLoading(false);

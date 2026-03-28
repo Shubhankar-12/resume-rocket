@@ -23,7 +23,7 @@ async function getCoverLetter(id: string): Promise<CoverLetterItem | null> {
 
     const resp = await fetch(url, {
       headers: {
-        Authorization: `Bearer ` + process.env.NEXT_PUBLIC_API_TOKEN,
+        Authorization: `Bearer ` + process.env.API_TOKEN,
       },
     });
 

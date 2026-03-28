@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code
+.claude/
+.claudeignore
+BUSINESS_ROADMAP.md
+CLAUDE_WORKFLOW_GUIDE.md
+CLAUDE.md
+PROMPT_FLOW_ARCHITECTURE.md

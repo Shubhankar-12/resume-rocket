@@ -16,9 +16,7 @@ import Link from "next/link";
 import AuthAPI from "@/lib/api";
 import { useDispatch } from "react-redux";
 import { login } from "@/lib/store/slices/authSlice";
-import { getCookie, setCookie } from "cookies-next";
 import UserAPI from "@/lib/api/user/users";
-import jwt from "jsonwebtoken";
 
 export default function GitHubCallbackPage() {
   const router = useRouter();
@@ -63,8 +61,6 @@ export default function GitHubCallbackPage() {
       });
       if (response && response.data) {
         console.log("GitHub authentication successful:", response.data);
-        await setCookie("token", response.data.body.token);
-
         setStatus("success");
         setTimeout(() => {
           router.push("/dashboard/github");
@@ -77,31 +73,6 @@ export default function GitHubCallbackPage() {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const error = searchParams.get("error");
-  const token = getCookie("token");
-
-  useEffect(() => {
-    if (error) {
-      setStatus("error");
-      setErrorMessage("Authentication failed. Please try again.");
-      return;
-    }
-    if (token) {
-      const decodedToken: any = jwt.decode(token as string);
-      if (
-        decodedToken &&
-        decodedToken.user &&
-        decodedToken.user.provider === "github"
-      ) {
-        return;
-      }
-      if (!code) {
-        console.log("No code provided in the URL parameters.");
-        router.push("/dashboard/github");
-      } else {
-        UpdateUserWithGitHub();
-      }
-    }
-  }, [token, code, state, error]);
 
   useEffect(() => {
     if (error) {
@@ -110,10 +81,38 @@ export default function GitHubCallbackPage() {
       return;
     }
 
-    if (code && !token) {
-      authenticateWithGitHub();
+    async function handleCallback() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.ok) {
+          const data = await res.json();
+          const user = data.data.user;
+          if (user.provider === "github") {
+            // Already authenticated with GitHub
+            return;
+          }
+          // Existing user connecting GitHub account
+          if (!code) {
+            console.log("No code provided in the URL parameters.");
+            router.push("/dashboard/github");
+          } else {
+            UpdateUserWithGitHub();
+          }
+        } else {
+          // Not logged in — authenticate via GitHub OAuth
+          if (code) {
+            authenticateWithGitHub();
+          }
+        }
+      } catch {
+        if (code) {
+          authenticateWithGitHub();
+        }
+      }
     }
-  }, [code, state, error, token]);
+
+    handleCallback();
+  }, [code, state, error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">

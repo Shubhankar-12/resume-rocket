@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from "axios";
-import { getCookie } from "cookies-next";
 
 // Define your base URLs
 const SERVICE_URL = {
@@ -12,9 +11,8 @@ const SERVICE_URL = {
 // Create axios instances
 export const userService: AxiosInstance = axios.create({
   baseURL: SERVICE_URL.USER + "/api/v1",
-  // You can add your custom config here
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + getCookie("token"),
   },
 });

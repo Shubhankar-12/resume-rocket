@@ -14,7 +14,7 @@ async function getResume(id: string): Promise<TailoredResumeData | null> {
 
     const resume = await fetch(url, {
       headers: {
-        Authorization: `Bearer ` + process.env.NEXT_PUBLIC_API_TOKEN,
+        Authorization: `Bearer ` + process.env.API_TOKEN,
       },
     });
 
