@@ -36,6 +36,10 @@ yarn-error.log*
 .env.production
 !.env.example
 
+# development logs (tracked locally, not in repo)
+DEVELOPMENT_LOG.md
+BUSINESS_ROADMAP.md
+
 # vercel
 .vercel
 
