@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Sparkles, Shield, Zap, Award } from "lucide-react";
+import { Check, X, Sparkles, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +47,7 @@ export default function PlansPage() {
       icon: Sparkles,
       color: "bg-gradient-to-br from-blue-400 to-blue-600",
       features: [
-        { name: "1 Resume Upload", included: true },
+        { name: "3 Resume Uploads/month", included: true },
         { name: "Basic ATS Check", included: true },
         { name: "Limited Resume Analysis", included: true },
         { name: "Email Support", included: true },
@@ -115,7 +115,7 @@ export default function PlansPage() {
     }
 
     const token = await getCookie("token");
-    const decodedToken: any = await jwt.decode(token as string);
+    const decodedToken = (await jwt.decode(token as string)) as { user?: { id?: string } } | null;
     if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
       console.error("Invalid token or user ID not found");
       return;
@@ -132,11 +132,9 @@ export default function PlansPage() {
         amount: price * 100, // Amount in smallest currency unit (e.g., paise for INR)
         currency: "INR",
         name: "ResumeRocket",
-        description: `${plan.name} Plan - ${
-          yearly ? "Yearly" : "Monthly"
-        } Subscription`,
+        description: `${plan.name} Plan - ${yearly ? "Yearly" : "Monthly"} Subscription`,
         image: "/logo.png", // Add your logo URL
-        handler: async (response: any) => {
+        handler: async (response: { razorpay_payment_id?: string }) => {
           // Handle successful payment
           if (response && response.razorpay_payment_id) {
             const resp = await PaymentSubcriptionAPI.createSubscription({
@@ -165,15 +163,14 @@ export default function PlansPage() {
           ondismiss: () => {
             console.log({
               title: "Payment Cancelled",
-              description:
-                "You cancelled the payment process. You can try again anytime.",
+              description: "You cancelled the payment process. You can try again anytime.",
               variant: "destructive",
             });
           },
         },
       };
 
-      // @ts-ignore - Razorpay is loaded dynamically
+      // @ts-expect-error - Razorpay is loaded dynamically
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     };
@@ -201,25 +198,18 @@ export default function PlansPage() {
           Choose Your Plan
         </h1>
         <p className="text-xl text-muted-foreground mt-4 max-w-2xl mx-auto">
-          Select the perfect plan to accelerate your job search and career
-          growth
+          Select the perfect plan to accelerate your job search and career growth
         </p>
 
         {/* Billing toggle */}
         <div className="flex items-center justify-center mt-8 space-x-3">
-          <span
-            className={cn("text-sm", !yearly && "font-medium text-foreground")}
-          >
-            Monthly
-          </span>
+          <span className={cn("text-sm", !yearly && "font-medium text-foreground")}>Monthly</span>
           <Switch
             checked={yearly}
             onCheckedChange={setYearly}
             className="data-[state=checked]:bg-purple-600"
           />
-          <span
-            className={cn("text-sm", yearly && "font-medium text-foreground")}
-          >
+          <span className={cn("text-sm", yearly && "font-medium text-foreground")}>
             Yearly
             <Badge
               variant="outline"
@@ -266,20 +256,14 @@ export default function PlansPage() {
                     <h3 className="text-2xl font-bold">{plan.name}</h3>
                   </div>
 
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {plan.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
 
                   <div className="mt-4 flex items-baseline">
                     <span className="text-3xl font-extrabold">
                       ₹{yearly ? plan.yearlyPrice : plan.monthlyPrice}
                     </span>
                     <span className="ml-1 text-muted-foreground">
-                      {plan.monthlyPrice > 0
-                        ? yearly
-                          ? "/year"
-                          : "/month"
-                        : ""}
+                      {plan.monthlyPrice > 0 ? (yearly ? "/year" : "/month") : ""}
                     </span>
                   </div>
 
@@ -306,9 +290,7 @@ export default function PlansPage() {
               </div>
 
               <div className="p-6 pt-4 space-y-4">
-                <h4 className="text-sm font-medium text-muted-foreground">
-                  Plan includes:
-                </h4>
+                <h4 className="text-sm font-medium text-muted-foreground">Plan includes:</h4>
                 <ul className="space-y-3">
                   {plan.features.map((feature, i) => (
                     <motion.li
@@ -323,12 +305,7 @@ export default function PlansPage() {
                       ) : (
                         <X className="h-5 w-5 text-muted-foreground mr-2 shrink-0" />
                       )}
-                      <span
-                        className={cn(
-                          "text-sm",
-                          !feature.included && "text-muted-foreground"
-                        )}
-                      >
+                      <span className={cn("text-sm", !feature.included && "text-muted-foreground")}>
                         {feature.name}
                       </span>
                     </motion.li>
@@ -348,8 +325,8 @@ export default function PlansPage() {
       >
         <h3 className="text-xl font-bold">Need a custom plan?</h3>
         <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-          Contact our sales team for custom enterprise solutions tailored to
-          your organization's needs.
+          Contact our sales team for custom enterprise solutions tailored to your
+          organization&apos;s needs.
         </p>
         <Button variant="outline" className="mt-4">
           Contact Sales
