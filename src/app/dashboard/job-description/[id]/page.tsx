@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import TailoredResumeAPI from "@/lib/api/user_resume/tailored_resume";
 import { useParams, useRouter } from "next/navigation";
 import { AnalysisItem } from "@/components/Resumes/types";
 import { useLoader } from "@/hooks/useLoader";
+import { useJobStatus } from "@/hooks/useJobStatus";
 import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
 
@@ -28,7 +29,9 @@ export default function JobDescriptionPage() {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [progress, setProgress] = useState(0);
   const [resumeAnalysis, setResumeAnalysis] = useState<AnalysisItem>();
+  const [tailoredJobId, setTailoredJobId] = useState<string | null>(null);
   const loader = useLoader();
+  const jobStatus = useJobStatus(tailoredJobId);
   const { id } = useParams();
   const router = useRouter();
 
@@ -75,26 +78,41 @@ export default function JobDescriptionPage() {
   const generateTailoredResume = async () => {
     const token: any = await getCookie("token");
     const decodedToken: any = jwt.decode(token);
-    if (decodedToken && decodedToken.user && decodedToken.user.id) {
-      try {
-        loader.show("Generating Tailored Resume...");
-        const resp = await TailoredResumeAPI.createResume({
-          user_id: decodedToken.user.id,
-          resume_id: id as string,
-          job_description: jobDescription,
-        });
-        if (resp && resp.data && resp.data.body) {
-          loader.hide();
-          router.push(
-            `/dashboard/tailored-resume/${resp.data.body.tailored_resume_id}`
-          );
-        }
-      } catch (error) {
+    if (!decodedToken?.user?.id) return;
+
+    try {
+      loader.show("Generating Tailored Resume...");
+      const resp = await TailoredResumeAPI.createResume({
+        user_id: decodedToken.user.id,
+        resume_id: id as string,
+        job_description: jobDescription,
+      });
+      if (resp?.data?.body?.job_id) {
+        // Async job enqueued — start polling
+        setTailoredJobId(resp.data.body.job_id);
+      } else if (resp?.data?.body?.tailored_resume_id) {
         loader.hide();
-        console.log("Error generating Tailored Resume: ", error);
+        router.push(
+          `/dashboard/tailored-resume/${resp.data.body.tailored_resume_id}`
+        );
       }
+    } catch (error) {
+      loader.hide();
+      console.log("Error generating Tailored Resume: ", error);
     }
   };
+
+  useEffect(() => {
+    if (jobStatus.status === "completed" && jobStatus.result) {
+      loader.hide();
+      const tailoredId = jobStatus.result.tailored_resume_id as string;
+      router.push(`/dashboard/tailored-resume/${tailoredId}`);
+    } else if (jobStatus.status === "failed") {
+      loader.hide();
+      setTailoredJobId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobStatus.status]);
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
