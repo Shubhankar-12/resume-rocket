@@ -10,6 +10,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint --fix src/",
     "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:e2e": "playwright test"
   },
   "lint-staged": {
@@ -61,21 +63,26 @@
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.17.32",
     "@types/puppeteer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "husky": "^9.1.7",
+    "jsdom": "^29.0.1",
     "lint-staged": "^16.4.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.2"
   }
 }
