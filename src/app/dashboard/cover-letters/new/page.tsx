@@ -29,6 +29,7 @@ import CoverLetterAPI from "@/lib/api/cover-letters/cover_letter";
 import { useRouter } from "next/navigation";
 import ResumeAPI from "@/lib/api/user_resume/resume";
 import { useLoader } from "@/hooks/useLoader";
+import { useJobStatus } from "@/hooks/useJobStatus";
 
 export default function NewCoverLetterPage() {
   const [jobTitle, setJobTitle] = useState("");
@@ -45,10 +46,13 @@ export default function NewCoverLetterPage() {
     company: "",
   });
 
+  const [coverLetterJobId, setCoverLetterJobId] = useState<string | null>(null);
+
   // Mock resume data
   const [resumes, setResumes] = useState<ResumeData[]>([]);
   const router = useRouter();
   const loader = useLoader();
+  const jobStatus = useJobStatus(coverLetterJobId);
 
   const fetchAllResumes = async () => {
     const token = getCookie("token") as string;
@@ -101,7 +105,10 @@ export default function NewCoverLetterPage() {
         user_id: decodedToken.user.id,
       });
 
-      if (response && response.data && response.data.body) {
+      if (response?.data?.body?.job_id) {
+        // Async job enqueued — start polling
+        setCoverLetterJobId(response.data.body.job_id);
+      } else if (response?.data?.body?.cover_letter_id) {
         setGeneratedCoverLetter(response.data.body);
         loader.hide();
         router.push(
@@ -113,6 +120,18 @@ export default function NewCoverLetterPage() {
       loader.hide();
     }
   };
+
+  useEffect(() => {
+    if (jobStatus.status === "completed" && jobStatus.result) {
+      loader.hide();
+      const coverLetterId = jobStatus.result.cover_letter_id as string;
+      router.push(`/dashboard/cover-letters/edit/${coverLetterId}`);
+    } else if (jobStatus.status === "failed") {
+      loader.hide();
+      setCoverLetterJobId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobStatus.status]);
 
   return (
     <div className="space-y-6">
