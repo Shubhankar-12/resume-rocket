@@ -20,6 +20,7 @@ import jwt from "jsonwebtoken";
 import ResumeAPI from "@/lib/api/user_resume/resume";
 import { useRouter } from "next/navigation";
 import { useLoader } from "@/hooks/useLoader";
+import { useJobStatus } from "@/hooks/useJobStatus";
 import { LimitExceededModal } from "@/components/LimitExceedsModal";
 
 export default function UploadResume() {
@@ -30,6 +31,7 @@ export default function UploadResume() {
   const [isParsing, setIsParsing] = useState(false);
   const [resumeAnalysis, setResumeAnalysis] = useState<any>(null);
   const [inActiveUpload, setInActiveUpload] = useState(false);
+  const [reportJobId, setReportJobId] = useState<string | null>(null);
   const [limitExceededData, setLimitExceededData] = useState<{
     isOpen: boolean;
     limitType: string;
@@ -46,6 +48,7 @@ export default function UploadResume() {
 
   const router = useRouter();
   const loader = useLoader();
+  const jobStatus = useJobStatus(reportJobId);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -136,7 +139,6 @@ export default function UploadResume() {
 
   const handleAnalyzeResume = async () => {
     if (!resumeAnalysis || !resumeAnalysis.resume_id) {
-      // Call the API to analyze the resume
       console.log("Resume analysis not available...");
       return;
     }
@@ -145,15 +147,30 @@ export default function UploadResume() {
       const resp = await ResumeAPI.createReport({
         resume_id: resumeAnalysis.resume_id,
       });
-      if (resp && resp.data && resp.data.body) {
+      if (resp?.data?.body?.job_id) {
+        // Async job enqueued — start polling
+        setReportJobId(resp.data.body.job_id);
+      } else if (resp?.data?.body?.resume_id || resp?.data?.body?.report_id) {
+        // Report already existed or returned directly
         loader.hide();
-        router.push(`/dashboard/grader/${resp.data.body.resume_id}`);
+        router.push(`/dashboard/grader/${resumeAnalysis.resume_id}`);
       }
     } catch (error) {
       loader.hide();
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (jobStatus.status === "completed" && jobStatus.result) {
+      loader.hide();
+      router.push(`/dashboard/grader/${resumeAnalysis?.resume_id}`);
+    } else if (jobStatus.status === "failed") {
+      loader.hide();
+      setReportJobId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobStatus.status]);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
