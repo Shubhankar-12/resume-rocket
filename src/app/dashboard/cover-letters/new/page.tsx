@@ -20,16 +20,18 @@ import { ResumeData } from "@/components/Resumes/types";
 import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
 import CoverLetterAPI from "@/lib/api/cover-letters/cover_letter";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import ResumeAPI from "@/lib/api/user_resume/resume";
 import { useLoader } from "@/hooks/useLoader";
 import { useJobStream } from "@/hooks/useJobStream";
 
 export default function NewCoverLetterPage() {
-  const [jobTitle, setJobTitle] = useState("");
-  const [companyName, setCompanyName] = useState("");
+  const searchParams = useSearchParams();
+
+  const [jobTitle, setJobTitle] = useState(searchParams.get("role") || "");
+  const [companyName, setCompanyName] = useState(searchParams.get("company") || "");
   const [jobDescription, setJobDescription] = useState("");
-  const [selectedResume, setSelectedResume] = useState("");
+  const [selectedResume, setSelectedResume] = useState(searchParams.get("resume_id") || "");
   const [coverLetterJobId, setCoverLetterJobId] = useState<string | null>(null);
 
   // Mock resume data
