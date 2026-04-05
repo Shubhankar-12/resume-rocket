@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Github, Upload } from "lucide-react";
+import { OnboardingWrapper } from "./OnboardingWrapper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { StatsType } from "../types/DashboardTypes";
 import { cookies } from "next/headers";
-import { generateBucketUrl } from "@/helpers/utils";
 import { formatDistanceToNow } from "date-fns";
 export const dynamic = "force-dynamic";
 
@@ -22,14 +22,11 @@ const getDashboardData = async (): Promise<StatsType | null> => {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_USER_API}/api/v1/user/stats`,
-      {
-        headers: {
-          Authorization: `Bearer ` + token,
-        },
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_USER_API}/api/v1/user/stats`, {
+      headers: {
+        Authorization: `Bearer ` + token,
+      },
+    });
     if (!res.ok) return null;
     const response = await res.json();
 
@@ -55,14 +52,13 @@ export default async function Dashboard() {
   if (!dashboardData) return <div>Something went wrong</div>;
   return (
     <div className="space-y-6">
+      <OnboardingWrapper />
       {/* Welcome Banner */}
       <Card className="bg-gradient-to-r from-blue-500 to-teal-500 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">
-                Welcome back, {dashboardData.name}!
-              </h2>
+              <h2 className="text-2xl font-bold">Welcome back, {dashboardData.name}!</h2>
               <p className="text-blue-100">
                 {dashboardData.user_resumes &&
                 dashboardData.user_resumes.analysis &&
@@ -73,10 +69,7 @@ export default async function Dashboard() {
             </div>
             <Avatar className="h-16 w-16 border-2 border-white">
               {dashboardData.avatar && dashboardData.avatar.url ? (
-                <AvatarImage
-                  src={dashboardData.avatar.url}
-                  alt={dashboardData.name}
-                />
+                <AvatarImage src={dashboardData.avatar.url} alt={dashboardData.name} />
               ) : (
                 <AvatarFallback className="dark:text-white text-gray-800">
                   {dashboardData.name.charAt(0).toUpperCase()}
@@ -113,9 +106,7 @@ export default async function Dashboard() {
                 <FileText className="mr-2 h-5 w-5 text-primary" />
                 Create Cover Letter
               </CardTitle>
-              <CardDescription>
-                Create a cover letter for your resume
-              </CardDescription>
+              <CardDescription>Create a cover letter for your resume</CardDescription>
             </CardHeader>
             <CardFooter>
               <Button asChild className="w-full">
@@ -129,20 +120,16 @@ export default async function Dashboard() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <Github className="mr-2 h-5 w-5 text-primary" />
-                {dashboardData?.provider === "github" &&
-                dashboardData?.githubProfile?.username
+                {dashboardData?.provider === "github" && dashboardData?.githubProfile?.username
                   ? `${dashboardData.githubProfile.username}`
                   : "Connect GitHub"}
               </CardTitle>
-              <CardDescription>
-                Analyze your projects for resume
-              </CardDescription>
+              <CardDescription>Analyze your projects for resume</CardDescription>
             </CardHeader>
             <CardFooter>
               <Button asChild className="w-full">
                 <Link href="/dashboard/github">
-                  {dashboardData?.provider === "github" &&
-                  dashboardData?.githubProfile?.username
+                  {dashboardData?.provider === "github" && dashboardData?.githubProfile?.username
                     ? "Analyze Now"
                     : "Connect"}{" "}
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -161,34 +148,26 @@ export default async function Dashboard() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Resume Score</CardTitle>
-                <CardDescription>
-                  Your current resume performance
-                </CardDescription>
+                <CardDescription>Your current resume performance</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Overall Grade</span>
                     <span className="text-sm font-medium text-primary">
-                      {getGrade(
-                        dashboardData.user_resumes.analysis.gradingScore
-                      )}
+                      {getGrade(dashboardData.user_resumes.analysis.gradingScore)}
                     </span>
                   </div>
                   <Progress value={75} className="h-2" />
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">
-                        ATS Compatibility
-                      </p>
+                      <p className="text-sm text-muted-foreground">ATS Compatibility</p>
                       <p className="text-lg font-semibold">
                         {dashboardData.user_resumes.analysis.atsScore}%
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">
-                        Keyword Match
-                      </p>
+                      <p className="text-sm text-muted-foreground">Keyword Match</p>
                       <p className="text-lg font-semibold">
                         {dashboardData.user_resumes.analysis.gradingScore}%
                       </p>
@@ -198,12 +177,7 @@ export default async function Dashboard() {
               </CardContent>
               <CardFooter>
                 <Button asChild variant="outline" className="w-full">
-                  <Link
-                    href={
-                      "/dashboard/grader/" +
-                      dashboardData?.user_resumes?.user_resume_id
-                    }
-                  >
+                  <Link href={"/dashboard/grader/" + dashboardData?.user_resumes?.user_resume_id}>
                     View Full Report
                   </Link>
                 </Button>
@@ -213,30 +187,22 @@ export default async function Dashboard() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Add Resume</CardTitle>
-                <CardDescription>
-                  Upload your resume for analysis
-                </CardDescription>
+                <CardDescription>Upload your resume for analysis</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Overall Grade</span>
-                    <span className="text-sm font-medium text-primary">
-                      Resume not found
-                    </span>
+                    <span className="text-sm font-medium text-primary">Resume not found</span>
                   </div>
                   <Progress value={0} className="h-2" />
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">
-                        ATS Compatibility
-                      </p>
+                      <p className="text-sm text-muted-foreground">ATS Compatibility</p>
                       <p className="text-lg font-semibold">N/A</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">
-                        Keyword Match
-                      </p>
+                      <p className="text-sm text-muted-foreground">Keyword Match</p>
                       <p className="text-lg font-semibold">N/A</p>
                     </div>
                   </div>
@@ -268,21 +234,16 @@ export default async function Dashboard() {
                           `You uploaded ${dashboardData?.user_resumes?.resume?.name}`}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(
-                          new Date(dashboardData.user_resumes.created_on),
-                          { addSuffix: true }
-                        )}
+                        {formatDistanceToNow(new Date(dashboardData.user_resumes.created_on), {
+                          addSuffix: true,
+                        })}
                       </p>
                     </div>
                   ) : (
                     <div>
                       <p className="text-sm font-medium">No Activity</p>
-                      <p className="text-xs text-muted-foreground">
-                        Add a resume to get started
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        No Resume Added
-                      </p>
+                      <p className="text-xs text-muted-foreground">Add a resume to get started</p>
+                      <p className="text-xs text-muted-foreground">No Resume Added</p>
                     </div>
                   )}
                 </div>
@@ -292,17 +253,14 @@ export default async function Dashboard() {
                   </div>
                   {dashboardData?.cover_letters?.created_on ? (
                     <div>
-                      <p className="text-sm font-medium">
-                        Cover Letter Generated
-                      </p>
+                      <p className="text-sm font-medium">Cover Letter Generated</p>
                       <p className="text-xs text-muted-foreground">
                         For {dashboardData?.cover_letters?.role} position
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(
-                          new Date(dashboardData.cover_letters.created_on),
-                          { addSuffix: true }
-                        )}
+                        {formatDistanceToNow(new Date(dashboardData.cover_letters.created_on), {
+                          addSuffix: true,
+                        })}
                       </p>
                     </div>
                   ) : (
@@ -311,9 +269,7 @@ export default async function Dashboard() {
                       <p className="text-xs text-muted-foreground">
                         Generate a cover letter by reviewing your resume
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        No Cover Letter Generated
-                      </p>
+                      <p className="text-xs text-muted-foreground">No Cover Letter Generated</p>
                     </div>
                   )}
                 </div>
@@ -334,39 +290,26 @@ export default async function Dashboard() {
         dashboardData?.user_resumes?.analysis?.suggestions &&
         dashboardData?.user_resumes?.analysis?.suggestions?.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">
-              Suggested Improvements
-            </h2>
+            <h2 className="text-xl font-semibold mb-4">Suggested Improvements</h2>
             <Card>
               <CardContent className="p-6">
                 <ul className="space-y-3">
-                  {dashboardData?.user_resumes?.analysis?.suggestions.map(
-                    (suggestion, index) => (
-                      <li key={index} className="flex items-start">
-                        <div className="mr-3 mt-0.5 h-5 w-5 rounded-full bg-amber-100 flex items-center justify-center">
-                          <span className="text-amber-600 text-xs font-bold">
-                            !
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-medium">{suggestion?.title}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {suggestion?.description}
-                          </p>
-                        </div>
-                      </li>
-                    )
-                  )}
+                  {dashboardData?.user_resumes?.analysis?.suggestions.map((suggestion, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="mr-3 mt-0.5 h-5 w-5 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span className="text-amber-600 text-xs font-bold">!</span>
+                      </div>
+                      <div>
+                        <p className="font-medium">{suggestion?.title}</p>
+                        <p className="text-sm text-muted-foreground">{suggestion?.description}</p>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full">
-                  <Link
-                    href={
-                      "/dashboard/grader/" +
-                      dashboardData?.user_resumes?.user_resume_id
-                    }
-                  >
+                  <Link href={"/dashboard/grader/" + dashboardData?.user_resumes?.user_resume_id}>
                     Fix Issues Now
                   </Link>
                 </Button>
