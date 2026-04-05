@@ -38,14 +38,11 @@ const navigation = [
   { name: "GitHub Projects", href: "/dashboard/github", icon: Github },
   { name: "Upload Resume", href: "/dashboard/upload", icon: Upload },
   // { name: "Resume Grader", href: "/dashboard/grader", iconass: BarChart3 },
+  { name: "AI Analytics", href: "/dashboard/ai-analytics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const dispatch = useDispatch();
@@ -69,9 +66,7 @@ export default function DashboardLayout({
             <div className="flex items-center justify-between h-16 px-4 border-b">
               <Link href="/dashboard" className="flex items-center">
                 {isSidebarOpen ? (
-                  <h1 className="text-xl font-bold text-primary">
-                    ResumeRocket
-                  </h1>
+                  <h1 className="text-xl font-bold text-primary">ResumeRocket</h1>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                     <span className="text-primary-foreground font-bold">R</span>
@@ -94,9 +89,7 @@ export default function DashboardLayout({
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className={`transition-all duration-300 ${
-                    isSidebarOpen ? "" : "rotate-180"
-                  }`}
+                  className={`transition-all duration-300 ${isSidebarOpen ? "" : "rotate-180"}`}
                 >
                   <path d="m15 18-6-6 6-6" />
                 </svg>
@@ -138,26 +131,17 @@ export default function DashboardLayout({
                 <div className="flex items-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="relative h-8 w-8 rounded-full"
-                      >
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src="/placeholder.svg" alt="User" />
                           <AvatarFallback>JD</AvatarFallback>
                         </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      className="w-56"
-                      align="end"
-                      forceMount
-                    >
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            John Doe
-                          </p>
+                          <p className="text-sm font-medium leading-none">John Doe</p>
                           <p className="text-xs leading-none text-muted-foreground">
                             john.doe@example.com
                           </p>
@@ -194,11 +178,7 @@ export default function DashboardLayout({
                 key={item.name}
                 href={item.href}
                 className={`
-                ${
-                  pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }
+                ${pathname === item.href ? "text-primary" : "text-muted-foreground"}
                 flex flex-col items-center justify-center
               `}
               >
@@ -235,18 +215,13 @@ export default function DashboardLayout({
                   <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
               </Button>
-              <h1 className="text-xl font-semibold ml-2 md:hidden">
-                ResumeRocket
-              </h1>
+              <h1 className="text-xl font-semibold ml-2 md:hidden">ResumeRocket</h1>
             </div>
             <div className="flex items-center space-x-2">
               <ModeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="md:hidden">
-                  <Button
-                    variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
-                  >
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="/placeholder.svg" alt="User" />
                       <AvatarFallback>JD</AvatarFallback>
@@ -256,9 +231,7 @@ export default function DashboardLayout({
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        John Doe
-                      </p>
+                      <p className="text-sm font-medium leading-none">John Doe</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         john.doe@example.com
                       </p>
@@ -282,9 +255,7 @@ export default function DashboardLayout({
               </DropdownMenu>
             </div>
           </header>
-          <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
-            {children}
-          </main>
+          <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">{children}</main>
         </div>
       </div>
     </RequireAuth>

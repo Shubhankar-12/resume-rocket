@@ -115,11 +115,15 @@ export default function PlansPage() {
     }
 
     const token = await getCookie("token");
-    const decodedToken = (await jwt.decode(token as string)) as { user?: { id?: string } } | null;
+    const decodedToken = (await jwt.decode(token as string)) as {
+      user?: { id?: string; name?: string; email?: string };
+    } | null;
     if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
       console.error("Invalid token or user ID not found");
       return;
     }
+
+    const tokenUser = decodedToken.user;
 
     // Load Razorpay script dynamically
     const script = document.createElement("script");
@@ -152,8 +156,8 @@ export default function PlansPage() {
           });
         },
         prefill: {
-          name: decodedToken.user.name, // Can be dynamically filled from user profile
-          email: decodedToken.user.email,
+          name: tokenUser.name, // Can be dynamically filled from user profile
+          email: tokenUser.email,
           contact: "9999999999",
         },
         theme: {
