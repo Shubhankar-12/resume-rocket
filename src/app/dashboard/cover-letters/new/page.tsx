@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, Sparkles, AlertCircle, Loader2 } from "lucide-react";
+import { ChevronLeft, Sparkles, AlertCircle } from "lucide-react";
 import { ResumeData } from "@/components/Resumes/types";
 import { getCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
@@ -29,34 +23,29 @@ import CoverLetterAPI from "@/lib/api/cover-letters/cover_letter";
 import { useRouter } from "next/navigation";
 import ResumeAPI from "@/lib/api/user_resume/resume";
 import { useLoader } from "@/hooks/useLoader";
-import { useJobStatus } from "@/hooks/useJobStatus";
+import { useJobStream } from "@/hooks/useJobStream";
 
 export default function NewCoverLetterPage() {
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [selectedResume, setSelectedResume] = useState("");
-  const [generatedCoverLetter, setGeneratedCoverLetter] = useState({
-    cover_letter: "",
-    resume_id: "",
-    cover_letter_id: "",
-    cover_letter_summary: "",
-    job_description: "",
-    role: "",
-    company: "",
-  });
-
   const [coverLetterJobId, setCoverLetterJobId] = useState<string | null>(null);
 
   // Mock resume data
   const [resumes, setResumes] = useState<ResumeData[]>([]);
   const router = useRouter();
   const loader = useLoader();
-  const jobStatus = useJobStatus(coverLetterJobId);
+  const {
+    status: streamStatus,
+    text: streamText,
+    coverId,
+    error: streamError,
+  } = useJobStream(coverLetterJobId);
 
   const fetchAllResumes = async () => {
     const token = getCookie("token") as string;
-    const decodedToken: any = await jwt.decode(token);
+    const decodedToken = jwt.decode(token) as { user?: { id?: string } } | null;
     console.log("Decoded Token:", decodedToken);
 
     if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
@@ -87,7 +76,7 @@ export default function NewCoverLetterPage() {
       return;
     }
     const token = getCookie("token") as string;
-    const decodedToken: any = await jwt.decode(token);
+    const decodedToken = jwt.decode(token) as { user?: { id?: string } } | null;
     console.log("Decoded Token:", decodedToken);
 
     if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
@@ -109,11 +98,8 @@ export default function NewCoverLetterPage() {
         // Async job enqueued — start polling
         setCoverLetterJobId(response.data.body.job_id);
       } else if (response?.data?.body?.cover_letter_id) {
-        setGeneratedCoverLetter(response.data.body);
         loader.hide();
-        router.push(
-          `/dashboard/cover-letters/edit/${response.data.body.cover_letter_id}`
-        );
+        router.push(`/dashboard/cover-letters/edit/${response.data.body.cover_letter_id}`);
       }
     } catch (error) {
       console.error("Error generating cover letter:", error);
@@ -122,16 +108,17 @@ export default function NewCoverLetterPage() {
   };
 
   useEffect(() => {
-    if (jobStatus.status === "completed" && jobStatus.result) {
+    if (streamStatus === "completed" && coverId) {
       loader.hide();
-      const coverLetterId = jobStatus.result.cover_letter_id as string;
-      router.push(`/dashboard/cover-letters/edit/${coverLetterId}`);
-    } else if (jobStatus.status === "failed") {
+      router.push(`/dashboard/cover-letters/edit/${coverId}`);
+    } else if (streamStatus === "failed") {
       loader.hide();
       setCoverLetterJobId(null);
+    } else if (streamStatus === "streaming") {
+      loader.hide();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobStatus.status]);
+  }, [streamStatus, coverId]);
 
   return (
     <div className="space-y-6">
@@ -143,9 +130,7 @@ export default function NewCoverLetterPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              Create New Cover Letter
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight">Create New Cover Letter</h1>
             <p className="text-muted-foreground">
               Generate a personalized cover letter for your job application
             </p>
@@ -215,9 +200,7 @@ export default function NewCoverLetterPage() {
         <CardFooter>
           <Button
             onClick={handleGenerate}
-            disabled={
-              !jobTitle || !companyName || !jobDescription || !selectedResume
-            }
+            disabled={!jobTitle || !companyName || !jobDescription || !selectedResume}
           >
             <>
               <Sparkles className="mr-2 h-4 w-4" />
@@ -227,22 +210,40 @@ export default function NewCoverLetterPage() {
         </CardFooter>
       </Card>
 
+      {streamStatus === "streaming" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 animate-pulse text-primary" />
+              Generating your cover letter...
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap">
+              {streamText}
+              <span className="animate-pulse text-primary">|</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {streamStatus === "failed" && streamError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Generation failed</AlertTitle>
+          <AlertDescription>{streamError}</AlertDescription>
+        </Alert>
+      )}
+
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Tips for a great cover letter</AlertTitle>
         <AlertDescription>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
             <li>Provide a detailed job description for better tailoring</li>
-            <li>
-              Make sure your selected resume is up-to-date with relevant
-              experience
-            </li>
-            <li>
-              Review and personalize the generated cover letter before sending
-            </li>
-            <li>
-              Customize the greeting if you know the hiring manager's name
-            </li>
+            <li>Make sure your selected resume is up-to-date with relevant experience</li>
+            <li>Review and personalize the generated cover letter before sending</li>
+            <li>Customize the greeting if you know the hiring manager&apos;s name</li>
           </ul>
         </AlertDescription>
       </Alert>
