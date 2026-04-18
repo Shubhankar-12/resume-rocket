@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { emitOutOfCredits } from "@/lib/events/outOfCredits";
 
 // Define your base URLs
 const SERVICE_URL = {
@@ -16,3 +17,18 @@ export const userService: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Intercept 402 INSUFFICIENT_CREDITS responses and raise the OutOfCredits modal.
+userService.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error?.response?.status === 402 &&
+      error?.response?.data?.error === "INSUFFICIENT_CREDITS"
+    ) {
+      const needed = Number(error.response.data.creditsNeeded) || 1;
+      emitOutOfCredits(needed);
+    }
+    return Promise.reject(error);
+  }
+);
