@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/mode-toggle";
+import { CreditBalancePill } from "@/components/CreditBalancePill";
 import RequireAuth from "@/components/RequireAuth";
 import { logout } from "@/lib/store/slices/authSlice";
 import { useDispatch } from "react-redux";
@@ -220,6 +221,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <h1 className="text-xl font-semibold ml-2 md:hidden">ResumeRocket</h1>
             </div>
             <div className="flex items-center space-x-2">
+              <CreditBalancePill />
               <ModeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="md:hidden">
