@@ -2,193 +2,147 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Sparkles, Shield, Zap } from "lucide-react";
+import { Check, X, Sparkles, Shield, Zap, Rocket, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-// import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
-import { getCookie } from "cookies-next";
-import jwt from "jsonwebtoken";
+import { BillingAPI, type Plan } from "@/lib/api";
+import { useCurrency } from "@/hooks/useCurrency";
+import { CurrencyToggle } from "@/components/CurrencyToggle";
 
-// Define plan types
-interface Feature {
+// Display metadata keyed off plan_id — keeps the existing visual design language
+// while the pricing numbers and feature list come from the backend catalog.
+const PLAN_META: Record<
+  Plan["plan_id"],
+  {
+    name: string;
+    description: string;
+    icon: React.ElementType;
+    color: string;
+    popular?: boolean;
+    order: number;
+  }
+> = {
+  FREE: {
+    name: "Free",
+    description: "Basic resume analysis for job seekers",
+    icon: Sparkles,
+    color: "bg-gradient-to-br from-blue-400 to-blue-600",
+    order: 0,
+  },
+  STARTER: {
+    name: "Starter",
+    description: "Kickstart your job hunt with core tools",
+    icon: Rocket,
+    color: "bg-gradient-to-br from-sky-400 to-sky-600",
+    order: 1,
+  },
+  BASIC: {
+    name: "Basic",
+    description: "Essential tools for serious job seekers",
+    icon: Shield,
+    color: "bg-gradient-to-br from-emerald-400 to-emerald-600",
+    order: 2,
+  },
+  PRO: {
+    name: "Pro",
+    description: "Complete toolkit for career advancement",
+    icon: Zap,
+    color: "bg-gradient-to-br from-purple-400 to-purple-600",
+    popular: true,
+    order: 3,
+  },
+  CAREER_PLUS: {
+    name: "Career Plus",
+    description: "Everything in Pro plus priority coaching",
+    icon: Crown,
+    color: "bg-gradient-to-br from-pink-400 to-pink-600",
+    order: 4,
+  },
+};
+
+function formatFeatureLabel(key: string, value: unknown): string {
+  const nice = key.replace(/_/g, " ");
+  if (typeof value === "boolean") return nice.charAt(0).toUpperCase() + nice.slice(1);
+  if (typeof value === "number") {
+    return `${value} ${nice}`;
+  }
+  if (typeof value === "string") {
+    return `${nice.charAt(0).toUpperCase() + nice.slice(1)}: ${value}`;
+  }
+  return nice;
+}
+
+interface NormalizedFeature {
   name: string;
   included: boolean;
 }
 
-interface Plan {
-  id: string;
-  name: string;
-  description: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  features: Feature[];
-  popular?: boolean;
-  icon: React.ElementType;
-  color: string;
+function normalizeFeatures(features: Record<string, unknown>): NormalizedFeature[] {
+  return Object.entries(features).map(([key, value]) => {
+    let included = true;
+    if (typeof value === "boolean") included = value;
+    else if (value === null || value === undefined || value === 0) included = false;
+    return { name: formatFeatureLabel(key, value), included };
+  });
 }
 
 export default function PlansPage() {
-  const [yearly, setYearly] = useState(false);
-  //   const { toast } = useconsole.log();
+  const { currency } = useCurrency();
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [fetching, setFetching] = useState(true);
+  const [subscribingId, setSubscribingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Define the plans
-  const plans: Plan[] = [
-    {
-      id: "FREE",
-      name: "Free",
-      description: "Basic resume analysis for job seekers",
-      monthlyPrice: 0,
-      yearlyPrice: 0,
-      icon: Sparkles,
-      color: "bg-gradient-to-br from-blue-400 to-blue-600",
-      features: [
-        { name: "3 Resume Uploads/month", included: true },
-        { name: "Basic ATS Check", included: true },
-        { name: "Limited Resume Analysis", included: true },
-        { name: "Email Support", included: true },
-        { name: "Cover Letter Generation", included: false },
-        { name: "GitHub Project Analysis", included: false },
-        { name: "Job-Specific Tailoring", included: false },
-        { name: "Priority Support", included: false },
-      ],
-    },
-    {
-      id: "BASIC",
-      name: "Basic",
-      description: "Essential tools for serious job seekers",
-      monthlyPrice: 199,
-      yearlyPrice: 1899, // 20 % OF (199 * 12 = 2398)
-      icon: Shield,
-      color: "bg-gradient-to-br from-emerald-400 to-emerald-600",
-      features: [
-        { name: "5 Resume Uploads", included: true },
-        { name: "Advanced ATS Check", included: true },
-        { name: "Full Resume Analysis", included: true },
-        { name: "Email Support", included: true },
-        { name: "Cover Letter Generation", included: true },
-        { name: "GitHub Project Analysis", included: false },
-        { name: "Job-Specific Tailoring", included: false },
-        { name: "Priority Support", included: false },
-      ],
-    },
-    {
-      id: "PRO",
-      name: "Pro",
-      description: "Complete toolkit for career advancement",
-      monthlyPrice: 499,
-      yearlyPrice: 4799,
-      icon: Zap,
-      color: "bg-gradient-to-br from-purple-400 to-purple-600",
-      popular: true,
-      features: [
-        { name: "Unlimited Resume Uploads", included: true },
-        { name: "Advanced ATS Check", included: true },
-        { name: "Full Resume Analysis", included: true },
-        { name: "Email Support", included: true },
-        { name: "Cover Letter Generation", included: true },
-        { name: "GitHub Project Analysis", included: true },
-        { name: "Job-Specific Tailoring", included: true },
-        { name: "Priority Support", included: true },
-      ],
-    },
-  ];
-
-  // Function to handle Razorpay payment
-  const handleSubscribe = async (plan: Plan) => {
-    const price = yearly ? plan.yearlyPrice : plan.monthlyPrice;
-    console.log("PLAN", plan);
-
-    if (plan.id === "FREE") {
-      const freeRes = await PaymentSubcriptionAPI.createSubscription({
-        plan: plan.id,
-      });
-      if (freeRes && freeRes.data && freeRes.data.body) {
-        console.log(freeRes.data.body);
-        alert("Subscribed Successfully");
-        return;
+  useEffect(() => {
+    let cancelled = false;
+    setFetching(true);
+    setError(null);
+    (async () => {
+      try {
+        const r = await BillingAPI.listPlans(currency);
+        if (!cancelled) {
+          const body = r?.data?.body ?? [];
+          setPlans(body);
+        }
+      } catch (e) {
+        console.error("Failed to load plans", e);
+        if (!cancelled) setError("Unable to load plans. Please try again.");
+      } finally {
+        if (!cancelled) setFetching(false);
       }
-    }
-
-    const token = await getCookie("token");
-    const decodedToken = (await jwt.decode(token as string)) as {
-      user?: { id?: string; name?: string; email?: string };
-    } | null;
-    if (!decodedToken || !decodedToken?.user || !decodedToken?.user?.id) {
-      console.error("Invalid token or user ID not found");
-      return;
-    }
-
-    const tokenUser = decodedToken.user;
-
-    // Load Razorpay script dynamically
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-
-    script.onload = () => {
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, // Replace with your actual Razorpay key
-        amount: price * 100, // Amount in smallest currency unit (e.g., paise for INR)
-        currency: "INR",
-        name: "ResumeRocket",
-        description: `${plan.name} Plan - ${yearly ? "Yearly" : "Monthly"} Subscription`,
-        image: "/logo.png", // Add your logo URL
-        handler: async (response: { razorpay_payment_id?: string }) => {
-          // Handle successful payment
-          if (response && response.razorpay_payment_id) {
-            const resp = await PaymentSubcriptionAPI.createSubscription({
-              plan: plan.id,
-            });
-            if (resp && resp.data && resp.data.body) {
-              console.log(resp.data.body);
-              alert("Subscribed Successfully");
-            }
-          }
-
-          console.log({
-            title: "Payment Successful!",
-            description: `Your payment for the ${plan.name} plan was successful. Payment ID: ${response.razorpay_payment_id}`,
-          });
-        },
-        prefill: {
-          name: tokenUser.name, // Can be dynamically filled from user profile
-          email: tokenUser.email,
-          contact: "9999999999",
-        },
-        theme: {
-          color: "#7C3AED", // Primary color of your app
-        },
-        modal: {
-          ondismiss: () => {
-            console.log({
-              title: "Payment Cancelled",
-              description: "You cancelled the payment process. You can try again anytime.",
-              variant: "destructive",
-            });
-          },
-        },
-      };
-
-      // @ts-expect-error - Razorpay is loaded dynamically
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
+    })();
+    return () => {
+      cancelled = true;
     };
+  }, [currency]);
 
-    script.onerror = () => {
-      console.log({
-        title: "Payment Error",
-        description: "Failed to load payment gateway. Please try again later.",
-        variant: "destructive",
-      });
-    };
+  async function handleSubscribe(planId: string) {
+    setSubscribingId(planId);
+    setError(null);
+    try {
+      const r = await BillingAPI.createCheckoutSession(planId, currency);
+      const checkoutUrl = r?.data?.body?.checkoutUrl;
+      if (!checkoutUrl) {
+        throw new Error("Checkout URL missing from response.");
+      }
+      window.location.href = checkoutUrl;
+    } catch (e: unknown) {
+      console.error("Checkout failed", e);
+      const msg = e instanceof Error ? e.message : "Checkout failed. Please try again.";
+      setError(msg);
+      setSubscribingId(null);
+    }
+  }
 
-    document.body.appendChild(script);
-  };
+  const symbol = currency === "USD" ? "$" : "₹";
+
+  const sortedPlans = [...plans].sort((a, b) => {
+    const ao = PLAN_META[a.plan_id]?.order ?? 999;
+    const bo = PLAN_META[b.plan_id]?.order ?? 999;
+    return ao - bo;
+  });
 
   return (
     <div className="container max-w-7xl mx-auto px-4 py-12">
@@ -205,121 +159,154 @@ export default function PlansPage() {
           Select the perfect plan to accelerate your job search and career growth
         </p>
 
-        {/* Billing toggle */}
-        <div className="flex items-center justify-center mt-8 space-x-3">
-          <span className={cn("text-sm", !yearly && "font-medium text-foreground")}>Monthly</span>
-          <Switch
-            checked={yearly}
-            onCheckedChange={setYearly}
-            className="data-[state=checked]:bg-purple-600"
-          />
-          <span className={cn("text-sm", yearly && "font-medium text-foreground")}>
-            Yearly
-            <Badge
-              variant="outline"
-              className="ml-2 bg-purple-100 text-purple-800 border-purple-200"
-            >
-              Save 20%
-            </Badge>
-          </span>
+        <div className="flex items-center justify-center mt-8">
+          <CurrencyToggle />
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-        <AnimatePresence>
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={cn(
-                "relative rounded-2xl overflow-hidden border shadow-lg hover:shadow-xl transition-all duration-300 bg-card hover:ring-2 hover:ring-offset-2",
-                plan.popular && "ring-purple-500"
-              )}
-            >
-              {plan.popular && (
-                <div className="absolute top-0 right-0">
-                  <div className="text-xs font-bold uppercase tracking-wider bg-purple-600 text-white px-4 py-1 rounded-bl-lg shadow-md">
-                    Popular
-                  </div>
-                </div>
-              )}
+      {error && (
+        <div className="mb-6 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
-              <div
-                className={cn(
-                  "p-1",
-                  plan.popular && "bg-gradient-to-r from-purple-500 to-pink-500"
-                )}
-              >
-                <div className="bg-card rounded-t-xl p-6">
-                  <div className="flex items-center justify-between">
-                    <div className={cn("p-2 rounded-lg", plan.color)}>
-                      <plan.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold">{plan.name}</h3>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
-
-                  <div className="mt-4 flex items-baseline">
-                    <span className="text-3xl font-extrabold">
-                      ₹{yearly ? plan.yearlyPrice : plan.monthlyPrice}
-                    </span>
-                    <span className="ml-1 text-muted-foreground">
-                      {plan.monthlyPrice > 0 ? (yearly ? "/year" : "/month") : ""}
-                    </span>
-                  </div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="mt-6"
-                  >
-                    <Button
-                      onClick={() => handleSubscribe(plan)}
-                      className={cn(
-                        "w-full",
-                        plan.popular
-                          ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                          : ""
-                      )}
-                      variant={plan.popular ? "default" : "outline"}
-                      size="lg"
-                    >
-                      {plan.monthlyPrice === 0 ? "Get Started" : "Subscribe"}
-                    </Button>
-                  </motion.div>
-                </div>
-              </div>
-
-              <div className="p-6 pt-4 space-y-4">
-                <h4 className="text-sm font-medium text-muted-foreground">Plan includes:</h4>
-                <ul className="space-y-3">
-                  {plan.features.map((feature, i) => (
-                    <motion.li
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 + i * 0.1 }}
-                      className="flex items-start"
-                    >
-                      {feature.included ? (
-                        <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                      ) : (
-                        <X className="h-5 w-5 text-muted-foreground mr-2 shrink-0" />
-                      )}
-                      <span className={cn("text-sm", !feature.included && "text-muted-foreground")}>
-                        {feature.name}
-                      </span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
+      {fetching && plans.length === 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="rounded-2xl border bg-card h-96 animate-pulse"
+              aria-hidden="true"
+            />
           ))}
-        </AnimatePresence>
-      </div>
+        </div>
+      ) : sortedPlans.length === 0 ? (
+        <div className="text-center text-muted-foreground py-16">
+          No plans are currently available for {currency}. Please check back soon.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+          <AnimatePresence>
+            {sortedPlans.map((plan, index) => {
+              const meta = PLAN_META[plan.plan_id] ?? {
+                name: plan.plan_id.replace(/_/g, " "),
+                description: "",
+                icon: Sparkles,
+                color: "bg-gradient-to-br from-slate-400 to-slate-600",
+                order: 999,
+              };
+              const PlanIcon = meta.icon;
+              const displayPrice = (plan.amount / 100).toFixed(0);
+              const normalizedFeatures = normalizeFeatures(plan.features);
+              const isFree = plan.amount === 0;
+              const isSubscribing = subscribingId === plan.plan_id;
+
+              return (
+                <motion.div
+                  key={`${plan.plan_id}-${plan.region}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className={cn(
+                    "relative rounded-2xl overflow-hidden border shadow-lg hover:shadow-xl transition-all duration-300 bg-card hover:ring-2 hover:ring-offset-2",
+                    meta.popular && "ring-purple-500"
+                  )}
+                >
+                  {meta.popular && (
+                    <div className="absolute top-0 right-0">
+                      <div className="text-xs font-bold uppercase tracking-wider bg-purple-600 text-white px-4 py-1 rounded-bl-lg shadow-md">
+                        Popular
+                      </div>
+                    </div>
+                  )}
+
+                  <div
+                    className={cn(
+                      "p-1",
+                      meta.popular && "bg-gradient-to-r from-purple-500 to-pink-500"
+                    )}
+                  >
+                    <div className="bg-card rounded-t-xl p-6">
+                      <div className="flex items-center justify-between">
+                        <div className={cn("p-2 rounded-lg", meta.color)}>
+                          <PlanIcon className="h-6 w-6 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold">{meta.name}</h3>
+                      </div>
+
+                      <p className="text-sm text-muted-foreground mt-2">{meta.description}</p>
+
+                      <div className="mt-4 flex items-baseline">
+                        <span className="text-3xl font-extrabold">
+                          {symbol}
+                          {displayPrice}
+                        </span>
+                        <span className="ml-1 text-muted-foreground">{isFree ? "" : "/month"}</span>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {plan.monthly_credits} credits / month
+                      </p>
+
+                      <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="mt-6"
+                      >
+                        <Button
+                          onClick={() => handleSubscribe(plan.plan_id)}
+                          disabled={isSubscribing || subscribingId !== null}
+                          className={cn(
+                            "w-full",
+                            meta.popular
+                              ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                              : ""
+                          )}
+                          variant={meta.popular ? "default" : "outline"}
+                          size="lg"
+                        >
+                          {isSubscribing ? "Redirecting..." : isFree ? "Get Started" : "Subscribe"}
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  {normalizedFeatures.length > 0 && (
+                    <div className="p-6 pt-4 space-y-4">
+                      <h4 className="text-sm font-medium text-muted-foreground">Plan includes:</h4>
+                      <ul className="space-y-3">
+                        {normalizedFeatures.map((feature, i) => (
+                          <motion.li
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 + i * 0.05 }}
+                            className="flex items-start"
+                          >
+                            {feature.included ? (
+                              <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                            ) : (
+                              <X className="h-5 w-5 text-muted-foreground mr-2 shrink-0" />
+                            )}
+                            <span
+                              className={cn(
+                                "text-sm",
+                                !feature.included && "text-muted-foreground"
+                              )}
+                            >
+                              {feature.name}
+                            </span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
 
       <motion.div
         initial={{ opacity: 0 }}
