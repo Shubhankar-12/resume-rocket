@@ -20,7 +20,10 @@ function loadRazorpayScript(): Promise<void> {
       existing.addEventListener("load", () => resolve(), { once: true });
       existing.addEventListener(
         "error",
-        () => reject(new Error("Razorpay script failed to load")),
+        () => {
+          scriptPromise = null;
+          reject(new Error("Razorpay script failed to load"));
+        },
         { once: true }
       );
       return;
@@ -29,7 +32,10 @@ function loadRazorpayScript(): Promise<void> {
     script.src = SCRIPT_SRC;
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Razorpay script failed to load"));
+    script.onerror = () => {
+      scriptPromise = null;
+      reject(new Error("Razorpay script failed to load"));
+    };
     document.head.appendChild(script);
   });
 
