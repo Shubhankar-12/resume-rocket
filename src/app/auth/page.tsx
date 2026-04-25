@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import AuthAPI from "@/lib/api";
 import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
 import { useDispatch } from "react-redux";
 import { login } from "@/lib/store/slices/authSlice";
+import { captureEvent } from "@/lib/analytics/posthog";
 
 function AuthPageInner() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
@@ -36,6 +37,14 @@ function AuthPageInner() {
     nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
       ? nextParam
       : "/dashboard";
+
+  const signupStartedRef = useRef(false);
+  const eventSource = useMemo<"landing" | "header" | "other">(() => {
+    if (typeof document === "undefined") return "other";
+    const ref = document.referrer || "";
+    if (ref && ref.startsWith(window.location.origin)) return "landing";
+    return "other";
+  }, []);
 
   useEffect(() => {
     async function checkAuth() {
@@ -124,6 +133,7 @@ function AuthPageInner() {
         // Create a free subscription after successful registration
         await createFreeSubscription();
         setIsLoading(false);
+        captureEvent("signup_completed", { source: eventSource });
         router.push(redirectDestination);
       }
     } catch (error) {
@@ -159,7 +169,16 @@ function AuthPageInner() {
                 Sign in to your account or create a new one
               </p>
             </div>
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs
+              defaultValue="login"
+              className="w-full"
+              onValueChange={(v) => {
+                if (v === "register" && !signupStartedRef.current) {
+                  signupStartedRef.current = true;
+                  captureEvent("signup_started", { source: eventSource });
+                }
+              }}
+            >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
