@@ -16,8 +16,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FileText, Github, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { FileText, Github } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import AuthAPI from "@/lib/api";
 import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
 import { useDispatch } from "react-redux";
@@ -28,6 +28,14 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next");
+
+  // Only honor `next=` values that look like internal paths to prevent open-redirect.
+  const redirectDestination =
+    nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : "/dashboard";
 
   useEffect(() => {
     async function checkAuth() {
@@ -36,7 +44,7 @@ export default function AuthPage() {
         if (res.ok) {
           const data = await res.json();
           dispatch(login(data.data.token));
-          router.push("/dashboard");
+          router.push(redirectDestination);
         } else {
           setIsLoggedIn(false);
         }
@@ -46,7 +54,7 @@ export default function AuthPage() {
       }
     }
     checkAuth();
-  }, []);
+  }, [dispatch, redirectDestination, router]);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -67,21 +75,14 @@ export default function AuthPage() {
       if (resp && resp.data && resp.data.body) {
         dispatch(login(resp.data.body.token));
         setIsLoading(false);
-        router.push("/dashboard");
+        router.push(redirectDestination);
       }
-    } catch (error: any) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.errors.length > 0
-      ) {
-        // setError(
-        //   error.response.data.errors[0].message || "Invalid credentials"
-        // ); FOR 3000 MS AND THEN REMOVE ERROR
-
-        setError(
-          error.response.data.errors[0].message || "Invalid credentials"
-        );
+    } catch (error: unknown) {
+      const axiosError = error as {
+        response?: { data?: { errors?: { message?: string }[] } };
+      };
+      if (axiosError.response?.data?.errors && axiosError.response.data.errors.length > 0) {
+        setError(axiosError.response.data.errors[0].message || "Invalid credentials");
 
         setTimeout(() => {
           setError("");
@@ -123,7 +124,7 @@ export default function AuthPage() {
         // Create a free subscription after successful registration
         await createFreeSubscription();
         setIsLoading(false);
-        router.push("/dashboard");
+        router.push(redirectDestination);
       }
     } catch (error) {
       setIsLoading(false);
@@ -153,9 +154,7 @@ export default function AuthPage() {
           </Link>
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Welcome to ResumeRocket
-              </h1>
+              <h1 className="text-2xl font-semibold tracking-tight">Welcome to ResumeRocket</h1>
               <p className="text-sm text-muted-foreground">
                 Sign in to your account or create a new one
               </p>
@@ -180,19 +179,14 @@ export default function AuthPage() {
                         id="email"
                         type="email"
                         placeholder="name@example.com"
-                        onChange={(e) =>
-                          setLoginData({ ...loginData, email: e.target.value })
-                        }
+                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                         value={loginData.email}
                       />
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="password">Password</Label>
-                        <Link
-                          href="#"
-                          className="text-xs text-teal-600 hover:underline"
-                        >
+                        <Link href="#" className="text-xs text-teal-600 hover:underline">
                           Forgot password?
                         </Link>
                       </div>
@@ -212,11 +206,7 @@ export default function AuthPage() {
                         error && <p className="text-red-500 text-sm">{error}</p>
                       }
                     </div>
-                    <Button
-                      className="w-full"
-                      onClick={handleSubmit}
-                      disabled={isLoading}
-                    >
+                    <Button className="w-full" onClick={handleSubmit} disabled={isLoading}>
                       {isLoading ? "Logging in..." : "Login"}
                     </Button>
                     <div className="relative">
@@ -254,9 +244,7 @@ export default function AuthPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Register</CardTitle>
-                    <CardDescription>
-                      Create a new account to get started
-                    </CardDescription>
+                    <CardDescription>Create a new account to get started</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -322,11 +310,7 @@ export default function AuthPage() {
                     </div>
                     {/* Error message */}
                     {error && <p className="text-red-500">{error}</p>}
-                    <Button
-                      className="w-full"
-                      onClick={handleRegister}
-                      disabled={isLoading}
-                    >
+                    <Button className="w-full" onClick={handleRegister} disabled={isLoading}>
                       {isLoading ? "Creating account..." : "Create account"}
                     </Button>
                     <div className="relative">

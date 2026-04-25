@@ -164,7 +164,7 @@ export default function PlansPage() {
   function handleBuyPack(packId: string) {
     const destination = `/dashboard/billing/credits?pack=${packId}`;
     if (!user) {
-      router.push(`/auth/login?next=${encodeURIComponent(destination)}`);
+      router.push(`/auth?next=${encodeURIComponent(destination)}`);
       return;
     }
     router.push(destination);

@@ -120,8 +120,8 @@ test.describe("plans page credit packs tab", () => {
     await expect(buyButtons.first()).toBeVisible({ timeout: 10000 });
     await buyButtons.first().click();
 
-    // Unauthenticated — should land on /auth/login with ?next= pointing at the credits page.
-    await page.waitForURL(/\/auth\/login\?next=/, { timeout: 10000 });
+    // Unauthenticated — should land on /auth with ?next= pointing at the credits page.
+    await page.waitForURL(/\/auth\?next=/, { timeout: 10000 });
     const url = new URL(page.url());
     const next = url.searchParams.get("next");
     expect(next).not.toBeNull();
