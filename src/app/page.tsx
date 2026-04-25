@@ -3,20 +3,24 @@ import jwt from "jsonwebtoken";
 import Landing from "@/components/landing";
 
 async function checkLoggedIn() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  if (!token) return false;
-  const decodedToken: { user?: { id?: string } } | null = jwt.decode(token) as {
-    user?: { id?: string };
-  } | null;
-  if (!decodedToken?.user?.id) return false;
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_USER_API}/api/v1/user?user_id=${decodedToken.user.id}`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  if (!res.ok) return false;
-  const response = await res.json();
-  return Boolean(response.body);
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+    if (!token) return false;
+    const decodedToken: { user?: { id?: string } } | null = jwt.decode(token) as {
+      user?: { id?: string };
+    } | null;
+    if (!decodedToken?.user?.id) return false;
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_USER_API}/api/v1/user?user_id=${decodedToken.user.id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (!res.ok) return false;
+    const response = await res.json();
+    return Boolean(response.body);
+  } catch {
+    return false;
+  }
 }
 
 function MaintenanceFallback() {
