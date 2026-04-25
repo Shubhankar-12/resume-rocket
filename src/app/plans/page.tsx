@@ -130,6 +130,11 @@ export default function PlansPage() {
     };
   }, [currency]);
 
+  useEffect(() => {
+    const fromUrl = searchParams.get("tab") === "credits" ? "credits" : "subscriptions";
+    setTab(fromUrl);
+  }, [searchParams]);
+
   function handleTabChange(value: string) {
     const next = value === "credits" ? "credits" : "subscriptions";
     setTab(next);
