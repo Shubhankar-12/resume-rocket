@@ -36,7 +36,7 @@ describe("useInViewOnce", () => {
     expect(mockObserve).toHaveBeenCalledWith(el);
     act(() => {
       observerCallback?.(
-        [{ isIntersecting: true, target: el } as IntersectionObserverEntry],
+        [{ isIntersecting: true, target: el } as unknown as IntersectionObserverEntry],
         {} as IntersectionObserver
       );
     });
@@ -52,11 +52,11 @@ describe("useInViewOnce", () => {
     });
     act(() => {
       observerCallback?.(
-        [{ isIntersecting: true, target: el } as IntersectionObserverEntry],
+        [{ isIntersecting: true, target: el } as unknown as IntersectionObserverEntry],
         {} as IntersectionObserver
       );
       observerCallback?.(
-        [{ isIntersecting: true, target: el } as IntersectionObserverEntry],
+        [{ isIntersecting: true, target: el } as unknown as IntersectionObserverEntry],
         {} as IntersectionObserver
       );
     });
@@ -73,7 +73,7 @@ describe("useInViewOnce", () => {
     });
     act(() => {
       observerCallback?.(
-        [{ isIntersecting: true, target: el } as IntersectionObserverEntry],
+        [{ isIntersecting: true, target: el } as unknown as IntersectionObserverEntry],
         {} as IntersectionObserver
       );
     });
