@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ import PaymentSubcriptionAPI from "@/lib/api/payment/payment_subs";
 import { useDispatch } from "react-redux";
 import { login } from "@/lib/store/slices/authSlice";
 
-export default function AuthPage() {
+function AuthPageInner() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -353,5 +353,19 @@ export default function AuthPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      }
+    >
+      <AuthPageInner />
+    </Suspense>
   );
 }

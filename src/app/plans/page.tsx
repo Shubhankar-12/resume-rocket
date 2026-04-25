@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, Sparkles, Shield, Zap, Rocket, Crown, Coins } from "lucide-react";
@@ -89,7 +89,7 @@ function normalizeFeatures(features: Record<string, unknown>): NormalizedFeature
   });
 }
 
-export default function PlansPage() {
+function PlansPageInner() {
   const { currency } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -446,5 +446,19 @@ export default function PlansPage() {
         </Button>
       </motion.div>
     </div>
+  );
+}
+
+export default function PlansPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      }
+    >
+      <PlansPageInner />
+    </Suspense>
   );
 }
