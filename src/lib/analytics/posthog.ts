@@ -21,9 +21,8 @@ export function initAnalytics(): void {
     session_recording: {
       maskAllInputs: true,
       maskInputOptions: { password: true, email: false },
+      sampleRate: 0.5,
     },
-    sample_rate: 1,
-    session_recording_sample_rate: 0.5,
     loaded: (instance) => {
       instance.opt_in_capturing();
     },

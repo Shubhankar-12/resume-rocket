@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import StoreProvider from "@/components/StoreProvider";
 import { LoaderProvider } from "@/components/Loader/loader-provider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { PostHogProvider } from "@/components/PostHogProvider";
+import { ConsentBanner } from "@/components/ConsentBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,7 +33,10 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <ErrorBoundary>{children}</ErrorBoundary>
+              <ErrorBoundary>
+                <PostHogProvider>{children}</PostHogProvider>
+              </ErrorBoundary>
+              <ConsentBanner />
             </ThemeProvider>
             {process.env.NEXT_PUBLIC_GA_ID && (
               <>
