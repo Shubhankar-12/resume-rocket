@@ -23,6 +23,7 @@ export default function CreditsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [highlightedPack, setHighlightedPack] = useState<string | null>(null);
   const packRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const buyInFlightRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +64,8 @@ export default function CreditsPage() {
   }, [requestedPack, packs]);
 
   async function handleBuy(packId: string) {
+    if (buyInFlightRef.current) return;
+    buyInFlightRef.current = true;
     setLoading(true);
     setPurchasingId(packId);
     setError(null);
@@ -103,11 +106,13 @@ export default function CreditsPage() {
                 "Payment verification failed. If you were charged, credits will arrive within a minute."
               );
             } finally {
+              buyInFlightRef.current = false;
               setLoading(false);
               setPurchasingId(null);
             }
           },
           onDismiss: () => {
+            buyInFlightRef.current = false;
             setLoading(false);
             setPurchasingId(null);
           },
@@ -120,6 +125,7 @@ export default function CreditsPage() {
       const response = (e as { response?: { data?: { error?: string } } })?.response;
       const msg = response?.data?.error ?? (e instanceof Error ? e.message : "Purchase failed.");
       setError(msg);
+      buyInFlightRef.current = false;
       setLoading(false);
       setPurchasingId(null);
     }
