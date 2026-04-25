@@ -11,9 +11,14 @@ export interface Plan {
 }
 
 export interface CheckoutResult {
-  checkoutUrl: string;
+  checkoutUrl?: string; // Stripe hosted URL; Razorpay payment mode omits it
   sessionId: string;
   provider: "razorpay" | "stripe";
+  // Populated only when provider === "razorpay" AND mode === "payment":
+  razorpayOrderId?: string;
+  razorpayKeyId?: string;
+  amount?: number; // paise
+  currency?: "INR" | "USD";
 }
 
 export interface CreditPack {
