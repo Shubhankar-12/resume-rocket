@@ -39,4 +39,16 @@ export class BillingAPI {
       { headers: { Authorization: `Bearer ${getCookie("token")}` } }
     );
   }
+
+  static async verifyRazorpayPayment(orderId: string, paymentId: string, signature: string) {
+    return userService.post<{ body: { verified: true } }>(
+      "/billing/razorpay/verify",
+      {
+        razorpay_order_id: orderId,
+        razorpay_payment_id: paymentId,
+        razorpay_signature: signature,
+      },
+      { headers: { Authorization: `Bearer ${getCookie("token")}` } }
+    );
+  }
 }
