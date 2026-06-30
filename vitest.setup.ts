@@ -14,8 +14,8 @@ class IntersectionObserverMock {
 }
 
 if (!("IntersectionObserver" in globalThis)) {
-  // @ts-expect-error assigning a minimal mock for the test environment
-  globalThis.IntersectionObserver = IntersectionObserverMock;
+  globalThis.IntersectionObserver =
+    IntersectionObserverMock as unknown as typeof IntersectionObserver;
 }
 
 // jsdom lacks matchMedia, used by next-themes and useReducedMotion.

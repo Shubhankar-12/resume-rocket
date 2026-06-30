@@ -83,6 +83,28 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        rr: {
+          bg: "hsl(var(--rr-bg))",
+          "bg-elevated": "hsl(var(--rr-bg-elevated))",
+          card: "hsl(var(--rr-card))",
+          "card-elevated": "hsl(var(--rr-card-elevated))",
+          border: "hsl(var(--rr-border))",
+          "border-muted": "hsl(var(--rr-border-muted))",
+          text: {
+            DEFAULT: "hsl(var(--rr-text))",
+            secondary: "hsl(var(--rr-text-secondary))",
+            muted: "hsl(var(--rr-text-muted))",
+          },
+          accent: {
+            DEFAULT: "hsl(var(--rr-accent))",
+            hover: "hsl(var(--rr-accent-hover))",
+            light: "hsl(var(--rr-accent-light))",
+          },
+          success: "hsl(var(--rr-success))",
+          warning: "hsl(var(--rr-warning))",
+          danger: "hsl(var(--rr-danger))",
+          info: "hsl(var(--rr-info))",
+        },
       },
       borderRadius: {
         sm: "8px",
