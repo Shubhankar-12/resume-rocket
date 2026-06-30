@@ -20,10 +20,11 @@ test.describe("Landing page (redesigned)", () => {
       "hero",
       "social-proof",
       "problem",
-      "demo",
       "how",
       "features",
-      "sample",
+      "deep-dive",
+      "demo",
+      "workflow",
       "compare",
       "testimonials",
       "pricing",
@@ -46,11 +47,11 @@ test.describe("Landing page (redesigned)", () => {
     }
 
     await page.locator("#hero").waitFor({ state: "visible", timeout: 5000 });
-    await page.locator("#hero").getByRole("link", { name: /start free/i }).click();
+    await page.locator("#hero").getByRole("link", { name: /upload resume/i }).click();
     await expect(page).toHaveURL(/\/auth/);
   });
 
-  test("PricingTeaser CTA navigates to /plans", async ({ page }) => {
+  test("Pricing section renders its heading", async ({ page }) => {
     try {
       await page.getByRole("dialog", { name: /cookie consent/i })
         .getByRole("button", { name: /accept/i })
@@ -59,9 +60,12 @@ test.describe("Landing page (redesigned)", () => {
       // Continue if banner not found
     }
 
+    // Pricing fetches plans from the backend; the heading is always present
+    // regardless of fetch state (loading / error / data), so it's the stable assertion.
     await page.locator("#pricing").waitFor({ state: "visible", timeout: 5000 });
-    await page.locator("#pricing").getByRole("link", { name: /see all plans/i }).click();
-    await expect(page).toHaveURL(/\/plans/);
+    await expect(
+      page.locator("#pricing").getByRole("heading", { name: /simple, transparent pricing/i })
+    ).toBeVisible();
   });
 
   test("FAQ accordion expands", async ({ page }) => {
@@ -76,10 +80,10 @@ test.describe("Landing page (redesigned)", () => {
     await page.locator("#faq").waitFor({ state: "visible", timeout: 5000 });
     const trigger = page
       .locator("#faq")
-      .getByRole("button", { name: /will it just rewrite/i });
+      .getByRole("button", { name: /how is payment handled/i });
     await trigger.click();
     await expect(
-      page.locator("#faq").getByText(/the grader points to specific lines/i)
+      page.locator("#faq").getByText(/Razorpay for INR and Stripe for USD/i)
     ).toBeVisible();
   });
 

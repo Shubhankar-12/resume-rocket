@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
-import { Header } from "./sections/Header";
-import { Hero } from "./sections/Hero";
-import { SocialProofStrip } from "./sections/SocialProofStrip";
-import { ProblemFraming } from "./sections/ProblemFraming";
-import { DemoShowcase } from "./sections/DemoShowcase";
-import { HowItWorks } from "./sections/HowItWorks";
-import { FeaturesByStage } from "./sections/FeaturesByStage";
-import { SampleReportPreview } from "./sections/SampleReportPreview";
-import { ComparisonTable } from "./sections/ComparisonTable";
-import { Testimonials } from "./sections/Testimonials";
-import { PricingTeaser } from "./sections/PricingTeaser";
-import { FAQ } from "./sections/FAQ";
-import { FinalCTA } from "./sections/FinalCTA";
-import { Footer } from "./sections/Footer";
+import { Navigation } from "./v2/Navigation";
+import { Hero } from "./v2/Hero";
+import { SocialProof } from "./v2/sections/SocialProof";
+import { Problem } from "./v2/sections/Problem";
+import { HowItWorks } from "./v2/sections/HowItWorks";
+import { Ecosystem } from "./v2/sections/Ecosystem";
+import { FeatureDeepDive } from "./v2/sections/FeatureDeepDive";
+import { InteractiveDemo } from "./v2/sections/InteractiveDemo";
+import { Workflow } from "./v2/sections/Workflow";
+import { Comparison } from "./v2/sections/Comparison";
+import { Testimonials } from "./v2/sections/Testimonials";
+import { Pricing } from "./v2/sections/Pricing";
+import { FAQ } from "./v2/sections/FAQ";
+import { FinalCTA } from "./v2/sections/FinalCTA";
+import { Footer } from "./v2/sections/Footer";
 import { captureEvent } from "@/lib/analytics/posthog";
 
 export interface LandingProps {
@@ -35,17 +36,18 @@ export function Landing({ isLoggedIn }: LandingProps) {
 
   return (
     <main className="min-h-screen">
-      <Header isLoggedIn={isLoggedIn} />
+      <Navigation isLoggedIn={isLoggedIn} />
       <Hero />
-      <SocialProofStrip />
-      <ProblemFraming />
-      <DemoShowcase />
+      <SocialProof />
+      <Problem />
       <HowItWorks />
-      <FeaturesByStage />
-      <SampleReportPreview />
-      <ComparisonTable />
+      <Ecosystem />
+      <FeatureDeepDive />
+      <InteractiveDemo />
+      <Workflow />
+      <Comparison />
       <Testimonials />
-      <PricingTeaser />
+      <Pricing />
       <FAQ />
       <FinalCTA />
       <Footer />
