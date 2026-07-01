@@ -7,6 +7,7 @@ import { WhyResumesFail } from "./v2/why/WhyResumesFail";
 import { HowItWorks } from "./v2/sections/HowItWorks";
 import { InteractiveDemo } from "./v2/sections/InteractiveDemo";
 import { WorkspaceSection } from "./v2/workspace/WorkspaceSection";
+import { ResumeTransformation } from "./v2/transformation/ResumeTransformation";
 import { Pricing } from "./v2/sections/Pricing";
 import { FAQ } from "./v2/sections/FAQ";
 import { FinalCTA } from "./v2/sections/FinalCTA";
@@ -37,6 +38,7 @@ export function Landing({ isLoggedIn }: LandingProps) {
       <HowItWorks />
       <InteractiveDemo />
       <WorkspaceSection />
+      <ResumeTransformation />
       <Pricing />
       <FAQ />
       <FinalCTA />
