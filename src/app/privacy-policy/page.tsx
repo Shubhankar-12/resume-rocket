@@ -2,24 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import {
-  Shield,
-  Eye,
-  Lock,
-  UserCheck,
-  ArrowLeft,
-  Calendar,
-} from "lucide-react";
+import { Shield, Eye, Lock, UserCheck, ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function PrivacyPolicyPage() {
@@ -51,7 +38,7 @@ export default function PrivacyPolicyPage() {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
         damping: 12,
       },
@@ -90,9 +77,7 @@ export default function PrivacyPolicyPage() {
         <div className="container mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold gradient-text">
-                ResumeRocket
-              </span>
+              <span className="text-2xl font-bold gradient-text">ResumeRocket</span>
             </Link>
           </motion.div>
           <Button variant="outline" asChild className="hover-lift">
@@ -106,10 +91,7 @@ export default function PrivacyPolicyPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section
-          ref={heroRef}
-          className="py-20 md:py-32 relative overflow-hidden"
-        >
+        <section ref={heroRef} className="py-20 md:py-32 relative overflow-hidden">
           <div className="container px-4 md:px-6 relative">
             <motion.div
               variants={containerVariants}
@@ -135,9 +117,8 @@ export default function PrivacyPolicyPage() {
                 variants={itemVariants}
                 className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
               >
-                We're committed to protecting your privacy and being transparent
-                about how we collect, use, and protect your personal
-                information.
+                We're committed to protecting your privacy and being transparent about how we
+                collect, use, and protect your personal information.
               </motion.p>
               <motion.div
                 variants={itemVariants}
@@ -160,9 +141,7 @@ export default function PrivacyPolicyPage() {
               className="max-w-6xl mx-auto"
             >
               <motion.div variants={itemVariants} className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Our Privacy Commitments
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Privacy Commitments</h2>
                 <p className="text-xl text-muted-foreground">
                   Key principles that guide our privacy practices
                 </p>
@@ -182,9 +161,7 @@ export default function PrivacyPolicyPage() {
                         <CardTitle className="group-hover:text-primary transition-colors duration-300">
                           {highlight.title}
                         </CardTitle>
-                        <CardDescription>
-                          {highlight.description}
-                        </CardDescription>
+                        <CardDescription>{highlight.description}</CardDescription>
                       </CardHeader>
                     </Card>
                   </motion.div>
@@ -213,35 +190,26 @@ export default function PrivacyPolicyPage() {
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Personal Information
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Personal Information</h3>
                             <p className="text-muted-foreground">
-                              We collect information you provide directly to us,
-                              such as when you create an account, upload your
-                              resume, or contact us for support. This includes:
+                              We collect information you provide directly to us, such as when you
+                              create an account, upload your resume, or contact us for support. This
+                              includes:
                             </p>
                             <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
-                              <li>
-                                Name, email address, and contact information
-                              </li>
+                              <li>Name, email address, and contact information</li>
                               <li>Resume content and career information</li>
                               <li>
-                                Payment information (processed securely by our
-                                payment providers)
+                                Payment information (processed securely by our payment providers)
                               </li>
-                              <li>
-                                Communication preferences and support inquiries
-                              </li>
+                              <li>Communication preferences and support inquiries</li>
                             </ul>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Usage Information
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Usage Information</h3>
                             <p className="text-muted-foreground">
-                              We automatically collect certain information about
-                              your use of our services, including:
+                              We automatically collect certain information about your use of our
+                              services, including:
                             </p>
                             <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
                               <li>Device information and browser type</li>
@@ -258,22 +226,15 @@ export default function PrivacyPolicyPage() {
                           2. How We Use Your Information
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          We use the information we collect to provide,
-                          maintain, and improve our services. Specifically, we
-                          use your information to:
+                          We use the information we collect to provide, maintain, and improve our
+                          services. Specifically, we use your information to:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                           <li>Analyze and optimize your resume content</li>
-                          <li>
-                            Provide personalized job recommendations and career
-                            advice
-                          </li>
+                          <li>Provide personalized job recommendations and career advice</li>
                           <li>Process payments and manage your subscription</li>
                           <li>Send you important updates about our services</li>
-                          <li>
-                            Provide customer support and respond to your
-                            inquiries
-                          </li>
+                          <li>Provide customer support and respond to your inquiries</li>
                           <li>Improve our AI algorithms and service quality</li>
                           <li>Ensure security and prevent fraud</li>
                         </ul>
@@ -284,50 +245,41 @@ export default function PrivacyPolicyPage() {
                           3. Information Sharing and Disclosure
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          We do not sell, trade, or otherwise transfer your
-                          personal information to third parties. We may share
-                          your information only in the following circumstances:
+                          We do not sell, trade, or otherwise transfer your personal information to
+                          third parties. We may share your information only in the following
+                          circumstances:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                           <li>
-                            <strong>Service Providers:</strong> With trusted
-                            third-party service providers who assist us in
-                            operating our platform
+                            <strong>Service Providers:</strong> With trusted third-party service
+                            providers who assist us in operating our platform
                           </li>
                           <li>
-                            <strong>Legal Requirements:</strong> When required
-                            by law or to protect our rights and safety
+                            <strong>Legal Requirements:</strong> When required by law or to protect
+                            our rights and safety
                           </li>
                           <li>
-                            <strong>Business Transfers:</strong> In connection
-                            with a merger, acquisition, or sale of assets
+                            <strong>Business Transfers:</strong> In connection with a merger,
+                            acquisition, or sale of assets
                           </li>
                           <li>
-                            <strong>With Your Consent:</strong> When you
-                            explicitly authorize us to share your information
+                            <strong>With Your Consent:</strong> When you explicitly authorize us to
+                            share your information
                           </li>
                         </ul>
                       </motion.section>
 
                       <motion.section variants={itemVariants} className="mb-12">
-                        <h2 className="text-2xl font-bold mb-4 text-primary">
-                          4. Data Security
-                        </h2>
+                        <h2 className="text-2xl font-bold mb-4 text-primary">4. Data Security</h2>
                         <p className="text-muted-foreground mb-4">
-                          We implement industry-standard security measures to
-                          protect your personal information:
+                          We implement industry-standard security measures to protect your personal
+                          information:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                           <li>End-to-end encryption for data transmission</li>
                           <li>Secure data storage with regular backups</li>
-                          <li>
-                            Regular security audits and vulnerability
-                            assessments
-                          </li>
-                          <li>
-                            Access controls and employee training on data
-                            protection
-                          </li>
+                          <li>Regular security audits and vulnerability assessments</li>
+                          <li>Access controls and employee training on data protection</li>
                           <li>Compliance with SOC 2 Type II standards</li>
                         </ul>
                       </motion.section>
@@ -337,29 +289,26 @@ export default function PrivacyPolicyPage() {
                           5. Your Rights and Choices
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          You have several rights regarding your personal
-                          information:
+                          You have several rights regarding your personal information:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                           <li>
-                            <strong>Access:</strong> Request a copy of the
-                            personal information we hold about you
+                            <strong>Access:</strong> Request a copy of the personal information we
+                            hold about you
                           </li>
                           <li>
-                            <strong>Correction:</strong> Update or correct
-                            inaccurate personal information
+                            <strong>Correction:</strong> Update or correct inaccurate personal
+                            information
                           </li>
                           <li>
-                            <strong>Deletion:</strong> Request deletion of your
-                            personal information
+                            <strong>Deletion:</strong> Request deletion of your personal information
                           </li>
                           <li>
-                            <strong>Portability:</strong> Request a copy of your
-                            data in a portable format
+                            <strong>Portability:</strong> Request a copy of your data in a portable
+                            format
                           </li>
                           <li>
-                            <strong>Opt-out:</strong> Unsubscribe from marketing
-                            communications
+                            <strong>Opt-out:</strong> Unsubscribe from marketing communications
                           </li>
                         </ul>
                         <p className="text-muted-foreground mt-4">
@@ -379,26 +328,25 @@ export default function PrivacyPolicyPage() {
                           6. Cookies and Tracking
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          We use cookies and similar tracking technologies to
-                          enhance your experience:
+                          We use cookies and similar tracking technologies to enhance your
+                          experience:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                           <li>
-                            <strong>Essential Cookies:</strong> Required for
-                            basic site functionality
+                            <strong>Essential Cookies:</strong> Required for basic site
+                            functionality
                           </li>
                           <li>
-                            <strong>Analytics Cookies:</strong> Help us
-                            understand how you use our services
+                            <strong>Analytics Cookies:</strong> Help us understand how you use our
+                            services
                           </li>
                           <li>
-                            <strong>Preference Cookies:</strong> Remember your
-                            settings and preferences
+                            <strong>Preference Cookies:</strong> Remember your settings and
+                            preferences
                           </li>
                         </ul>
                         <p className="text-muted-foreground mt-4">
-                          You can control cookie settings through your browser
-                          preferences.
+                          You can control cookie settings through your browser preferences.
                         </p>
                       </motion.section>
 
@@ -407,11 +355,9 @@ export default function PrivacyPolicyPage() {
                           7. International Data Transfers
                         </h2>
                         <p className="text-muted-foreground">
-                          Your information may be transferred to and processed
-                          in countries other than your own. We ensure
-                          appropriate safeguards are in place to protect your
-                          data in accordance with this privacy policy and
-                          applicable laws.
+                          Your information may be transferred to and processed in countries other
+                          than your own. We ensure appropriate safeguards are in place to protect
+                          your data in accordance with this privacy policy and applicable laws.
                         </p>
                       </motion.section>
 
@@ -420,11 +366,10 @@ export default function PrivacyPolicyPage() {
                           8. Children's Privacy
                         </h2>
                         <p className="text-muted-foreground">
-                          Our services are not intended for children under 13
-                          years of age. We do not knowingly collect personal
-                          information from children under 13. If you become
-                          aware that a child has provided us with personal
-                          information, please contact us immediately.
+                          Our services are not intended for children under 13 years of age. We do
+                          not knowingly collect personal information from children under 13. If you
+                          become aware that a child has provided us with personal information,
+                          please contact us immediately.
                         </p>
                       </motion.section>
 
@@ -433,21 +378,18 @@ export default function PrivacyPolicyPage() {
                           9. Changes to This Policy
                         </h2>
                         <p className="text-muted-foreground">
-                          We may update this privacy policy from time to time.
-                          We will notify you of any material changes by posting
-                          the new policy on this page and updating the "Last
-                          updated" date. We encourage you to review this policy
+                          We may update this privacy policy from time to time. We will notify you of
+                          any material changes by posting the new policy on this page and updating
+                          the "Last updated" date. We encourage you to review this policy
                           periodically.
                         </p>
                       </motion.section>
 
                       <motion.section variants={itemVariants}>
-                        <h2 className="text-2xl font-bold mb-4 text-primary">
-                          10. Contact Us
-                        </h2>
+                        <h2 className="text-2xl font-bold mb-4 text-primary">10. Contact Us</h2>
                         <p className="text-muted-foreground mb-4">
-                          If you have any questions about this privacy policy or
-                          our privacy practices, please contact us:
+                          If you have any questions about this privacy policy or our privacy
+                          practices, please contact us:
                         </p>
                         <div className="bg-muted/50 p-4 rounded-lg">
                           <p className="text-muted-foreground">
@@ -459,8 +401,8 @@ export default function PrivacyPolicyPage() {
                               privacy@resumerocket.com
                             </a>
                             <br />
-                            <strong>Address:</strong> 123 Innovation Drive,
-                            Suite 100, San Francisco, CA 94105
+                            <strong>Address:</strong> 123 Innovation Drive, Suite 100, San
+                            Francisco, CA 94105
                             <br />
                             <strong>Phone:</strong> +1 (555) 123-4567
                           </p>
@@ -479,9 +421,7 @@ export default function PrivacyPolicyPage() {
       <footer className="bg-background/80 backdrop-blur-sm border-t py-12 px-4 md:px-6">
         <div className="container mx-auto text-center">
           <Link href="/" className="inline-block mb-4">
-            <span className="text-xl font-bold gradient-text">
-              ResumeRocket
-            </span>
+            <span className="text-xl font-bold gradient-text">ResumeRocket</span>
           </Link>
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} ResumeRocket. All rights reserved.

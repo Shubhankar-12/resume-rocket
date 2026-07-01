@@ -22,13 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -135,8 +129,7 @@ export default function ContactPage() {
     {
       icon: <Clock className="h-5 w-5" />,
       label: "Business Hours",
-      value:
-        "Monday - Friday: 9:00 AM - 6:00 PM PST\nWeekends: 10:00 AM - 4:00 PM PST",
+      value: "Monday - Friday: 9:00 AM - 6:00 PM PST\nWeekends: 10:00 AM - 4:00 PM PST",
     },
     {
       icon: <Users className="h-5 w-5" />,
@@ -162,7 +155,7 @@ export default function ContactPage() {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
         damping: 12,
       },
@@ -178,9 +171,7 @@ export default function ContactPage() {
         <div className="container mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold gradient-text">
-                ResumeRocket
-              </span>
+              <span className="text-2xl font-bold gradient-text">ResumeRocket</span>
             </Link>
           </motion.div>
           <Button variant="outline" asChild className="hover-lift">
@@ -194,10 +185,7 @@ export default function ContactPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section
-          ref={heroRef}
-          className="py-20 md:py-32 relative overflow-hidden"
-        >
+        <section ref={heroRef} className="py-20 md:py-32 relative overflow-hidden">
           <div className="container px-4 md:px-6 relative">
             <motion.div
               variants={containerVariants}
@@ -223,13 +211,10 @@ export default function ContactPage() {
                 variants={itemVariants}
                 className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
               >
-                Have questions about ResumeRocket? Need help optimizing your
-                resume? Our team is here to help you succeed in your job search.
+                Have questions about ResumeRocket? Need help optimizing your resume? Our team is
+                here to help you succeed in your job search.
               </motion.p>
-              <motion.div
-                variants={itemVariants}
-                className="flex flex-wrap justify-center gap-4"
-              >
+              <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-4">
                 <Badge variant="outline" className="bg-background">
                   <CheckCircle className="mr-1 h-3 w-3 text-primary" />
                   24/7 Support Available
@@ -257,9 +242,7 @@ export default function ContactPage() {
               className="max-w-6xl mx-auto"
             >
               <motion.div variants={itemVariants} className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Multiple Ways to Reach Us
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">Multiple Ways to Reach Us</h2>
                 <p className="text-xl text-muted-foreground">
                   Choose the contact method that works best for you
                 </p>
@@ -296,10 +279,7 @@ export default function ContactPage() {
               </div>
 
               {/* Office Information */}
-              <motion.div
-                variants={itemVariants}
-                className="grid gap-8 md:grid-cols-3"
-              >
+              <motion.div variants={itemVariants} className="grid gap-8 md:grid-cols-3">
                 {officeInfo.map((info, i) => (
                   <motion.div
                     key={i}
@@ -311,9 +291,7 @@ export default function ContactPage() {
                       <div className="text-primary">{info.icon}</div>
                     </div>
                     <h3 className="font-semibold mb-2">{info.label}</h3>
-                    <p className="text-muted-foreground whitespace-pre-line">
-                      {info.value}
-                    </p>
+                    <p className="text-muted-foreground whitespace-pre-line">{info.value}</p>
                   </motion.div>
                 ))}
               </motion.div>
@@ -331,12 +309,9 @@ export default function ContactPage() {
               className="max-w-4xl mx-auto"
             >
               <motion.div variants={itemVariants} className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Send Us a Message
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">Send Us a Message</h2>
                 <p className="text-xl text-muted-foreground">
-                  Fill out the form below and we'll get back to you as soon as
-                  possible
+                  Fill out the form below and we'll get back to you as soon as possible
                 </p>
               </motion.div>
 
@@ -356,49 +331,36 @@ export default function ContactPage() {
                         >
                           <CheckCircle className="h-10 w-10 text-green-600" />
                         </motion.div>
-                        <h3 className="text-2xl font-bold mb-4">
-                          Message Sent Successfully!
-                        </h3>
+                        <h3 className="text-2xl font-bold mb-4">Message Sent Successfully!</h3>
                         <p className="text-muted-foreground">
-                          Thank you for contacting us. We'll get back to you
-                          within 24 hours.
+                          Thank you for contacting us. We'll get back to you within 24 hours.
                         </p>
                       </motion.div>
                     ) : (
                       <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid gap-6 md:grid-cols-2">
                           <div className="space-y-2">
-                            <label
-                              htmlFor="name"
-                              className="text-sm font-medium"
-                            >
+                            <label htmlFor="name" className="text-sm font-medium">
                               Full Name *
                             </label>
                             <Input
                               id="name"
                               value={formData.name}
-                              onChange={(e) =>
-                                handleInputChange("name", e.target.value)
-                              }
+                              onChange={(e) => handleInputChange("name", e.target.value)}
                               placeholder="Enter your full name"
                               required
                               className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                             />
                           </div>
                           <div className="space-y-2">
-                            <label
-                              htmlFor="email"
-                              className="text-sm font-medium"
-                            >
+                            <label htmlFor="email" className="text-sm font-medium">
                               Email Address *
                             </label>
                             <Input
                               id="email"
                               type="email"
                               value={formData.email}
-                              onChange={(e) =>
-                                handleInputChange("email", e.target.value)
-                              }
+                              onChange={(e) => handleInputChange("email", e.target.value)}
                               placeholder="Enter your email address"
                               required
                               className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
@@ -408,54 +370,34 @@ export default function ContactPage() {
 
                         <div className="grid gap-6 md:grid-cols-2">
                           <div className="space-y-2">
-                            <label
-                              htmlFor="category"
-                              className="text-sm font-medium"
-                            >
+                            <label htmlFor="category" className="text-sm font-medium">
                               Category *
                             </label>
                             <Select
                               value={formData.category}
-                              onValueChange={(value) =>
-                                handleInputChange("category", value)
-                              }
+                              onValueChange={(value) => handleInputChange("category", value)}
                             >
                               <SelectTrigger className="transition-all duration-300 focus:ring-2 focus:ring-primary/20">
                                 <SelectValue placeholder="Select a category" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="general">
-                                  General Inquiry
-                                </SelectItem>
-                                <SelectItem value="technical">
-                                  Technical Support
-                                </SelectItem>
-                                <SelectItem value="billing">
-                                  Billing & Payments
-                                </SelectItem>
-                                <SelectItem value="feature">
-                                  Feature Request
-                                </SelectItem>
+                                <SelectItem value="general">General Inquiry</SelectItem>
+                                <SelectItem value="technical">Technical Support</SelectItem>
+                                <SelectItem value="billing">Billing & Payments</SelectItem>
+                                <SelectItem value="feature">Feature Request</SelectItem>
                                 <SelectItem value="bug">Bug Report</SelectItem>
-                                <SelectItem value="partnership">
-                                  Partnership
-                                </SelectItem>
+                                <SelectItem value="partnership">Partnership</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <label
-                              htmlFor="subject"
-                              className="text-sm font-medium"
-                            >
+                            <label htmlFor="subject" className="text-sm font-medium">
                               Subject *
                             </label>
                             <Input
                               id="subject"
                               value={formData.subject}
-                              onChange={(e) =>
-                                handleInputChange("subject", e.target.value)
-                              }
+                              onChange={(e) => handleInputChange("subject", e.target.value)}
                               placeholder="Brief description of your inquiry"
                               required
                               className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
@@ -464,18 +406,13 @@ export default function ContactPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <label
-                            htmlFor="message"
-                            className="text-sm font-medium"
-                          >
+                          <label htmlFor="message" className="text-sm font-medium">
                             Message *
                           </label>
                           <Textarea
                             id="message"
                             value={formData.message}
-                            onChange={(e) =>
-                              handleInputChange("message", e.target.value)
-                            }
+                            onChange={(e) => handleInputChange("message", e.target.value)}
                             placeholder="Please provide details about your inquiry..."
                             required
                             rows={6}
@@ -483,10 +420,7 @@ export default function ContactPage() {
                           />
                         </div>
 
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
+                        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                           <Button
                             type="submit"
                             disabled={isSubmitting}
@@ -524,9 +458,7 @@ export default function ContactPage() {
       <footer className="bg-background/80 backdrop-blur-sm border-t py-12 px-4 md:px-6">
         <div className="container mx-auto text-center">
           <Link href="/" className="inline-block mb-4">
-            <span className="text-xl font-bold gradient-text">
-              ResumeRocket
-            </span>
+            <span className="text-xl font-bold gradient-text">ResumeRocket</span>
           </Link>
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} ResumeRocket. All rights reserved.
