@@ -10,11 +10,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem("theme") as
-      | "light"
-      | "dark"
-      | "system"
-      | null;
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | "system" | null;
     if (savedTheme) {
       setTheme(savedTheme);
     }
@@ -27,8 +23,7 @@ export function ThemeToggle() {
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
@@ -74,7 +69,7 @@ export function ThemeToggle() {
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 1, type: "spring", stiffness: 200, damping: 20 }}
+      transition={{ delay: 1, type: "spring" as const, stiffness: 200, damping: 20 }}
       className="fixed bottom-6 right-6 z-50"
     >
       <motion.button

@@ -2,24 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import {
-  FileText,
-  Scale,
-  Shield,
-  Users,
-  ArrowLeft,
-  Calendar,
-} from "lucide-react";
+import { FileText, Scale, Shield, Users, ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function TermsPage() {
@@ -50,7 +37,7 @@ export default function TermsPage() {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
         damping: 12,
       },
@@ -89,9 +76,7 @@ export default function TermsPage() {
         <div className="container mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold gradient-text">
-                ResumeRocket
-              </span>
+              <span className="text-2xl font-bold gradient-text">ResumeRocket</span>
             </Link>
           </motion.div>
           <Button variant="outline" asChild className="hover-lift">
@@ -105,10 +90,7 @@ export default function TermsPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section
-          ref={heroRef}
-          className="py-20 md:py-32 relative overflow-hidden"
-        >
+        <section ref={heroRef} className="py-20 md:py-32 relative overflow-hidden">
           <div className="container px-4 md:px-6 relative">
             <motion.div
               variants={containerVariants}
@@ -134,9 +116,8 @@ export default function TermsPage() {
                 variants={itemVariants}
                 className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
               >
-                Please read these terms and conditions carefully before using
-                our services. By accessing ResumeRocket, you agree to be bound
-                by these terms.
+                Please read these terms and conditions carefully before using our services. By
+                accessing ResumeRocket, you agree to be bound by these terms.
               </motion.p>
               <motion.div
                 variants={itemVariants}
@@ -159,9 +140,7 @@ export default function TermsPage() {
               className="max-w-6xl mx-auto"
             >
               <motion.div variants={itemVariants} className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Key Terms Overview
-                </h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">Key Terms Overview</h2>
                 <p className="text-xl text-muted-foreground">
                   Important aspects of our terms and conditions
                 </p>
@@ -181,9 +160,7 @@ export default function TermsPage() {
                         <CardTitle className="group-hover:text-primary transition-colors duration-300">
                           {highlight.title}
                         </CardTitle>
-                        <CardDescription>
-                          {highlight.description}
-                        </CardDescription>
+                        <CardDescription>{highlight.description}</CardDescription>
                       </CardHeader>
                     </Card>
                   </motion.div>
@@ -211,10 +188,9 @@ export default function TermsPage() {
                           1. Acceptance of Terms
                         </h2>
                         <p className="text-muted-foreground">
-                          By accessing and using ResumeRocket ("the Service"),
-                          you accept and agree to be bound by the terms and
-                          provision of this agreement. If you do not agree to
-                          abide by the above, please do not use this service.
+                          By accessing and using ResumeRocket ("the Service"), you accept and agree
+                          to be bound by the terms and provision of this agreement. If you do not
+                          agree to abide by the above, please do not use this service.
                         </p>
                       </motion.section>
 
@@ -223,8 +199,8 @@ export default function TermsPage() {
                           2. Description of Service
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          ResumeRocket provides AI-powered resume optimization
-                          services, including but not limited to:
+                          ResumeRocket provides AI-powered resume optimization services, including
+                          but not limited to:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                           <li>Resume analysis and scoring</li>
@@ -242,35 +218,27 @@ export default function TermsPage() {
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Account Creation
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Account Creation</h3>
                             <p className="text-muted-foreground">
-                              To access certain features of our service, you
-                              must register for an account. You agree to provide
-                              accurate, current, and complete information during
-                              the registration process.
+                              To access certain features of our service, you must register for an
+                              account. You agree to provide accurate, current, and complete
+                              information during the registration process.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Account Security
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Account Security</h3>
                             <p className="text-muted-foreground">
-                              You are responsible for safeguarding your account
-                              credentials and for all activities that occur
-                              under your account. You must notify us immediately
-                              of any unauthorized use of your account.
+                              You are responsible for safeguarding your account credentials and for
+                              all activities that occur under your account. You must notify us
+                              immediately of any unauthorized use of your account.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Account Termination
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Account Termination</h3>
                             <p className="text-muted-foreground">
-                              We reserve the right to terminate or suspend your
-                              account at any time for violations of these terms
-                              or for any other reason at our sole discretion.
+                              We reserve the right to terminate or suspend your account at any time
+                              for violations of these terms or for any other reason at our sole
+                              discretion.
                             </p>
                           </div>
                         </div>
@@ -282,35 +250,26 @@ export default function TermsPage() {
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Subscription Plans
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Subscription Plans</h3>
                             <p className="text-muted-foreground">
-                              We offer both free and paid subscription plans.
-                              Paid subscriptions provide access to premium
-                              features and enhanced service capabilities.
+                              We offer both free and paid subscription plans. Paid subscriptions
+                              provide access to premium features and enhanced service capabilities.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Payment Processing
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Payment Processing</h3>
                             <p className="text-muted-foreground">
-                              Payments are processed securely through
-                              third-party payment processors. By providing
-                              payment information, you authorize us to charge
-                              the applicable fees.
+                              Payments are processed securely through third-party payment
+                              processors. By providing payment information, you authorize us to
+                              charge the applicable fees.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Automatic Renewal
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Automatic Renewal</h3>
                             <p className="text-muted-foreground">
-                              Paid subscriptions automatically renew unless
-                              cancelled before the renewal date. You can cancel
-                              your subscription at any time through your account
-                              settings.
+                              Paid subscriptions automatically renew unless cancelled before the
+                              renewal date. You can cancel your subscription at any time through
+                              your account settings.
                             </p>
                           </div>
                         </div>
@@ -322,33 +281,25 @@ export default function TermsPage() {
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Content Ownership
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Content Ownership</h3>
                             <p className="text-muted-foreground">
-                              You retain ownership of all content you upload to
-                              our service, including resumes, cover letters, and
-                              personal information.
+                              You retain ownership of all content you upload to our service,
+                              including resumes, cover letters, and personal information.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              License to Use
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">License to Use</h3>
                             <p className="text-muted-foreground">
-                              By uploading content, you grant us a limited
-                              license to use, process, and analyze your content
-                              solely for the purpose of providing our services.
+                              By uploading content, you grant us a limited license to use, process,
+                              and analyze your content solely for the purpose of providing our
+                              services.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Content Standards
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Content Standards</h3>
                             <p className="text-muted-foreground">
-                              You agree not to upload content that is illegal,
-                              harmful, threatening, abusive, defamatory, or
-                              otherwise objectionable.
+                              You agree not to upload content that is illegal, harmful, threatening,
+                              abusive, defamatory, or otherwise objectionable.
                             </p>
                           </div>
                         </div>
@@ -359,27 +310,17 @@ export default function TermsPage() {
                           6. Acceptable Use Policy
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          You agree not to use our service for any unlawful
-                          purpose or in any way that could damage, disable, or
-                          impair our service. Prohibited activities include:
+                          You agree not to use our service for any unlawful purpose or in any way
+                          that could damage, disable, or impair our service. Prohibited activities
+                          include:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                          <li>
-                            Attempting to gain unauthorized access to our
-                            systems
-                          </li>
-                          <li>
-                            Using automated tools to access our service without
-                            permission
-                          </li>
+                          <li>Attempting to gain unauthorized access to our systems</li>
+                          <li>Using automated tools to access our service without permission</li>
                           <li>Uploading malicious code or viruses</li>
-                          <li>
-                            Interfering with other users' use of the service
-                          </li>
+                          <li>Interfering with other users' use of the service</li>
                           <li>Violating any applicable laws or regulations</li>
-                          <li>
-                            Impersonating others or providing false information
-                          </li>
+                          <li>Impersonating others or providing false information</li>
                         </ul>
                       </motion.section>
 
@@ -393,19 +334,16 @@ export default function TermsPage() {
                               Our Intellectual Property
                             </h3>
                             <p className="text-muted-foreground">
-                              The service, including all software, algorithms,
-                              designs, and content, is protected by copyright,
-                              trademark, and other intellectual property laws.
+                              The service, including all software, algorithms, designs, and content,
+                              is protected by copyright, trademark, and other intellectual property
+                              laws.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Limited License
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Limited License</h3>
                             <p className="text-muted-foreground">
-                              We grant you a limited, non-exclusive,
-                              non-transferable license to use our service in
-                              accordance with these terms.
+                              We grant you a limited, non-exclusive, non-transferable license to use
+                              our service in accordance with these terms.
                             </p>
                           </div>
                         </div>
@@ -416,11 +354,10 @@ export default function TermsPage() {
                           8. Privacy and Data Protection
                         </h2>
                         <p className="text-muted-foreground">
-                          Your privacy is important to us. Our collection and
-                          use of personal information is governed by our Privacy
-                          Policy, which is incorporated into these terms by
-                          reference. Please review our Privacy Policy to
-                          understand our practices.
+                          Your privacy is important to us. Our collection and use of personal
+                          information is governed by our Privacy Policy, which is incorporated into
+                          these terms by reference. Please review our Privacy Policy to understand
+                          our practices.
                         </p>
                       </motion.section>
 
@@ -430,34 +367,26 @@ export default function TermsPage() {
                         </h2>
                         <div className="space-y-4">
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Service Availability
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Service Availability</h3>
                             <p className="text-muted-foreground">
-                              We strive to maintain high service availability
-                              but cannot guarantee uninterrupted access. We may
-                              temporarily suspend service for maintenance or
-                              updates.
+                              We strive to maintain high service availability but cannot guarantee
+                              uninterrupted access. We may temporarily suspend service for
+                              maintenance or updates.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              AI-Generated Content
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">AI-Generated Content</h3>
                             <p className="text-muted-foreground">
-                              Our AI-powered recommendations are provided as
-                              guidance only. We do not guarantee job placement
-                              or interview success based on our recommendations.
+                              Our AI-powered recommendations are provided as guidance only. We do
+                              not guarantee job placement or interview success based on our
+                              recommendations.
                             </p>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold mb-2">
-                              Limitation of Liability
-                            </h3>
+                            <h3 className="text-lg font-semibold mb-2">Limitation of Liability</h3>
                             <p className="text-muted-foreground">
-                              To the maximum extent permitted by law, we shall
-                              not be liable for any indirect, incidental,
-                              special, or consequential damages arising from
+                              To the maximum extent permitted by law, we shall not be liable for any
+                              indirect, incidental, special, or consequential damages arising from
                               your use of our service.
                             </p>
                           </div>
@@ -465,29 +394,15 @@ export default function TermsPage() {
                       </motion.section>
 
                       <motion.section variants={itemVariants} className="mb-12">
-                        <h2 className="text-2xl font-bold mb-4 text-primary">
-                          10. Termination
-                        </h2>
+                        <h2 className="text-2xl font-bold mb-4 text-primary">10. Termination</h2>
                         <p className="text-muted-foreground mb-4">
-                          Either party may terminate this agreement at any time.
-                          Upon termination:
+                          Either party may terminate this agreement at any time. Upon termination:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                          <li>
-                            Your access to the service will be immediately
-                            suspended
-                          </li>
-                          <li>
-                            You may download your data within 30 days of
-                            termination
-                          </li>
-                          <li>
-                            We may delete your data after the 30-day period
-                          </li>
-                          <li>
-                            No refunds will be provided for unused subscription
-                            periods
-                          </li>
+                          <li>Your access to the service will be immediately suspended</li>
+                          <li>You may download your data within 30 days of termination</li>
+                          <li>We may delete your data after the 30-day period</li>
+                          <li>No refunds will be provided for unused subscription periods</li>
                         </ul>
                       </motion.section>
 
@@ -496,11 +411,9 @@ export default function TermsPage() {
                           11. Changes to Terms
                         </h2>
                         <p className="text-muted-foreground">
-                          We reserve the right to modify these terms at any
-                          time. We will notify users of material changes via
-                          email or through our service. Continued use of the
-                          service after changes constitutes acceptance of the
-                          new terms.
+                          We reserve the right to modify these terms at any time. We will notify
+                          users of material changes via email or through our service. Continued use
+                          of the service after changes constitutes acceptance of the new terms.
                         </p>
                       </motion.section>
 
@@ -509,12 +422,10 @@ export default function TermsPage() {
                           12. Governing Law and Disputes
                         </h2>
                         <p className="text-muted-foreground">
-                          These terms are governed by the laws of the State of
-                          California, United States. Any disputes arising from
-                          these terms or your use of our service will be
-                          resolved through binding arbitration in accordance
-                          with the rules of the American Arbitration
-                          Association.
+                          These terms are governed by the laws of the State of California, United
+                          States. Any disputes arising from these terms or your use of our service
+                          will be resolved through binding arbitration in accordance with the rules
+                          of the American Arbitration Association.
                         </p>
                       </motion.section>
 
@@ -523,8 +434,8 @@ export default function TermsPage() {
                           13. Contact Information
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                          If you have any questions about these terms and
-                          conditions, please contact us:
+                          If you have any questions about these terms and conditions, please contact
+                          us:
                         </p>
                         <div className="bg-muted/50 p-4 rounded-lg">
                           <p className="text-muted-foreground">
@@ -536,8 +447,8 @@ export default function TermsPage() {
                               legal@resumerocket.com
                             </a>
                             <br />
-                            <strong>Address:</strong> 123 Innovation Drive,
-                            Suite 100, San Francisco, CA 94105
+                            <strong>Address:</strong> 123 Innovation Drive, Suite 100, San
+                            Francisco, CA 94105
                             <br />
                             <strong>Phone:</strong> +1 (555) 123-4567
                           </p>
@@ -556,9 +467,7 @@ export default function TermsPage() {
       <footer className="bg-background/80 backdrop-blur-sm border-t py-12 px-4 md:px-6">
         <div className="container mx-auto text-center">
           <Link href="/" className="inline-block mb-4">
-            <span className="text-xl font-bold gradient-text">
-              ResumeRocket
-            </span>
+            <span className="text-xl font-bold gradient-text">ResumeRocket</span>
           </Link>
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} ResumeRocket. All rights reserved.

@@ -15,7 +15,7 @@ function getChromeExecutablePath() {
     return "/opt/render/chrome/chrome";
   } else if (process.platform === "linux") {
     // Common Linux paths
-    // eslint-disable-next-line no-undef
+
     return process.env.GOOGLE_CHROME_PATH || "/usr/bin/google-chrome-stable";
   } else if (process.platform === "darwin") {
     // macOS
@@ -39,13 +39,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     const pdfBuffer = await generatePdf(url);
     const processedPdf = await makeTextSelectable(pdfBuffer);
 
-    return new NextResponse(processedPdf, {
+    return new NextResponse(new Uint8Array(processedPdf), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${
-          fileName || "download"
-        }.pdf"`,
+        "Content-Disposition": `attachment; filename="${fileName || "download"}.pdf"`,
       },
     });
   } catch (error: any) {
