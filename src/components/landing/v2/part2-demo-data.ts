@@ -2,44 +2,9 @@
 // no real users, customers, statistics, or testimonials.
 
 export type IconKey =
-  | "upload"
-  | "sparkles"
-  | "barchart"
-  | "target"
-  | "file"
-  | "kanban"
-  | "wand"
-  | "send"
-  | "github";
+  "upload" | "sparkles" | "barchart" | "target" | "file" | "kanban" | "wand" | "send" | "github";
 
-/* §3 Problem ------------------------------------------------------------- */
-
-export const PIPELINE_NODES = [
-  { label: "Resume", reject: "Missing keywords or formatting issues" },
-  { label: "ATS Screening", reject: "Generic resume not tailored to the role" },
-  { label: "Recruiter Review", reject: "Weak project descriptions, no measurable impact" },
-  { label: "Interview", reject: undefined },
-  { label: "Offer", reject: undefined },
-] as const;
-
-export const PROBLEM_CARDS = [
-  {
-    title: "Generic Resume",
-    body: "Using the same resume for every application often reduces relevance.",
-  },
-  {
-    title: "Missing Keywords",
-    body: "Important skills from the job description may never appear in the resume.",
-  },
-  {
-    title: "Weak Project Descriptions",
-    body: "Projects explain what was built but not why it mattered.",
-  },
-  {
-    title: "Application Chaos",
-    body: "Tracking multiple applications manually becomes difficult over time.",
-  },
-] as const;
+/* §3 Problem — see src/components/landing/v2/why/ (WhyResumesFail section) --- */
 
 /* §4 How It Works -------------------------------------------------------- */
 

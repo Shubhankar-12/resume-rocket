@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { Navigation } from "./v2/Navigation";
 import { Hero } from "./v2/Hero";
+import { WhyResumesFail } from "./v2/why/WhyResumesFail";
 import { SocialProof } from "./v2/sections/SocialProof";
-import { Problem } from "./v2/sections/Problem";
 import { HowItWorks } from "./v2/sections/HowItWorks";
 import { Ecosystem } from "./v2/sections/Ecosystem";
 import { FeatureDeepDive } from "./v2/sections/FeatureDeepDive";
@@ -38,8 +38,8 @@ export function Landing({ isLoggedIn }: LandingProps) {
     <main className="min-h-screen">
       <Navigation isLoggedIn={isLoggedIn} />
       <Hero />
+      <WhyResumesFail />
       <SocialProof />
-      <Problem />
       <HowItWorks />
       <Ecosystem />
       <FeatureDeepDive />
