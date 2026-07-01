@@ -5,9 +5,10 @@ import { Hero } from "../Hero";
 vi.mock("@/lib/analytics/posthog", () => ({ captureEvent: vi.fn() }));
 
 describe("Hero", () => {
-  it("renders the h1 and the preview stage together", () => {
+  it("renders the headline and the product preview together", () => {
     render(<Hero />);
     expect(screen.getByRole("heading", { level: 1, name: /land more interviews/i })).toBeTruthy();
-    expect(screen.getByLabelText(/example product preview/i)).toBeTruthy();
+    // The browser preview renders the example dashboard home screen.
+    expect(screen.getByText(/welcome back, alex/i)).toBeTruthy();
   });
 });

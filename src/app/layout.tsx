@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -11,6 +11,12 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { ConsentBanner } from "@/components/ConsentBanner";
 
 const inter = Inter({ subsets: ["latin"] });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "ResumeRocket - Resume Grader & Job Application Tailor",
@@ -26,7 +32,7 @@ export default function RootLayout({
     <StoreProvider>
       <LoaderProvider>
         <html lang="en" suppressHydrationWarning>
-          <body className={inter.className}>
+          <body className={`${inter.className} ${spaceGrotesk.variable}`}>
             <ThemeProvider
               attribute="class"
               defaultTheme="light"

@@ -106,6 +106,9 @@ const config = {
           info: "hsl(var(--rr-info))",
         },
       },
+      fontFamily: {
+        display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       borderRadius: {
         sm: "8px",
         md: "12px",
