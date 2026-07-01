@@ -6,8 +6,7 @@ import { Hero } from "./v2/Hero";
 import { WhyResumesFail } from "./v2/why/WhyResumesFail";
 import { HowItWorks } from "./v2/sections/HowItWorks";
 import { InteractiveDemo } from "./v2/sections/InteractiveDemo";
-import { FeatureDeepDive } from "./v2/sections/FeatureDeepDive";
-import { Ecosystem } from "./v2/sections/Ecosystem";
+import { WorkspaceSection } from "./v2/workspace/WorkspaceSection";
 import { Pricing } from "./v2/sections/Pricing";
 import { FAQ } from "./v2/sections/FAQ";
 import { FinalCTA } from "./v2/sections/FinalCTA";
@@ -37,8 +36,7 @@ export function Landing({ isLoggedIn }: LandingProps) {
       <WhyResumesFail />
       <HowItWorks />
       <InteractiveDemo />
-      <FeatureDeepDive />
-      <Ecosystem />
+      <WorkspaceSection />
       <Pricing />
       <FAQ />
       <FinalCTA />

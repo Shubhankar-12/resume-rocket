@@ -21,7 +21,6 @@ test.describe("Landing page (redesigned)", () => {
       "problem",
       "how",
       "demo",
-      "deep-dive",
       "features",
       "pricing",
       "faq",
