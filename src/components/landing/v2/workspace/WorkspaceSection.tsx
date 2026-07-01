@@ -35,9 +35,15 @@ export function WorkspaceSection() {
 
         {/* workflow comparison */}
         <div className="mt-20 border-t border-rr-border pt-12 md:mt-24">
-          <h3 className="mb-8 font-display text-xl font-semibold tracking-[-0.01em] text-rr-text sm:text-2xl">
-            The same job, without the tool-switching.
-          </h3>
+          <div className="mb-10 grid gap-4 md:grid-cols-2 md:gap-16">
+            <h3 className="font-display text-xl font-semibold leading-[1.15] tracking-[-0.01em] text-rr-text sm:text-2xl">
+              The same job — without the tool-switching.
+            </h3>
+            <p className="max-w-[42ch] text-sm leading-relaxed text-rr-text-secondary md:self-end">
+              What a job search normally scatters across five disconnected tools happens here in one
+              continuous flow.
+            </p>
+          </div>
           <WorkflowComparison />
         </div>
 
