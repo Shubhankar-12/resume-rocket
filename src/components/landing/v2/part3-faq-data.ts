@@ -1,109 +1,172 @@
-export type FaqCategory =
-  | "General"
-  | "Resume Analysis"
-  | "Credits"
-  | "Billing"
-  | "Privacy"
-  | "GitHub";
+import {
+  HelpCircle,
+  Gauge,
+  Mail,
+  Github,
+  CreditCard,
+  ShieldCheck,
+  type LucideIcon,
+} from "lucide-react";
+
+/**
+ * FAQ content for the knowledge-center section. Every answer describes a
+ * capability that actually ships today (verified against the dashboard) — no
+ * invented features, no future promises, no marketing language.
+ */
+
+export type FaqCategoryId = "general" | "analysis" | "cover" | "github" | "billing" | "privacy";
+
+export interface FaqCategory {
+  id: FaqCategoryId;
+  title: string;
+  icon: LucideIcon;
+}
 
 export const FAQ_CATEGORIES: FaqCategory[] = [
-  "General",
-  "Resume Analysis",
-  "Credits",
-  "Billing",
-  "Privacy",
-  "GitHub",
+  { id: "general", title: "General", icon: HelpCircle },
+  { id: "analysis", title: "Resume Analysis", icon: Gauge },
+  { id: "cover", title: "Cover Letters", icon: Mail },
+  { id: "github", title: "GitHub Analysis", icon: Github },
+  { id: "billing", title: "Credits & Billing", icon: CreditCard },
+  { id: "privacy", title: "Privacy & Security", icon: ShieldCheck },
 ];
 
-export type FaqItem = {
+export interface FaqItem {
   id: string;
-  category: FaqCategory;
+  category: FaqCategoryId;
   question: string;
   answer: string;
-};
+}
 
-// Answers describe actual product capabilities only — no future promises.
 export const FAQ_ITEMS: FaqItem[] = [
+  // ── General ──────────────────────────────────────────────────────────────
   {
     id: "formats",
-    category: "General",
+    category: "general",
     question: "What file formats are supported?",
-    answer: "PDF and DOCX for upload. Exports go out as PDF.",
+    answer:
+      "You can upload resumes as PDF or DOCX. Analyses, tailored resumes, and cover letters are exported as PDF.",
   },
   {
     id: "multiple-resumes",
-    category: "General",
-    question: "Can I manage multiple resumes?",
-    answer: "Yes. You can store and organize multiple resumes in one workspace.",
+    category: "general",
+    question: "Can I upload multiple resumes?",
+    answer:
+      "Yes. You can upload and keep multiple resumes in one workspace, and each keeps its own analysis history so you can compare versions.",
   },
   {
-    id: "how-analysis",
-    category: "Resume Analysis",
-    question: "How does resume analysis work?",
+    id: "need-jd",
+    category: "general",
+    question: "Do I need a job description?",
     answer:
-      "ResumeRocket parses your resume and grades it against what recruiters and applicant-tracking systems actually look for — keyword coverage, parseable formatting, and measurable impact. You get a letter grade, an ATS score, and a prioritized list of improvements.",
+      "No. You can analyze a resume on its own to get an ATS score, a letter grade, and improvement suggestions. A job description is only needed when you want to tailor a resume to a specific role.",
   },
+
+  // ── Resume Analysis ────────────────────────────────────────────────────────
   {
     id: "ats-score",
-    category: "Resume Analysis",
-    question: "What is an ATS score?",
+    category: "analysis",
+    question: "How is the ATS score calculated?",
     answer:
-      "An ATS score estimates how well your resume passes automated applicant-tracking screening, based on keyword coverage, parseable formatting, and structure. A higher score means fewer reasons for a system to filter you out before a human reads it.",
+      "The ATS score estimates how cleanly an applicant-tracking system can read and rank your resume, based on keyword coverage, parseable formatting, and structure. A higher score means fewer reasons for a system to filter you out before a person reads it.",
   },
   {
-    id: "tailor-multiple",
-    category: "Resume Analysis",
-    question: "Can I tailor multiple resumes?",
+    id: "letter-grade",
+    category: "analysis",
+    question: "What does the letter grade mean?",
     answer:
-      "Yes. Paste a job description and ResumeRocket tailors a version for that role while preserving your real experience — it doesn't fabricate. You can tailor as many versions as your credits allow.",
+      "The letter grade is an at-a-glance summary of overall resume strength. It combines factors like clarity, measurable impact, and ATS-readiness into a single rating so you can quickly gauge where a resume stands.",
   },
+  {
+    id: "suggestions",
+    category: "analysis",
+    question: "How are improvement suggestions generated?",
+    answer:
+      "ResumeRocket reviews your resume against what recruiters and ATS software look for, then returns a prioritized list of specific, section-level suggestions. Each one points to a concrete change you can make rather than generic advice.",
+  },
+
+  // ── Cover Letters ──────────────────────────────────────────────────────────
+  {
+    id: "cover-edit",
+    category: "cover",
+    question: "Can I edit generated cover letters?",
+    answer:
+      "Yes. Every generated cover letter opens in an editor where you can revise the wording before downloading it as a PDF.",
+  },
+  {
+    id: "cover-versions",
+    category: "cover",
+    question: "Can I generate multiple versions?",
+    answer:
+      "Yes. You can generate as many cover letters as your credits allow — for different roles or different framings — and each is saved separately in your workspace.",
+  },
+
+  // ── GitHub Analysis ────────────────────────────────────────────────────────
+  {
+    id: "github-how",
+    category: "github",
+    question: "How does GitHub project analysis work?",
+    answer:
+      "After you connect your GitHub account, ResumeRocket reviews your repositories and turns the projects you choose into concise, resume-ready bullet points, each with a relevance indicator to help you decide what to feature.",
+  },
+  {
+    id: "github-select",
+    category: "github",
+    question: "Can I choose which repositories are analyzed?",
+    answer:
+      "Yes. You select which repositories to analyze — nothing from your GitHub account is added to your resume automatically.",
+  },
+
+  // ── Credits & Billing ──────────────────────────────────────────────────────
   {
     id: "credits-used",
-    category: "Credits",
+    category: "billing",
     question: "How are AI credits used?",
     answer:
-      "Each AI action — a resume analysis, a tailored resume, a cover letter, or a GitHub analysis — uses credits. Your current balance is always visible in the dashboard.",
+      "Each AI action — a resume analysis, a tailored resume, a cover letter, or a GitHub analysis — spends credits. Your current balance is always visible in the dashboard.",
   },
   {
     id: "credits-expire",
-    category: "Credits",
-    question: "Do purchased credits expire?",
+    category: "billing",
+    question: "Do purchased credit packs expire?",
     answer:
-      "Monthly plan credits reset at renewal. Purchased credit packs never expire — they stay in your account until you use them.",
+      "No. Purchased credit packs never expire and stay in your account until you use them. Monthly plan credits are separate and reset at the start of each billing cycle.",
   },
   {
     id: "run-out",
-    category: "Credits",
-    question: "What happens if I run out of credits?",
+    category: "billing",
+    question: "What happens when I run out of credits?",
     answer:
-      "You can buy a one-time credit pack or upgrade your plan for more monthly credits. Your saved resumes and history stay available either way.",
-  },
-  {
-    id: "cancel",
-    category: "Billing",
-    question: "Can I cancel my subscription?",
-    answer:
-      "Yes. You can cancel anytime from billing settings; access continues until the end of the current billing period.",
+      "You can buy a one-time credit pack or upgrade your plan for more monthly credits. Your saved resumes, analyses, and documents stay available either way.",
   },
   {
     id: "payment",
-    category: "Billing",
+    category: "billing",
     question: "How is payment handled?",
     answer:
       "Payments are processed by Razorpay for INR and Stripe for USD. ResumeRocket never stores your card details.",
   },
   {
-    id: "privacy-storage",
-    category: "Privacy",
-    question: "How is my resume stored?",
+    id: "cancel",
+    category: "billing",
+    question: "Can I cancel my subscription?",
     answer:
-      "Your resume is stored securely in your account and isn't used to train any model. You can delete your account and all associated data at any time from settings.",
+      "Yes. You can cancel anytime from billing settings, and access continues until the end of the current billing period.",
+  },
+
+  // ── Privacy & Security ─────────────────────────────────────────────────────
+  {
+    id: "who-access",
+    category: "privacy",
+    question: "Who can access my resume?",
+    answer:
+      "Only you. Your resumes are private to your account, sent over encrypted connections, and never used to train any AI model.",
   },
   {
-    id: "github",
-    category: "GitHub",
-    question: "Can I analyze GitHub repositories?",
+    id: "delete-resumes",
+    category: "privacy",
+    question: "Can I delete my uploaded resumes?",
     answer:
-      "Yes. Connect your GitHub account and ResumeRocket turns selected repositories into recruiter-ready, resume-ready project bullet points with a relevance indicator.",
+      "Yes. You can delete any resume from your workspace at any time. You can also permanently delete your entire account and all associated data from settings.",
   },
 ];

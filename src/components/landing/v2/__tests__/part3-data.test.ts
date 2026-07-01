@@ -3,10 +3,12 @@ import { FAQ_ITEMS, FAQ_CATEGORIES } from "../part3-faq-data";
 import { PLAN_META } from "../pricing/plan-meta";
 
 describe("part 3 data", () => {
-  it("has 12 FAQ items across the six categories with non-empty answers", () => {
-    expect(FAQ_ITEMS).toHaveLength(12);
+  it("has FAQ items across the six categories with non-empty answers", () => {
+    const categoryIds = FAQ_CATEGORIES.map((c) => c.id);
+    expect(FAQ_CATEGORIES).toHaveLength(6);
+    expect(FAQ_ITEMS.length).toBeGreaterThanOrEqual(15);
     FAQ_ITEMS.forEach((f) => {
-      expect(FAQ_CATEGORIES).toContain(f.category);
+      expect(categoryIds).toContain(f.category);
       expect(f.answer.length).toBeGreaterThan(0);
     });
   });

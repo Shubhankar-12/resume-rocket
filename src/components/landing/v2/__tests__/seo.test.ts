@@ -13,7 +13,7 @@ describe("seo builders", () => {
   it("builds FAQPage JSON-LD with one entity per question", () => {
     const ld = buildFaqLd(FAQ_ITEMS);
     expect(ld["@type"]).toBe("FAQPage");
-    expect(ld.mainEntity).toHaveLength(12);
+    expect(ld.mainEntity).toHaveLength(FAQ_ITEMS.length);
     expect(ld.mainEntity[0]["@type"]).toBe("Question");
     expect(ld.mainEntity[0].acceptedAnswer["@type"]).toBe("Answer");
   });
