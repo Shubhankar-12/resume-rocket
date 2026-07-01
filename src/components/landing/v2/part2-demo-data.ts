@@ -6,52 +6,7 @@ export type IconKey =
 
 /* §3 Problem — see src/components/landing/v2/why/ (WhyResumesFail section) --- */
 
-/* §4 How It Works -------------------------------------------------------- */
-
-export const HOW_STEPS = [
-  {
-    n: 1,
-    title: "Upload Resume",
-    icon: "upload" as IconKey,
-    desc: "Upload a PDF or DOCX resume securely.",
-    preview: { kind: "upload", file: "Senior_Frontend_Resume.pdf", status: "Uploaded" },
-  },
-  {
-    n: 2,
-    title: "AI Resume Parsing",
-    icon: "sparkles" as IconKey,
-    desc: "ResumeRocket extracts structured information including experience, education, skills, projects, and contact information.",
-    preview: { kind: "parse", experience: 5, skills: 22, projects: 8 },
-  },
-  {
-    n: 3,
-    title: "Resume Analysis",
-    icon: "barchart" as IconKey,
-    desc: "Receive a detailed report including ATS score, letter grade, keyword match, and priority improvements.",
-    preview: { kind: "score", grade: "A-", ats: 87 },
-  },
-  {
-    n: 4,
-    title: "Tailor Resume",
-    icon: "target" as IconKey,
-    desc: "Paste a job description and identify missing skills, strengths, and improvement opportunities.",
-    preview: { kind: "tailor", matching: 14, missing: 3 },
-  },
-  {
-    n: 5,
-    title: "Generate Cover Letter",
-    icon: "file" as IconKey,
-    desc: "Generate a personalized cover letter using your resume and target role.",
-    preview: { kind: "cover", text: "Dear Hiring Manager, I'm excited to apply…" },
-  },
-  {
-    n: 6,
-    title: "Track Applications",
-    icon: "kanban" as IconKey,
-    desc: "Keep applications organized throughout your job search.",
-    preview: { kind: "track", columns: ["Applied", "Interview", "Offer", "Rejected"] },
-  },
-] as const;
+/* §4 How It Works — see src/components/landing/v2/how/ (HowItWorks section) - */
 
 /* §5 Ecosystem ----------------------------------------------------------- */
 
@@ -218,38 +173,4 @@ export const DEMO_TRACKER = {
   counts: { Applied: 6, Interview: 2, Offer: 1, Rejected: 3 },
 } as const;
 
-/* §8 Workflow ------------------------------------------------------------ */
-
-export const WORKFLOW_STEPS = [
-  {
-    title: "Upload Resume",
-    icon: "upload" as IconKey,
-    note: "Add a PDF or DOCX to your workspace.",
-  },
-  {
-    title: "Analyze Resume",
-    icon: "barchart" as IconKey,
-    note: "Get an ATS score and a prioritized report.",
-  },
-  {
-    title: "Improve Resume",
-    icon: "wand" as IconKey,
-    note: "Apply the highest-impact suggestions.",
-  },
-  {
-    title: "Tailor Resume",
-    icon: "target" as IconKey,
-    note: "Match the resume to a specific job description.",
-  },
-  {
-    title: "Generate Cover Letter",
-    icon: "file" as IconKey,
-    note: "Draft a personalized letter for the role.",
-  },
-  { title: "Apply", icon: "send" as IconKey, note: "Submit with a resume built for the role." },
-  {
-    title: "Track Progress",
-    icon: "kanban" as IconKey,
-    note: "Follow each application to its outcome.",
-  },
-] as const;
+/* §8 Workflow — removed; the journey now lives in the HowItWorks section --- */

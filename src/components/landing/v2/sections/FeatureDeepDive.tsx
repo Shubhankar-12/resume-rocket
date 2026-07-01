@@ -14,8 +14,8 @@ export function FeatureDeepDive() {
       <div className="mx-auto max-w-[1200px] px-4 md:px-8">
         <SectionHeading
           id="deep-dive-h"
-          eyebrow="Feature Deep Dive"
-          title="A Closer Look at Each Capability"
+          eyebrow="Under the Hood"
+          title="Deep Dive Into Features"
           intro="Understand exactly what each part of ResumeRocket does before you upload a single file."
         />
 

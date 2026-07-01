@@ -6,7 +6,7 @@ describe("InteractiveDemo", () => {
   it("renders the heading, Preview Workspace label, and six tabs", () => {
     render(<InteractiveDemo />);
     expect(
-      screen.getByRole("heading", { level: 2, name: /see resumerocket in action/i })
+      screen.getByRole("heading", { level: 2, name: /interactive product tour/i })
     ).toBeTruthy();
     expect(screen.getByText("Preview Workspace")).toBeTruthy();
     expect(screen.getAllByRole("tab")).toHaveLength(6);

@@ -11,7 +11,7 @@ export function Ecosystem() {
         <SectionHeading
           id="features-h"
           eyebrow="The Platform"
-          title="Designed Around the Complete Job Application Journey"
+          title="Everything in One Workspace"
         />
 
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

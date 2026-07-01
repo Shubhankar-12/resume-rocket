@@ -1,33 +1,23 @@
 "use client";
 
-import { SectionHeading } from "../shared/SectionHeading";
-import { TimelineStep } from "../how/TimelineStep";
-import { HOW_STEPS } from "../part2-demo-data";
+import { useCallback, useState } from "react";
+import { WorkflowRail } from "../how/WorkflowRail";
+import { WorkflowCanvas } from "../how/WorkflowCanvas";
 
+/**
+ * "How ResumeRocket works" — a sticky editorial rail beside a scrolling canvas
+ * of connected product previews. The rail tracks whichever stage is in view.
+ */
 export function HowItWorks() {
+  const [active, setActive] = useState(0);
+  const onEnter = useCallback((index: number) => setActive(index), []);
+
   return (
     <section id="how" aria-labelledby="how-h" className="bg-rr-bg-elevated py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-4 md:px-8">
-        <SectionHeading
-          id="how-h"
-          eyebrow="How It Works"
-          title="One Workspace for Your Entire Job Search"
-          intro="ResumeRocket combines resume analysis, AI-powered writing, GitHub project enhancement, and application tracking into a single workflow."
-        />
-
-        <div className="relative mt-14">
-          {/* decorative timeline rail (desktop) */}
-          <div
-            aria-hidden
-            className="absolute left-0 right-0 top-9 hidden border-t border-dashed border-rr-border lg:block"
-          />
-          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-            {HOW_STEPS.map((step, i) => (
-              <li key={step.n}>
-                <TimelineStep step={step} index={i} />
-              </li>
-            ))}
-          </ol>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-16">
+          <WorkflowRail active={active} />
+          <WorkflowCanvas active={active} onEnter={onEnter} />
         </div>
       </div>
     </section>

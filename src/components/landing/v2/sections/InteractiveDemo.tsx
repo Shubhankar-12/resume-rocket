@@ -13,7 +13,7 @@ export function InteractiveDemo() {
           </span>
           <SectionHeading
             id="demo-h"
-            title="See ResumeRocket in Action"
+            title="Interactive Product Tour"
             intro="Explore a sample workspace. Every tab uses example data — it never represents a real customer."
           />
         </div>

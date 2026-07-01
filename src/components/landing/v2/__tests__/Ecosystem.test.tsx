@@ -8,7 +8,7 @@ describe("Ecosystem", () => {
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /designed around the complete job application journey/i,
+        name: /everything in one workspace/i,
       })
     ).toBeTruthy();
     [

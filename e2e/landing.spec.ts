@@ -6,7 +6,7 @@ test.describe("Landing page (redesigned)", () => {
     await page.goto("/");
   });
 
-  test("renders all 13 numbered sections", async ({ page }) => {
+  test("renders all landing sections", async ({ page }) => {
     // Dismiss consent banner if visible
     try {
       await page.getByRole("dialog", { name: /cookie consent/i })
@@ -18,15 +18,11 @@ test.describe("Landing page (redesigned)", () => {
 
     const sectionIds = [
       "hero",
-      "social-proof",
       "problem",
       "how",
-      "features",
-      "deep-dive",
       "demo",
-      "workflow",
-      "compare",
-      "testimonials",
+      "deep-dive",
+      "features",
       "pricing",
       "faq",
       "final-cta",
@@ -85,25 +81,5 @@ test.describe("Landing page (redesigned)", () => {
     await expect(
       page.locator("#faq").getByText(/Razorpay for INR and Stripe for USD/i)
     ).toBeVisible();
-  });
-
-  test("ComparisonTable renders desktop or accordion based on viewport", async ({ page }) => {
-    try {
-      await page.getByRole("dialog", { name: /cookie consent/i })
-        .getByRole("button", { name: /accept/i })
-        .click({ timeout: 2000 });
-    } catch {
-      // Continue if banner not found
-    }
-
-    await page.setViewportSize({ width: 375, height: 800 });
-    await page.locator("#compare").waitFor({ state: "visible", timeout: 5000 });
-    await expect(
-      page.locator("#compare").getByRole("button", { name: "ResumeRocket" })
-    ).toBeVisible();
-    await page.setViewportSize({ width: 1280, height: 800 });
-    await page.reload();
-    await page.locator("#compare").waitFor({ state: "visible", timeout: 5000 });
-    await expect(page.locator("#compare table")).toBeVisible();
   });
 });
