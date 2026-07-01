@@ -8,6 +8,13 @@ export interface Plan {
   monthly_credits: number;
   features: Record<string, unknown>;
   active: boolean;
+  // Optional, backend-provided presentation hints. When present they OVERRIDE
+  // client display metadata. `popular`/`badge` are the only source for a "Most
+  // Popular"-style claim — the UI never invents one.
+  name?: string;
+  description?: string;
+  popular?: boolean;
+  badge?: string | null;
 }
 
 export interface CheckoutResult {

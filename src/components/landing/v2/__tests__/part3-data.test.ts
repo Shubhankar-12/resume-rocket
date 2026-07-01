@@ -11,8 +11,8 @@ describe("part 3 data", () => {
     });
   });
 
-  it("marks PRO as the popular plan in display meta", () => {
-    expect(PLAN_META.PRO.popular).toBe(true);
-    expect(PLAN_META.FREE.popular).toBeUndefined();
+  it("gives PRO a visual emphasis (design accent only, not a popularity claim)", () => {
+    expect(PLAN_META.PRO.emphasis).toBe(true);
+    expect(PLAN_META.FREE.emphasis).toBeUndefined();
   });
 });
