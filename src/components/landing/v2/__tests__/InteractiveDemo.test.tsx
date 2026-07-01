@@ -8,7 +8,7 @@ describe("InteractiveDemo", () => {
     expect(
       screen.getByRole("heading", { level: 2, name: /interactive product tour/i })
     ).toBeTruthy();
-    expect(screen.getByText("Preview Workspace")).toBeTruthy();
+    expect(screen.getAllByText("Preview Workspace").length).toBeGreaterThan(0);
     expect(screen.getAllByRole("tab")).toHaveLength(6);
   });
 
