@@ -9,18 +9,18 @@ vi.mock("@/lib/analytics/posthog", () => ({
 }));
 
 describe("FinalCTA", () => {
-  it("renders the headline, CTAs, chips, and fires final analytics", () => {
+  it("renders the headline, CTAs, trust notes, and fires final analytics", () => {
     captureEvent.mockClear();
     render(<FinalCTA />);
     expect(
-      screen.getByRole("heading", { level: 2, name: /build stronger job applications with ai/i })
+      screen.getByRole("heading", { level: 2, name: /build better job applications/i })
     ).toBeTruthy();
     const primary = screen.getByRole("link", { name: /upload your resume/i });
     expect(primary.getAttribute("href")).toBe("/auth?next=/dashboard");
-    expect(screen.getByRole("link", { name: /explore pricing/i }).getAttribute("href")).toBe(
+    expect(screen.getByRole("link", { name: /view pricing/i }).getAttribute("href")).toBe(
       "#pricing"
     );
-    expect(screen.getByText("ATS Optimization")).toBeTruthy();
+    expect(screen.getByText(/supports pdf & docx/i)).toBeTruthy();
     fireEvent.click(primary);
     expect(captureEvent).toHaveBeenCalledWith("hero_cta_clicked", {
       cta_label: "Upload Your Resume",

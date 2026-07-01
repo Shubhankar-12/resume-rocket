@@ -1,93 +1,71 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight, FileText, BarChart3, Wand2, Send } from "lucide-react";
-import { captureEvent } from "@/lib/analytics/posthog";
+import { motion, useReducedMotion } from "framer-motion";
+import { CTAButtons } from "../finalcta/CTAButtons";
+import { TrustNotes } from "../finalcta/TrustNotes";
+import { WorkflowStrip } from "../finalcta/WorkflowStrip";
 
-const CHIPS = [
-  "Resume Analysis",
-  "ATS Optimization",
-  "Cover Letters",
-  "GitHub Analysis",
-  "Application Tracker",
-];
-
-const FLOW = [
-  { icon: FileText, label: "Resume" },
-  { icon: BarChart3, label: "Analysis" },
-  { icon: Wand2, label: "Improvement" },
-  { icon: Send, label: "Application" },
-];
+/** Static mesh atmosphere — large blurred orbs + faint grain, nothing looping. */
+function ClosingBackground() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_35%,hsl(var(--rr-accent)/0.10),transparent)]" />
+      <div className="absolute -left-24 top-1/4 h-[32rem] w-[32rem] rounded-full bg-rr-accent/10 blur-3xl" />
+      <div className="absolute -right-28 bottom-0 h-[30rem] w-[30rem] rounded-full bg-rr-info/10 blur-3xl" />
+      <div
+        className="absolute inset-0 opacity-[0.15] mix-blend-soft-light"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
+    </div>
+  );
+}
 
 export function FinalCTA() {
-  const onPrimary = () =>
-    captureEvent("hero_cta_clicked", { cta_label: "Upload Your Resume", cta_position: "final" });
+  const reduce = useReducedMotion() ?? false;
 
   return (
     <section
       id="final-cta"
       aria-labelledby="final-cta-h"
-      className="relative overflow-hidden bg-rr-bg py-20 md:py-28"
+      className="relative overflow-hidden bg-rr-bg py-24 md:py-36"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_50%_0%,hsl(var(--rr-accent)/0.12),transparent),radial-gradient(50%_50%_at_100%_100%,hsl(var(--rr-info)/0.10),transparent)]"
-      />
-      <div className="mx-auto max-w-[1200px] px-4 md:px-8">
-        <div className="glass-rr mx-auto max-w-3xl rounded-3xl p-8 text-center md:p-12">
+      <ClosingBackground />
+
+      <div className="mx-auto max-w-[820px] px-4 md:px-8">
+        <motion.div
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: reduce ? 0 : 0.6, ease: [0.2, 0, 0, 1] }}
+          className="glass-rr rounded-[28px] px-6 py-12 text-center shadow-[0_28px_70px_-32px_hsl(240_24%_10%/0.28)] sm:px-12 md:py-16"
+        >
           <h2
             id="final-cta-h"
-            className="text-3xl font-bold tracking-[-0.02em] text-rr-text sm:text-4xl"
+            className="mx-auto max-w-[16ch] font-display text-4xl font-bold leading-[1.05] tracking-[-0.025em] text-rr-text sm:text-5xl lg:text-[3.25rem]"
           >
-            Build Stronger Job Applications With AI
+            Build better job applications.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-rr-text-secondary sm:text-lg">
-            Upload your resume, receive actionable feedback, tailor it for your next opportunity,
-            and manage your applications from one workspace.
+          <p className="mx-auto mt-5 max-w-[54ch] text-base leading-relaxed text-rr-text-secondary sm:text-lg">
+            Upload your resume to receive actionable feedback, tailor it for specific roles,
+            generate personalized cover letters, and organize your entire job search from one
+            workspace.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="/auth?next=/dashboard"
-              onClick={onPrimary}
-              className="inline-flex h-12 items-center gap-2 rounded-xl bg-rr-accent px-6 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_hsl(243_78%_60%/0.6)] transition-all hover:bg-rr-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rr-accent focus-visible:ring-offset-2"
-            >
-              Upload Your Resume <ArrowRight className="h-4 w-4" />
-            </Link>
-            <a
-              href="#pricing"
-              className="inline-flex h-12 items-center rounded-xl border border-rr-border px-6 text-sm font-semibold text-rr-text transition-colors hover:bg-rr-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rr-accent"
-            >
-              Explore Pricing
-            </a>
-          </div>
+          <CTAButtons />
+          <TrustNotes />
+        </motion.div>
 
-          <ul className="mt-7 flex flex-wrap justify-center gap-2" aria-label="Capabilities">
-            {CHIPS.map((c) => (
-              <li
-                key={c}
-                className="rounded-full border border-rr-border bg-rr-card px-3 py-1.5 text-xs font-medium text-rr-text-secondary"
-              >
-                {c}
-              </li>
-            ))}
-          </ul>
-
-          <div
-            className="mt-8 flex items-center justify-center gap-2 text-rr-text-muted"
-            aria-hidden
-          >
-            {FLOW.map((step, i) => (
-              <div key={step.label} className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-rr-bg-elevated px-2.5 py-1.5 text-xs">
-                  <step.icon className="h-3.5 w-3.5 text-rr-accent" />
-                  {step.label}
-                </span>
-                {i < FLOW.length - 1 && <ArrowRight className="h-3.5 w-3.5" />}
-              </div>
-            ))}
-          </div>
-        </div>
+        <motion.div
+          initial={reduce ? { opacity: 1 } : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.25 }}
+        >
+          <WorkflowStrip />
+        </motion.div>
       </div>
     </section>
   );
