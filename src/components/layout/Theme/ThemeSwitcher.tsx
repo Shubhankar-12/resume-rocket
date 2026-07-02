@@ -3,15 +3,14 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { motion, useReducedMotion } from "framer-motion";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type ThemeValue = "light" | "dark" | "system";
+type ThemeValue = "light" | "dark";
 
 const OPTIONS: { value: ThemeValue; label: string; Icon: typeof Sun }[] = [
   { value: "light", label: "Light", Icon: Sun },
   { value: "dark", label: "Dark", Icon: Moon },
-  { value: "system", label: "System", Icon: Monitor },
 ];
 
 /**
@@ -36,7 +35,7 @@ export function ThemeSwitcher({
 
   useEffect(() => setMounted(true), []);
 
-  const active = (theme as ThemeValue) ?? "system";
+  const active = (theme as ThemeValue) ?? "light";
   const showLabels = size === "lg";
   const btn = size === "lg" ? "h-10 gap-2 px-4 text-sm" : "h-8 w-8 justify-center sm:aspect-square";
 

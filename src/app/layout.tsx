@@ -33,7 +33,7 @@ export default function RootLayout({
       <LoaderProvider>
         <html lang="en" suppressHydrationWarning>
           <body className={`${inter.className} ${spaceGrotesk.variable}`}>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
               <ErrorBoundary>
                 <PostHogProvider>{children}</PostHogProvider>
               </ErrorBoundary>

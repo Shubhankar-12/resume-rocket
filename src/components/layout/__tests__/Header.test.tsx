@@ -44,6 +44,8 @@ describe("Header", () => {
   it("exposes a theme radiogroup", () => {
     renderHeader();
     expect(screen.getAllByRole("radiogroup", { name: /color theme/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("radio", { name: /system/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("radio", { name: /light/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("radio", { name: /dark/i }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("radio", { name: /system/i })).toBeNull();
   });
 });
