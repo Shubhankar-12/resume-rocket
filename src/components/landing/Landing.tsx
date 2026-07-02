@@ -31,7 +31,10 @@ export function Landing({ isLoggedIn }: LandingProps) {
   }, []);
 
   return (
-    <main className="min-h-screen">
+    // overflow-x-clip (not hidden) contains any section's incidental horizontal
+    // overflow without turning main into a scroll container, which would break
+    // the sticky header.
+    <main className="min-h-screen overflow-x-clip">
       <Header isLoggedIn={isLoggedIn} />
       <Hero />
       <WhyResumesFail />

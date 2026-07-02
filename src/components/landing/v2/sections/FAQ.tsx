@@ -68,9 +68,9 @@ export function FAQ() {
         </div>
 
         {/* two-column knowledge center */}
-        <div className="mt-10 grid items-start gap-8 lg:mt-14 lg:grid-cols-[236px_1fr] lg:gap-14">
+        <div className="mt-10 grid grid-cols-1 items-start gap-8 lg:mt-14 lg:grid-cols-[236px_minmax(0,1fr)] lg:gap-14">
           {/* category nav — sticky on desktop, scrollable chips on smaller screens */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
             <FAQCategories
               active={active}
               counts={COUNTS}
@@ -80,7 +80,7 @@ export function FAQ() {
           </div>
 
           {/* search + answers */}
-          <div>
+          <div className="min-w-0">
             <FAQSearch query={query} onChange={setQuery} />
 
             <div className="mt-6">
