@@ -69,19 +69,20 @@ export function EcosystemDiagram() {
           })}
         </svg>
 
-        {/* hub */}
-        <motion.div
-          className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-          animate={reduce ? undefined : { scale: [1, 1.04, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="flex flex-col items-center gap-1 rounded-2xl border border-rr-border bg-rr-card px-4 py-3 shadow-md">
+        {/* hub — centering lives on a static wrapper so Framer's animated
+            transform (scale) doesn't clobber the -translate-1/2 that centres it */}
+        <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+          <motion.div
+            animate={reduce ? undefined : { scale: [1, 1.04, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="flex flex-col items-center gap-1 rounded-2xl border border-rr-border bg-rr-card px-4 py-3 shadow-md"
+          >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-rr-accent text-white">
               <Rocket className="h-5 w-5" aria-hidden />
             </span>
             <span className="text-[13px] font-semibold text-rr-text">ResumeRocket</span>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* nodes */}
         {NODES.map((node, i) => {
