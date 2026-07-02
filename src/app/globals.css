@@ -135,25 +135,27 @@
     --glass-alpha: 0.6;
     --glass-border: 255 255 255;
 
-    /* RR palette — dark (designed separately, not inverted) */
-    --rr-bg: 240 24% 5%;
-    --rr-bg-elevated: 240 20% 8%;
-    --rr-card: 240 18% 10%;
-    --rr-card-elevated: 240 16% 13%;
-    --rr-border: 240 12% 18%;
-    --rr-border-muted: 240 12% 14%;
-    --rr-text: 240 18% 97%;
-    --rr-text-secondary: 240 10% 72%;
-    --rr-text-muted: 240 8% 58%;
-    --rr-accent: 239 84% 72%;
-    --rr-accent-hover: 239 84% 78%;
-    --rr-accent-light: 240 40% 16%;
-    --rr-success: 152 55% 52%;
-    --rr-warning: 38 92% 58%;
-    --rr-danger: 2 76% 64%;
-    --rr-info: 220 80% 68%;
-    --rr-glass-bg: 20 20 28;
-    --rr-glass-alpha: 0.62;
+    /* RR palette — dark (designed from scratch as a deep blue-slate neutral,
+       anchored near #0B0F14 / #11161D; low-contrast borders, brighter text,
+       desaturated accent surface. Never a direct inversion of light.) */
+    --rr-bg: 213 33% 6%; /* ≈ #0B0F14 */
+    --rr-bg-elevated: 214 27% 9%; /* ≈ #11161D */
+    --rr-card: 214 24% 11%;
+    --rr-card-elevated: 214 21% 14%;
+    --rr-border: 214 16% 20%; /* low contrast */
+    --rr-border-muted: 214 16% 15%;
+    --rr-text: 210 32% 96%; /* slightly brighter */
+    --rr-text-secondary: 214 16% 72%;
+    --rr-text-muted: 214 12% 55%;
+    --rr-accent: 239 84% 74%;
+    --rr-accent-hover: 239 84% 80%;
+    --rr-accent-light: 234 44% 18%; /* desaturated accent surface */
+    --rr-success: 152 52% 55%;
+    --rr-warning: 38 92% 60%;
+    --rr-danger: 2 76% 66%;
+    --rr-info: 214 82% 70%;
+    --rr-glass-bg: 17 22 29;
+    --rr-glass-alpha: 0.66;
   }
 }
 
@@ -164,6 +166,15 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  /* Smooth, flash-free theme switching on the base surface. Components that
+     already use `transition-colors` cross-fade with it; reduced-motion opts out. */
+  @media (prefers-reduced-motion: no-preference) {
+    body {
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+    }
   }
   .dark ::-webkit-scrollbar {
     width: 8px;

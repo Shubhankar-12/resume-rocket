@@ -14,7 +14,7 @@ export const EVENTS = {
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];
 
-type CtaPosition = "hero" | "how" | "demo" | "final";
+type CtaPosition = "hero" | "how" | "demo" | "final" | "header";
 
 export type EventPropsMap = {
   landing_viewed: {

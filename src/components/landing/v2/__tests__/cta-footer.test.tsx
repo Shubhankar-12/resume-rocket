@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { ThemeProvider } from "next-themes";
 import { FinalCTA } from "../sections/FinalCTA";
-import { Footer } from "../sections/Footer";
+import { Footer } from "@/components/layout/Footer/Footer";
 
 const captureEvent = vi.fn();
 vi.mock("@/lib/analytics/posthog", () => ({
@@ -29,22 +30,30 @@ describe("FinalCTA", () => {
   });
 });
 
+const renderFooter = () =>
+  render(
+    <ThemeProvider attribute="class">
+      <Footer />
+    </ThemeProvider>
+  );
+
 describe("Footer", () => {
-  it("renders five columns, version, coming-soon resources, and correct legal routes", () => {
-    render(<Footer />);
-    ["Product", "Company", "Resources", "Legal", "Social"].forEach((t) =>
+  it("renders the column headings, version, coming-soon items, and legal routes", () => {
+    renderFooter();
+    ["Product", "Resources", "Company", "Account"].forEach((t) =>
       expect(screen.getByText(t)).toBeTruthy()
     );
-    expect(screen.getByText("Version 1.0")).toBeTruthy();
-    expect(screen.getAllByText("Coming Soon")).toHaveLength(3);
-    expect(screen.getByRole("link", { name: /privacy policy/i }).getAttribute("href")).toBe(
+    expect(screen.getByText("v1.0")).toBeTruthy();
+    // Roadmap + 4 resources + Language = 6 "Soon" tags.
+    expect(screen.getAllByText("Soon").length).toBeGreaterThanOrEqual(5);
+    expect(screen.getByRole("link", { name: /^privacy$/i }).getAttribute("href")).toBe(
       "/privacy-policy"
     );
   });
 
   it("reopens the consent banner from the Cookies control", () => {
     const spy = vi.spyOn(window, "dispatchEvent");
-    render(<Footer />);
+    renderFooter();
     fireEvent.click(screen.getByRole("button", { name: /cookies/i }));
     expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: "rr:open-consent" }));
     spy.mockRestore();

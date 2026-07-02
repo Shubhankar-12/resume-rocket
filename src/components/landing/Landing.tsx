@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Navigation } from "./v2/Navigation";
+import { Header } from "@/components/layout/Header/Header";
 import { Hero } from "./v2/Hero";
 import { WhyResumesFail } from "./v2/why/WhyResumesFail";
 import { HowItWorks } from "./v2/sections/HowItWorks";
@@ -11,7 +11,7 @@ import { ResumeTransformation } from "./v2/transformation/ResumeTransformation";
 import { Pricing } from "./v2/sections/Pricing";
 import { FAQ } from "./v2/sections/FAQ";
 import { FinalCTA } from "./v2/sections/FinalCTA";
-import { Footer } from "./v2/sections/Footer";
+import { Footer } from "@/components/layout/Footer/Footer";
 import { captureEvent } from "@/lib/analytics/posthog";
 
 export interface LandingProps {
@@ -32,7 +32,7 @@ export function Landing({ isLoggedIn }: LandingProps) {
 
   return (
     <main className="min-h-screen">
-      <Navigation isLoggedIn={isLoggedIn} />
+      <Header isLoggedIn={isLoggedIn} />
       <Hero />
       <WhyResumesFail />
       <HowItWorks />
