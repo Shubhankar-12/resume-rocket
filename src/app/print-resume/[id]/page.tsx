@@ -5,28 +5,41 @@ type Props = {
   searchParams: Promise<{ template?: string }>;
 };
 
-async function getDraft(id: string): Promise<BuilderResume | null> {
+async function getDraft(id: string): Promise<{ draft: BuilderResume | null; reason: string }> {
+  const base = process.env.NEXT_PUBLIC_USER_API;
+  if (!base) return { draft: null, reason: "NEXT_PUBLIC_USER_API is not set" };
+  if (!process.env.API_TOKEN) return { draft: null, reason: "API_TOKEN is not set" };
+  const url = `${base}/api/v1/resume-builder?resume_draft_id=${id}`;
   try {
-    const url = `${process.env.NEXT_PUBLIC_USER_API}/api/v1/resume-builder?resume_draft_id=${id}`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${process.env.API_TOKEN}` },
       cache: "no-store",
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.error("print-resume getDraft failed", res.status, body.slice(0, 300));
+      return { draft: null, reason: `backend responded ${res.status}` };
+    }
     const json = await res.json();
-    return (json.body as BuilderResume) ?? null;
-  } catch {
-    return null;
+    const draft = (json.body as BuilderResume) ?? null;
+    return { draft, reason: draft ? "" : "backend returned an empty body" };
+  } catch (e) {
+    return { draft: null, reason: `fetch error: ${e instanceof Error ? e.message : "unknown"}` };
   }
 }
 
 export default async function PrintResume({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
-  const draft = await getDraft(id);
+  const { draft, reason } = await getDraft(id);
 
   if (!draft) {
-    return <div className="p-10 text-center text-gray-600">Resume not found</div>;
+    return (
+      <div className="p-10 text-center text-gray-600">
+        Resume not found
+        {reason && <div className="mt-2 text-xs text-gray-400">({reason})</div>}
+      </div>
+    );
   }
 
   const resume: BuilderResume = normalizeDraft(
