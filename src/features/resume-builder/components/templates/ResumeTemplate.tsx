@@ -10,6 +10,10 @@ import { DeedyTemplate } from "./DeedyTemplate";
 import { ModernTechTemplate } from "./ModernTechTemplate";
 import { EmojiTemplate } from "./EmojiTemplate";
 import { TriHeaderTemplate } from "./TriHeaderTemplate";
+import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
+import { BlueSidebarTemplate } from "./BlueSidebarTemplate";
+import { TimelinePhotoTemplate } from "./TimelinePhotoTemplate";
+import { ExecSidebarTemplate } from "./ExecSidebarTemplate";
 
 /** Renders the resume in its selected template. Shared by the live preview and the print page. */
 export function ResumeTemplate({ resume }: TemplateProps) {
@@ -34,6 +38,14 @@ export function ResumeTemplate({ resume }: TemplateProps) {
       return <EmojiTemplate resume={resume} />;
     case "tri-header":
       return <TriHeaderTemplate resume={resume} />;
+    case "dark-sidebar":
+      return <DarkSidebarTemplate resume={resume} />;
+    case "blue-sidebar":
+      return <BlueSidebarTemplate resume={resume} />;
+    case "timeline-photo":
+      return <TimelinePhotoTemplate resume={resume} />;
+    case "exec-sidebar":
+      return <ExecSidebarTemplate resume={resume} />;
     case "classic":
     default:
       return <ClassicTemplate resume={resume} />;

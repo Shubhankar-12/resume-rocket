@@ -11,6 +11,10 @@ import { DeedyTemplate } from "./DeedyTemplate";
 import { ModernTechTemplate } from "./ModernTechTemplate";
 import { EmojiTemplate } from "./EmojiTemplate";
 import { TriHeaderTemplate } from "./TriHeaderTemplate";
+import { DarkSidebarTemplate } from "./DarkSidebarTemplate";
+import { BlueSidebarTemplate } from "./BlueSidebarTemplate";
+import { TimelinePhotoTemplate } from "./TimelinePhotoTemplate";
+import { ExecSidebarTemplate } from "./ExecSidebarTemplate";
 
 export type TemplateCategory = "ats" | "designer";
 
@@ -112,6 +116,38 @@ export const TEMPLATES: TemplateMeta[] = [
     category: "ats",
     atsSafe: true,
     Component: TriHeaderTemplate,
+  },
+  {
+    id: "dark-sidebar",
+    label: "Dark Header",
+    description: "Dark band · sidebar",
+    category: "designer",
+    atsSafe: false,
+    Component: DarkSidebarTemplate,
+  },
+  {
+    id: "blue-sidebar",
+    label: "Blue Sidebar",
+    description: "Left rail · blue",
+    category: "designer",
+    atsSafe: false,
+    Component: BlueSidebarTemplate,
+  },
+  {
+    id: "timeline-photo",
+    label: "Timeline",
+    description: "Photo · timeline · bars",
+    category: "designer",
+    atsSafe: false,
+    Component: TimelinePhotoTemplate,
+  },
+  {
+    id: "exec-sidebar",
+    label: "Executive",
+    description: "Photo · navy/gold",
+    category: "designer",
+    atsSafe: false,
+    Component: ExecSidebarTemplate,
   },
 ];
 

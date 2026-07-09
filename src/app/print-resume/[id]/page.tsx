@@ -1,4 +1,4 @@
-import { ResumeTemplate, type BuilderResume } from "@/features/resume-builder";
+import { ResumeTemplate, normalizeDraft, type BuilderResume } from "@/features/resume-builder";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -29,9 +29,9 @@ export default async function PrintResume({ params, searchParams }: Props) {
     return <div className="p-10 text-center text-gray-600">Resume not found</div>;
   }
 
-  const resume: BuilderResume = sp?.template
-    ? { ...draft, template_id: sp.template as BuilderResume["template_id"] }
-    : draft;
+  const resume: BuilderResume = normalizeDraft(
+    sp?.template ? { ...draft, template_id: sp.template as BuilderResume["template_id"] } : draft
+  );
 
   return (
     <div className="min-h-screen bg-white">

@@ -14,6 +14,10 @@ export const TEMPLATE_IDS = [
   "jake",
   "business-pro",
   "modern-tech",
+  "dark-sidebar",
+  "blue-sidebar",
+  "timeline-photo",
+  "exec-sidebar",
 ] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 

@@ -1,4 +1,10 @@
-import type { BuilderResume, SectionKey, SkillLevel, LanguageItem } from "../../types";
+import type {
+  BuilderResume,
+  SectionKey,
+  SkillLevel,
+  LanguageLevel,
+  LanguageItem,
+} from "../../types";
 import { SECTION_KEYS } from "../../types";
 
 export interface ResolvedSkillGroup {
@@ -35,6 +41,53 @@ export function skillsByTier(
   for (const t of TIER_ORDER) if (byTier.has(t)) out.push({ level: t, names: byTier.get(t)! });
   if (byTier.has("other")) out.push({ level: "other", names: byTier.get("other")! });
   return out;
+}
+
+export const SKILL_LEVEL_LABEL: Record<SkillLevel, string> = {
+  expert: "Expert",
+  proficient: "Proficient",
+  intermediate: "Intermediate",
+  beginner: "Beginner",
+};
+export const LANGUAGE_LEVEL_LABEL: Record<LanguageLevel, string> = {
+  native: "Native",
+  fluent: "Fluent",
+  professional: "Professional",
+  intermediate: "Intermediate",
+  basic: "Basic",
+};
+
+/** Percent fill for a skill proficiency bar (unset -> a neutral 60%). */
+export function skillLevelPct(level?: SkillLevel): number {
+  switch (level) {
+    case "expert":
+      return 100;
+    case "proficient":
+      return 75;
+    case "intermediate":
+      return 50;
+    case "beginner":
+      return 25;
+    default:
+      return 60;
+  }
+}
+/** Percent fill for a language proficiency bar (unset -> a neutral 60%). */
+export function languageLevelPct(level?: LanguageLevel): number {
+  switch (level) {
+    case "native":
+      return 100;
+    case "fluent":
+      return 90;
+    case "professional":
+      return 70;
+    case "intermediate":
+      return 50;
+    case "basic":
+      return 30;
+    default:
+      return 60;
+  }
 }
 
 /** Languages to render: items if present, else derived from the flat list. */
