@@ -5,19 +5,20 @@ import { WidgetCard } from "@/components/rr";
 import { useApplications } from "@/features/application-tracker/hooks/useApplications";
 
 const STAGES: {
-  key: "BOOKMARKED" | "APPLIED" | "INTERVIEW" | "OFFER";
+  key: "BOOKMARKED" | "APPLIED" | "PHONE_SCREEN" | "INTERVIEW" | "OFFER";
   label: string;
   dot: string;
 }[] = [
   { key: "BOOKMARKED", label: "Saved", dot: "bg-rr-text-muted" },
   { key: "APPLIED", label: "Applied", dot: "bg-rr-accent" },
+  { key: "PHONE_SCREEN", label: "Phone screen", dot: "bg-rr-info" },
   { key: "INTERVIEW", label: "Interview", dot: "bg-rr-info" },
   { key: "OFFER", label: "Offer", dot: "bg-rr-success" },
 ];
 
 export function PipelineWidget({ reduce: _reduce }: { reduce: boolean }) {
   const { columns, loading } = useApplications();
-  const total = Object.values(columns).reduce((n, col) => n + col.length, 0);
+  const total = STAGES.reduce((n, s) => n + columns[s.key].length, 0);
 
   return (
     <WidgetCard title="Application Pipeline">
