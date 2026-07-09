@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText } from "lucide-react";
@@ -21,9 +15,7 @@ import UserAPI from "@/lib/api/user/users";
 export default function GitHubCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
-  );
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const dispatch = useDispatch();
   const authenticateWithGitHub = async () => {
@@ -39,7 +31,7 @@ export default function GitHubCallbackPage() {
       if (response && response.data) {
         console.log("GitHub authentication successful:", response.data);
 
-        dispatch(login(response.data.body.token.token)); // Assuming the token is in response.data.token
+        dispatch(login(response.data.body.token)); // body.token is the JWT string
         setStatus("success");
         setTimeout(() => {
           router.push("/dashboard");
@@ -116,10 +108,7 @@ export default function GitHubCallbackPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
-      <Link
-        href="/"
-        className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center gap-2"
-      >
+      <Link href="/" className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center gap-2">
         <FileText className="h-6 w-6 text-teal-600" />
         <span className="text-xl font-bold">ResumeRocket</span>
       </Link>
@@ -151,8 +140,7 @@ export default function GitHubCallbackPage() {
                 <CheckCircle className="h-8 w-8 text-teal-600" />
               </div>
               <p className="text-center text-sm text-muted-foreground">
-                You have successfully authenticated with GitHub. Redirecting to
-                dashboard...
+                You have successfully authenticated with GitHub. Redirecting to dashboard...
               </p>
             </div>
           )}
@@ -164,10 +152,7 @@ export default function GitHubCallbackPage() {
               <AlertDescription>
                 {errorMessage}
                 <div className="mt-4">
-                  <Link
-                    href="/auth"
-                    className="text-sm font-medium underline underline-offset-4"
-                  >
+                  <Link href="/auth" className="text-sm font-medium underline underline-offset-4">
                     Return to login page
                   </Link>
                 </div>

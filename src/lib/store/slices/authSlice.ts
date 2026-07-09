@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import jwt from "jsonwebtoken";
-import { deleteCookie } from "cookies-next";
+import { setCookie, deleteCookie } from "cookies-next";
 
 const authSlice = createSlice({
   name: "auth",
@@ -33,7 +33,14 @@ const authSlice = createSlice({
       state.user = decodedToken.user;
       state.token = action.payload;
       state.isLoggedIn = true;
-      console.log("Login state", state);
+      // Persist the token on the frontend domain so /api/me, the axios
+      // interceptor, and getCookie("token") all see it. Required because the
+      // backend runs on a different domain (its Set-Cookie can't reach us).
+      setCookie("token", action.payload, {
+        maxAge: 60 * 60 * 24 * 30,
+        path: "/",
+        sameSite: "lax",
+      });
     },
 
     setSliceToken: (state, action) => {
@@ -42,9 +49,7 @@ const authSlice = createSlice({
       if (!action.payload) {
         // Redirect to login
       }
-      let tokenPayload = JSON.parse(
-        Buffer.from(action.payload.split(".")[1], "base64").toString()
-      );
+      let tokenPayload = JSON.parse(Buffer.from(action.payload.split(".")[1], "base64").toString());
       console.log("tokenPayload", tokenPayload);
 
       state.user = tokenPayload.user;
@@ -58,6 +63,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, checkTokenExists, login, setSliceToken } =
-  authSlice.actions;
+export const { logout, checkTokenExists, login, setSliceToken } = authSlice.actions;
 export default authSlice.reducer;
