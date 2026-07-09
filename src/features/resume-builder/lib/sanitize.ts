@@ -1,12 +1,25 @@
-import DOMPurify from "isomorphic-dompurify";
+// Dependency-free HTML sanitizer for resume rich text. No jsdom / DOMPurify so
+// it runs identically on the server (print page / SSR) and the client without
+// pulling native/ESM deps that break on serverless runtimes.
 
 // Resume rich text allows only inline emphasis + simple lists (ATS + print safe).
-const ALLOWED_TAGS = ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li"];
+const ALLOWED_TAGS = new Set(["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li"]);
 
-/** Sanitize rich-text HTML down to the resume allowlist (no attributes, no links/scripts). */
+/**
+ * Sanitize rich-text HTML down to the resume allowlist: strips <script>/<style>
+ * blocks, comments/doctypes, ALL attributes, and every non-allowlisted tag
+ * (keeping their inner text). Since no attributes survive, there is no href /
+ * event-handler / style vector.
+ */
 export function sanitizeHtml(html: string): string {
   if (!html) return "";
-  return DOMPurify.sanitize(html, { ALLOWED_TAGS, ALLOWED_ATTR: [] });
+  return html
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<![^>]*>/g, "")
+    .replace(/<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?>/g, (_m, slash: string, tag: string) =>
+      ALLOWED_TAGS.has(tag.toLowerCase()) ? `<${slash}${tag.toLowerCase()}>` : ""
+    );
 }
 
 const escapeHtml = (s: string): string =>
