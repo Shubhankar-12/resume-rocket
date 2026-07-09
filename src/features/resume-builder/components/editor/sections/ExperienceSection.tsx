@@ -1,13 +1,17 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Sparkles, Trash2 } from "lucide-react";
 
 import type { BuilderExperience, SectionEditorProps } from "../../../types";
 import { TextField } from "../fields";
 import { MonthField } from "../MonthField";
 import { RichTextEditor } from "../RichTextEditor";
+import { useAiAssist } from "../../../hooks/useAiAssist";
+import { htmlToText, bulletsToHtml } from "../../../lib/sanitize";
 
 export function ExperienceSection({ draft, update }: SectionEditorProps) {
+  const { polishDescription, busy } = useAiAssist();
+
   const setItem = (id: string, patch: Partial<BuilderExperience>) =>
     update({
       experience: draft.experience.map((x) => (x.id === id ? { ...x, ...patch } : x)),
@@ -87,9 +91,30 @@ export function ExperienceSection({ draft, update }: SectionEditorProps) {
           </label>
 
           <div>
-            <span className="mb-1 block text-[11px] font-medium text-rr-text-muted">
-              Description
-            </span>
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-[11px] font-medium text-rr-text-muted">Description</span>
+              <button
+                type="button"
+                disabled={busy === item.id || !htmlToText(item.description)}
+                onClick={async () => {
+                  const text = htmlToText(item.description);
+                  if (!text) return;
+                  const bullets = await polishDescription(
+                    item.id,
+                    text,
+                    `${item.role} at ${item.companyName}`.trim()
+                  );
+                  if (bullets && bullets.length) {
+                    setItem(item.id, { description: bulletsToHtml(bullets) });
+                  }
+                }}
+                className="inline-flex items-center gap-1 text-[12px] font-medium text-rr-accent hover:text-rr-accent-hover disabled:opacity-40"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                {busy === item.id ? "Polishing…" : "Polish with AI"}
+                <span className="text-rr-text-muted">· 1 credit</span>
+              </button>
+            </div>
             <RichTextEditor
               value={item.description}
               onChange={(v) => setItem(item.id, { description: v })}

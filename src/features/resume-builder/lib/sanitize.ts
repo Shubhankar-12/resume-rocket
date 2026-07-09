@@ -9,6 +9,16 @@ export function sanitizeHtml(html: string): string {
   return DOMPurify.sanitize(html, { ALLOWED_TAGS, ALLOWED_ATTR: [] });
 }
 
+const escapeHtml = (s: string): string =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/** Wrap a list of bullet strings into a sanitized-friendly <ul> (for AI polish output). */
+export function bulletsToHtml(bullets: string[]): string {
+  const items = bullets.map((b) => b.trim()).filter(Boolean);
+  if (!items.length) return "";
+  return `<ul>${items.map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul>`;
+}
+
 /** Flatten rich-text HTML to plain text (for sending to the AI). */
 export function htmlToText(html: string): string {
   if (!html) return "";

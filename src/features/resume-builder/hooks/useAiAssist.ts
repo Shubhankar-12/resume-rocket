@@ -60,5 +60,22 @@ export function useAiAssist() {
     []
   );
 
-  return { busy, error, improveBullet, generateSummary, suggestSkills };
+  const polishDescription = useCallback(
+    async (key: string, text: string, context: string): Promise<string[] | null> => {
+      setBusy(key);
+      setError(null);
+      try {
+        const res = await ResumeBuilderAPI.polishDescription(text, context);
+        return (res?.data?.body?.bullets as string[]) ?? null;
+      } catch {
+        setError("AI request failed");
+        return null;
+      } finally {
+        setBusy(null);
+      }
+    },
+    []
+  );
+
+  return { busy, error, improveBullet, generateSummary, suggestSkills, polishDescription };
 }

@@ -62,6 +62,14 @@ export class ResumeBuilderAPI {
     );
   }
 
+  static async polishDescription(text: string, context: string) {
+    return userService.post(
+      "/resume-builder/ai/polish-description",
+      { text, context },
+      authHeaders()
+    );
+  }
+
   static async ghostwrite(text: string, context: string) {
     return userService.post("/resume-builder/ai/ghostwrite", { text, context }, authHeaders());
   }
