@@ -38,12 +38,11 @@ const renderFooter = () =>
   );
 
 describe("Footer", () => {
-  it("renders the column headings, version, coming-soon items, and legal routes", () => {
+  it("renders the column headings, coming-soon items, and legal routes", () => {
     renderFooter();
     ["Product", "Resources", "Company", "Account"].forEach((t) =>
       expect(screen.getByText(t)).toBeTruthy()
     );
-    expect(screen.getByText("v1.0")).toBeTruthy();
     // Roadmap + 4 resources + Language = 6 "Soon" tags.
     expect(screen.getAllByText("Soon").length).toBeGreaterThanOrEqual(5);
     expect(screen.getByRole("link", { name: /^privacy$/i }).getAttribute("href")).toBe(
@@ -51,11 +50,7 @@ describe("Footer", () => {
     );
   });
 
-  it("reopens the consent banner from the Cookies control", () => {
-    const spy = vi.spyOn(window, "dispatchEvent");
-    renderFooter();
-    fireEvent.click(screen.getByRole("button", { name: /cookies/i }));
-    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ type: "rr:open-consent" }));
-    spy.mockRestore();
-  });
+  // The FooterBottom row (© / v1.0 / Cookies control / theme / back-to-top) is
+  // currently commented out in Footer.tsx, so its version + consent-reopen
+  // assertions are omitted here until it's re-enabled.
 });
