@@ -49,7 +49,7 @@ export function CompactTemplate({ resume }: TemplateProps) {
 
           {key === "summary" && <RichText html={resume.summary} className="text-gray-800" />}
 
-          {key === "skills" && <p className="text-gray-800">{resume.skills.join(" • ")}</p>}
+          {key === "skills" && <p className="text-gray-800">{resume.skills.join(", ")}</p>}
 
           {key === "experience" &&
             resume.experience.map((x) => (
@@ -124,9 +124,9 @@ export function CompactTemplate({ resume }: TemplateProps) {
               </div>
             ))}
 
-          {key === "languages" && <p className="text-gray-800">{resume.languages.join(" • ")}</p>}
+          {key === "languages" && <p className="text-gray-800">{resume.languages.join(", ")}</p>}
 
-          {key === "interests" && <p className="text-gray-800">{resume.interests.join(" • ")}</p>}
+          {key === "interests" && <p className="text-gray-800">{resume.interests.join(", ")}</p>}
         </section>
       ))}
     </div>

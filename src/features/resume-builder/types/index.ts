@@ -5,12 +5,14 @@
 export const TEMPLATE_IDS = ["classic", "modern", "compact"] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
+// Default order tells the candidate's story for a 6-8s recruiter scan:
+// pitch -> what they've done -> what they know -> proof -> credentials.
 export const SECTION_KEYS = [
   "summary",
-  "skills",
   "experience",
-  "education",
+  "skills",
   "projects",
+  "education",
   "certifications",
   "languages",
   "interests",
