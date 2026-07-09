@@ -1,11 +1,14 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Sparkles, Trash2 } from "lucide-react";
 
 import type { BuilderExperience, SectionEditorProps } from "../../../types";
 import { TextField } from "../fields";
+import { useAiAssist } from "../../../hooks/useAiAssist";
 
 export function ExperienceSection({ draft, update }: SectionEditorProps) {
+  const { improveBullet, busy } = useAiAssist();
+
   const setItem = (id: string, patch: Partial<BuilderExperience>) =>
     update({
       experience: draft.experience.map((x) => (x.id === id ? { ...x, ...patch } : x)),
@@ -98,6 +101,29 @@ export function ExperienceSection({ draft, update }: SectionEditorProps) {
                     }
                   />
                 </div>
+                <button
+                  type="button"
+                  aria-label="Improve bullet with AI"
+                  title="Improve with AI · 1 credit"
+                  disabled={!bullet.trim() || busy === `${item.id}:${i}`}
+                  onClick={async () => {
+                    const key = `${item.id}:${i}`;
+                    const better = await improveBullet(
+                      key,
+                      bullet,
+                      `${item.role} at ${item.companyName}`.trim()
+                    );
+                    if (better) {
+                      setBullets(
+                        item.id,
+                        item.bullets.map((b, idx) => (idx === i ? better : b))
+                      );
+                    }
+                  }}
+                  className="text-rr-accent hover:text-rr-accent-hover disabled:opacity-40"
+                >
+                  <Sparkles className="h-4 w-4" />
+                </button>
                 <button
                   type="button"
                   aria-label="Remove bullet"

@@ -39,4 +39,34 @@ export class ResumeBuilderAPI {
   static async disable(resume_draft_id: string, user_id: string) {
     return userService.post("/resume-builder/disable", { resume_draft_id, user_id }, authHeaders());
   }
+
+  // --- AI assist (synchronous) ---
+
+  static async improveBullet(bullet: string, context: string) {
+    return userService.post(
+      "/resume-builder/ai/improve-bullet",
+      { bullet, context },
+      authHeaders()
+    );
+  }
+
+  static async summary(resume: string) {
+    return userService.post("/resume-builder/ai/summary", { resume }, authHeaders());
+  }
+
+  static async skills(role: string, experience: string, existing: string[]) {
+    return userService.post(
+      "/resume-builder/ai/skills",
+      { role, experience, existing },
+      authHeaders()
+    );
+  }
+
+  static async ghostwrite(text: string, context: string) {
+    return userService.post("/resume-builder/ai/ghostwrite", { text, context }, authHeaders());
+  }
+
+  static async ghostwriteAccept() {
+    return userService.post("/resume-builder/ai/ghostwrite/accept", {}, authHeaders());
+  }
 }
