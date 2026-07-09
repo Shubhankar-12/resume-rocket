@@ -35,6 +35,8 @@ export default async function PrintResume({ params, searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Suppress global app chrome (e.g. cookie consent) on the PDF/print surface. */}
+      <style>{`[aria-label="Cookie consent"]{display:none !important}`}</style>
       <ResumeTemplate resume={resume} />
     </div>
   );
