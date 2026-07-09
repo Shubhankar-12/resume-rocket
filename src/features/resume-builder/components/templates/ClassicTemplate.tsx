@@ -1,6 +1,7 @@
 import type { TemplateProps } from "../../types";
 import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
 import { RichText } from "./RichText";
+import { ProjectLinks } from "./ProjectLinks";
 
 /**
  * Classic — serif, formal, conservative spacing. Single-column, ATS-parseable.
@@ -109,6 +110,7 @@ export function ClassicTemplate({ resume }: TemplateProps) {
                 {x.technologies.length > 0 && (
                   <p className="text-[12px] text-gray-600">{x.technologies.join(", ")}</p>
                 )}
+                <ProjectLinks links={x.links} accent={accent} />
               </div>
             ))}
 

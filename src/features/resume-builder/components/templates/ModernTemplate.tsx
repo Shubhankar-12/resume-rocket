@@ -1,6 +1,7 @@
 import type { TemplateProps } from "../../types";
 import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
 import { RichText } from "./RichText";
+import { ProjectLinks } from "./ProjectLinks";
 
 /**
  * Modern — sans-serif, left-aligned, airy. Single-column, ATS-parseable.
@@ -110,6 +111,7 @@ export function ModernTemplate({ resume }: TemplateProps) {
                 {x.technologies.length > 0 && (
                   <p className="text-[12px] text-gray-500">{x.technologies.join(", ")}</p>
                 )}
+                <ProjectLinks links={x.links} accent={accent} />
               </div>
             ))}
 

@@ -1,6 +1,7 @@
 import type { TemplateProps } from "../../types";
 import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
 import { RichText } from "./RichText";
+import { ProjectLinks } from "./ProjectLinks";
 
 /**
  * Compact — dense, sans-serif, one-page-oriented. Single-column, ATS-parseable.
@@ -104,6 +105,7 @@ export function CompactTemplate({ resume }: TemplateProps) {
                 {x.technologies.length > 0 && (
                   <p className="text-[11px] text-gray-600">{x.technologies.join(", ")}</p>
                 )}
+                <ProjectLinks links={x.links} accent={accent} />
               </div>
             ))}
 
