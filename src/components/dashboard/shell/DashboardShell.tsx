@@ -33,7 +33,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopbar pathname={pathname} user={user} onLogout={handleLogout} />
-        <main className="flex-1 overflow-auto p-4 pb-24 md:p-6 lg:pb-6">{children}</main>
+        <main className="flex-1 overflow-auto p-4 pb-24 md:p-6 md:pb-24 lg:pb-6">{children}</main>
       </div>
       <MobileNav pathname={pathname} />
     </div>
