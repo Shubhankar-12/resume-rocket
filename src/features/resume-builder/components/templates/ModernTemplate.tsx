@@ -103,11 +103,11 @@ export function ModernTemplate({ resume }: TemplateProps) {
 
           {key === "projects" &&
             resume.projects.map((x) => (
-              <div key={x.id} className="mb-2.5">
-                <span className="font-semibold text-gray-900">{x.title}</span>
-                {x.description && <RichText html={x.description} className="text-gray-800" />}
+              <div key={x.id} className="mb-3">
+                <div className="font-semibold text-gray-900">{x.title}</div>
+                {x.description && <RichText html={x.description} className="mt-1 text-gray-800" />}
                 {x.technologies.length > 0 && (
-                  <p className="text-[12px] text-gray-500">{x.technologies.join(", ")}</p>
+                  <p className="mt-1 text-[12px] text-gray-500">{x.technologies.join(", ")}</p>
                 )}
                 <ProjectLinks links={x.links} accent={accent} />
               </div>

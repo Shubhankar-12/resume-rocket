@@ -5,6 +5,7 @@ const displayUrl = (url: string) =>
   url
     .trim()
     .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
     .replace(/\/+$/, "");
 
 /**

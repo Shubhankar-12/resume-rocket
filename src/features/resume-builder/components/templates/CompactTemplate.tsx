@@ -103,13 +103,15 @@ export function CompactTemplate({ resume }: TemplateProps) {
 
           {key === "projects" &&
             resume.projects.map((x) => (
-              <div key={x.id} className="mb-1">
-                <span className="font-bold text-gray-900">{x.title}</span>
-                {x.description && <RichText html={x.description} className="text-gray-800" />}
-                {x.technologies.length > 0 && (
-                  <p className="text-[11px] text-gray-600">{x.technologies.join(", ")}</p>
+              <div key={x.id} className="mb-2">
+                <div className="font-bold text-gray-900">{x.title}</div>
+                {x.description && (
+                  <RichText html={x.description} className="mt-0.5 text-gray-800" />
                 )}
-                <ProjectLinks links={x.links} accent={accent} />
+                {x.technologies.length > 0 && (
+                  <p className="mt-0.5 text-[11px] text-gray-600">{x.technologies.join(", ")}</p>
+                )}
+                <ProjectLinks links={x.links} accent={accent} className="mt-0.5" />
               </div>
             ))}
 
