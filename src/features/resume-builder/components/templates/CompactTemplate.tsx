@@ -2,6 +2,7 @@ import type { TemplateProps } from "../../types";
 import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
 import { RichText } from "./RichText";
 import { ProjectLinks } from "./ProjectLinks";
+import { InlineLinks } from "./InlineLinks";
 
 /**
  * Compact — dense, sans-serif, one-page-oriented. Single-column, ATS-parseable.
@@ -11,7 +12,6 @@ export function CompactTemplate({ resume }: TemplateProps) {
   const accent = accentHex(resume.accent_color);
   const { basics } = resume;
   const contact = [basics.email, basics.phone, basics.location].filter(Boolean);
-  const contactLine = [...contact, ...basics.links.map((l) => l.url).filter(Boolean)];
 
   const Heading = ({ children }: { children: string }) => (
     <h2
@@ -34,8 +34,12 @@ export function CompactTemplate({ resume }: TemplateProps) {
             {basics.headline}
           </p>
         )}
-        {contactLine.length > 0 && (
-          <p className="mt-0.5 text-[11px] text-gray-600">{contactLine.join(" · ")}</p>
+        {(contact.length > 0 || basics.links.some((l) => l.url)) && (
+          <p className="mt-0.5 text-[11px] text-gray-600">
+            {contact.join(" · ")}
+            {contact.length > 0 && basics.links.some((l) => l.url) ? " · " : ""}
+            <InlineLinks links={basics.links} accent={accent} />
+          </p>
         )}
       </header>
 

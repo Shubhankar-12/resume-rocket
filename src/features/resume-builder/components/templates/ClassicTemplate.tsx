@@ -2,6 +2,7 @@ import type { TemplateProps } from "../../types";
 import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
 import { RichText } from "./RichText";
 import { ProjectLinks } from "./ProjectLinks";
+import { InlineLinks } from "./InlineLinks";
 
 /**
  * Classic — serif, formal, conservative spacing. Single-column, ATS-parseable.
@@ -32,14 +33,11 @@ export function ClassicTemplate({ resume }: TemplateProps) {
             {basics.headline}
           </p>
         )}
-        {(contact.length > 0 || basics.links.length > 0) && (
+        {(contact.length > 0 || basics.links.some((l) => l.url)) && (
           <p className="mt-1.5 text-[12px] text-gray-600">
             {contact.join("  ·  ")}
-            {basics.links.length > 0 && contact.length > 0 ? "  ·  " : ""}
-            {basics.links
-              .map((l) => l.url)
-              .filter(Boolean)
-              .join("  ·  ")}
+            {contact.length > 0 && basics.links.some((l) => l.url) ? "  ·  " : ""}
+            <InlineLinks links={basics.links} accent={accent} />
           </p>
         )}
       </header>
