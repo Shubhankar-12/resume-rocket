@@ -1,6 +1,7 @@
 import {
   BarChart3,
   CreditCard,
+  FilePlus2,
   FileText,
   Github,
   Home,
@@ -20,6 +21,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "My Resumes", href: "/dashboard/resumes", icon: FileText },
+  { name: "Builder", href: "/dashboard/builder", icon: FilePlus2 },
   { name: "Cover Letters", href: "/dashboard/cover-letters", icon: Mail },
   { name: "Tracker", href: "/dashboard/tracker", icon: Kanban },
   { name: "GitHub", href: "/dashboard/github", icon: Github },
@@ -36,6 +38,7 @@ export function isNavActive(pathname: string, href: string): boolean {
 
 const BREADCRUMB_MAP: { prefix: string; label: string }[] = [
   { prefix: "/dashboard/resumes", label: "My Resumes" },
+  { prefix: "/dashboard/builder", label: "Builder" },
   { prefix: "/dashboard/cover-letters", label: "Cover Letters" },
   { prefix: "/dashboard/tracker", label: "Tracker" },
   { prefix: "/dashboard/github", label: "GitHub" },

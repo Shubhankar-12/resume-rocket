@@ -1,0 +1,68 @@
+import type { BuilderResume, SectionKey } from "../../types";
+import { SECTION_KEYS } from "../../types";
+
+/** Accent color tokens -> hex (templates render in fixed light/print colors). */
+export const ACCENT_HEX: Record<string, string> = {
+  accent: "#6366f1",
+  slate: "#334155",
+  emerald: "#059669",
+  blue: "#2563eb",
+  rose: "#e11d48",
+  amber: "#d97706",
+};
+
+export function accentHex(key: string | undefined): string {
+  return (key && ACCENT_HEX[key]) || ACCENT_HEX.accent;
+}
+
+export const SECTION_LABEL: Record<SectionKey, string> = {
+  summary: "Summary",
+  skills: "Skills",
+  experience: "Experience",
+  education: "Education",
+  projects: "Projects",
+  certifications: "Certifications",
+  languages: "Languages",
+  interests: "Interests",
+};
+
+/** True when a section has any content worth rendering. */
+export function hasSectionContent(resume: BuilderResume, key: SectionKey): boolean {
+  switch (key) {
+    case "summary":
+      return !!resume.summary?.trim();
+    case "skills":
+      return (resume.skills ?? []).length > 0;
+    case "experience":
+      return (resume.experience ?? []).length > 0;
+    case "education":
+      return (resume.education ?? []).length > 0;
+    case "projects":
+      return (resume.projects ?? []).length > 0;
+    case "certifications":
+      return (resume.certifications ?? []).length > 0;
+    case "languages":
+      return (resume.languages ?? []).length > 0;
+    case "interests":
+      return (resume.interests ?? []).length > 0;
+    default:
+      return false;
+  }
+}
+
+/** Section keys to render, in the draft's saved order, filtered to non-empty ones. */
+export function orderedSectionKeys(resume: BuilderResume): SectionKey[] {
+  const order = (resume.section_order ?? []).filter((k): k is SectionKey =>
+    (SECTION_KEYS as readonly string[]).includes(k)
+  );
+  // Append any canonical keys missing from a stored order (forward-compat).
+  for (const k of SECTION_KEYS) if (!order.includes(k)) order.push(k);
+  return order.filter((k) => hasSectionContent(resume, k));
+}
+
+/** "Jan 2020 — Present" style date range. */
+export function dateRange(start: string, end: string, isPresent?: boolean): string {
+  const e = isPresent ? "Present" : end;
+  if (start && e) return `${start} — ${e}`;
+  return start || e || "";
+}
