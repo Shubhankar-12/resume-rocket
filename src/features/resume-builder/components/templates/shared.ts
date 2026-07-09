@@ -60,9 +60,20 @@ export function orderedSectionKeys(resume: BuilderResume): SectionKey[] {
   return order.filter((k) => hasSectionContent(resume, k));
 }
 
-/** "Jan 2020 — Present" style date range. */
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "YYYY-MM" -> "May 2024"; legacy free-text passes through unchanged. */
+export function formatMonth(value: string): string {
+  const m = /^(\d{4})-(\d{2})$/.exec(value ?? "");
+  if (!m) return value ?? "";
+  const idx = parseInt(m[2], 10) - 1;
+  return idx >= 0 && idx < 12 ? `${MONTHS[idx]} ${m[1]}` : value;
+}
+
+/** "May 2020 – Present" style range (en dash, never an em dash). */
 export function dateRange(start: string, end: string, isPresent?: boolean): string {
-  const e = isPresent ? "Present" : end;
-  if (start && e) return `${start} — ${e}`;
-  return start || e || "";
+  const s = formatMonth(start);
+  const e = isPresent ? "Present" : formatMonth(end);
+  if (s && e) return `${s} – ${e}`;
+  return s || e || "";
 }

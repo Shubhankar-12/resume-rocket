@@ -1,5 +1,6 @@
 import type { TemplateProps } from "../../types";
 import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
+import { RichText } from "./RichText";
 
 /**
  * Modern — sans-serif, left-aligned, airy. Single-column, ATS-parseable.
@@ -47,7 +48,7 @@ export function ModernTemplate({ resume }: TemplateProps) {
         <section key={key} className="mb-6">
           <Heading>{SECTION_LABEL[key]}</Heading>
 
-          {key === "summary" && <p className="text-gray-800">{resume.summary}</p>}
+          {key === "summary" && <RichText html={resume.summary} className="text-gray-800" />}
 
           {key === "skills" && <p className="text-gray-800">{resume.skills.join(", ")}</p>}
 
@@ -64,31 +65,40 @@ export function ModernTemplate({ resume }: TemplateProps) {
                   </span>
                 </div>
                 {x.location && <div className="text-[12px] text-gray-500">{x.location}</div>}
-                {x.bullets.length > 0 && (
-                  <ul className="mt-1.5 list-disc space-y-1 pl-5">
-                    {x.bullets.map((b, i) => (
-                      <li key={i} className="text-gray-800">
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
+                {x.description ? (
+                  <RichText html={x.description} className="mt-1.5 text-gray-800" />
+                ) : (
+                  x.bullets.length > 0 && (
+                    <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                      {x.bullets.map((b, i) => (
+                        <li key={i} className="text-gray-800">
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )
                 )}
               </div>
             ))}
 
           {key === "education" &&
             resume.education.map((x) => (
-              <div key={x.id} className="mb-2 flex items-baseline justify-between gap-3">
-                <span className="text-gray-900">
-                  <span className="font-semibold">
+              <div key={x.id} className="mb-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-gray-900">
                     {x.degree}
                     {x.subject ? `, ${x.subject}` : ""}
                   </span>
-                  {x.schoolName ? ` — ${x.schoolName}` : ""}
-                </span>
-                <span className="shrink-0 text-[12px] text-gray-500">
-                  {dateRange(x.startDate, x.endDate)}
-                </span>
+                  <span className="shrink-0 text-[12px] text-gray-500">
+                    {dateRange(x.startDate, x.endDate)}
+                  </span>
+                </div>
+                {x.schoolName && (
+                  <div className="text-[12px] text-gray-500">
+                    {x.schoolName}
+                    {x.location ? `, ${x.location}` : ""}
+                  </div>
+                )}
               </div>
             ))}
 
@@ -96,7 +106,7 @@ export function ModernTemplate({ resume }: TemplateProps) {
             resume.projects.map((x) => (
               <div key={x.id} className="mb-2.5">
                 <span className="font-semibold text-gray-900">{x.title}</span>
-                {x.description && <p className="text-gray-800">{x.description}</p>}
+                {x.description && <RichText html={x.description} className="text-gray-800" />}
                 {x.technologies.length > 0 && (
                   <p className="text-[12px] text-gray-500">{x.technologies.join(", ")}</p>
                 )}
@@ -105,12 +115,12 @@ export function ModernTemplate({ resume }: TemplateProps) {
 
           {key === "certifications" &&
             resume.certifications.map((x) => (
-              <div key={x.id} className="mb-1.5 flex items-baseline justify-between gap-3">
-                <span className="text-gray-900">
-                  <span className="font-semibold">{x.name}</span>
-                  {x.issuer ? ` — ${x.issuer}` : ""}
-                </span>
-                {x.date && <span className="shrink-0 text-[12px] text-gray-500">{x.date}</span>}
+              <div key={x.id} className="mb-1.5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-gray-900">{x.name}</span>
+                  {x.date && <span className="shrink-0 text-[12px] text-gray-500">{x.date}</span>}
+                </div>
+                {x.issuer && <div className="text-[12px] text-gray-500">{x.issuer}</div>}
               </div>
             ))}
 

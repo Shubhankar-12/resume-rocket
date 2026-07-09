@@ -2,8 +2,9 @@
 
 import { Sparkles } from "lucide-react";
 import type { SectionEditorProps } from "../../../types";
-import { TextArea } from "../fields";
+import { RichTextEditor } from "../RichTextEditor";
 import { useAiAssist } from "../../../hooks/useAiAssist";
+import { htmlToText } from "../../../lib/sanitize";
 
 export function SummarySection({ draft, update }: SectionEditorProps) {
   const { generateSummary, busy } = useAiAssist();
@@ -12,20 +13,19 @@ export function SummarySection({ draft, update }: SectionEditorProps) {
     const payload = JSON.stringify({
       headline: draft.basics.headline,
       skills: draft.skills,
-      experience: draft.experience,
+      experience: draft.experience.map((e) => ({
+        role: e.role,
+        company: e.companyName,
+        description: htmlToText(e.description),
+      })),
     });
     const summary = await generateSummary(payload);
-    if (summary) update({ summary });
+    if (summary) update({ summary: `<p>${summary}</p>` });
   };
 
   return (
     <div className="space-y-2">
-      <TextArea
-        label="Professional summary"
-        rows={4}
-        value={draft.summary}
-        onChange={(v) => update({ summary: v })}
-      />
+      <RichTextEditor value={draft.summary} onChange={(v) => update({ summary: v })} />
       <button
         type="button"
         onClick={write}

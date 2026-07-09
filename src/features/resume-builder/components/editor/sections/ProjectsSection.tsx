@@ -3,7 +3,8 @@
 import { Plus, Trash2 } from "lucide-react";
 
 import type { BuilderLink, BuilderProject, SectionEditorProps } from "../../../types";
-import { ChipList, TextArea, TextField } from "../fields";
+import { ChipList, TextField } from "../fields";
+import { RichTextEditor } from "../RichTextEditor";
 
 export function ProjectsSection({ draft, update }: SectionEditorProps) {
   const setItem = (id: string, patch: Partial<BuilderProject>) =>
@@ -42,11 +43,15 @@ export function ProjectsSection({ draft, update }: SectionEditorProps) {
             value={item.title}
             onChange={(v) => setItem(item.id, { title: v })}
           />
-          <TextArea
-            label="Description"
-            value={item.description}
-            onChange={(v) => setItem(item.id, { description: v })}
-          />
+          <div>
+            <span className="mb-1 block text-[11px] font-medium text-rr-text-muted">
+              Description
+            </span>
+            <RichTextEditor
+              value={item.description}
+              onChange={(v) => setItem(item.id, { description: v })}
+            />
+          </div>
           <ChipList
             label="Technologies"
             values={item.technologies}

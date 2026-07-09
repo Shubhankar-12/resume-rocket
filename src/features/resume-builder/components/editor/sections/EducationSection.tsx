@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 
 import type { BuilderEducation, SectionEditorProps } from "../../../types";
 import { TextField } from "../fields";
+import { MonthField } from "../MonthField";
 
 export function EducationSection({ draft, update }: SectionEditorProps) {
   const setItem = (id: string, patch: Partial<BuilderEducation>) =>
@@ -58,12 +59,12 @@ export function EducationSection({ draft, update }: SectionEditorProps) {
             onChange={(v) => setItem(item.id, { location: v })}
           />
           <div className="grid grid-cols-2 gap-2">
-            <TextField
+            <MonthField
               label="Start date"
               value={item.startDate}
               onChange={(v) => setItem(item.id, { startDate: v })}
             />
-            <TextField
+            <MonthField
               label="End date"
               value={item.endDate}
               onChange={(v) => setItem(item.id, { endDate: v })}

@@ -31,6 +31,8 @@ export interface BuilderExperience {
   endDate: string;
   isPresent: boolean;
   bullets: string[];
+  /** Rich-text (sanitized HTML) description; preferred over bullets when set. */
+  description: string;
 }
 
 export interface BuilderEducation {
