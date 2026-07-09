@@ -91,7 +91,7 @@ export function Footer() {
         </div>
       </div>
 
-      <FooterBottom />
+      {/* <FooterBottom /> */}
     </footer>
   );
 }
