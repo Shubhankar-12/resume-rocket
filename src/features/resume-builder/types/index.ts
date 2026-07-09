@@ -2,7 +2,19 @@
 // `resume_draft` documents returned by /api/v1/resume-builder (the query layer
 // renames `_id` -> `resume_draft_id` and keeps every other field as stored).
 
-export const TEMPLATE_IDS = ["classic", "modern", "compact"] as const;
+export const TEMPLATE_IDS = [
+  "classic",
+  "modern",
+  "compact",
+  "coursework-classic",
+  "tri-header",
+  "faangpath",
+  "deedy",
+  "emoji",
+  "jake",
+  "business-pro",
+  "modern-tech",
+] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
 // Default order tells the candidate's story for a 6-8s recruiter scan.

@@ -1,5 +1,48 @@
-import type { BuilderResume, SectionKey } from "../../types";
+import type { BuilderResume, SectionKey, SkillLevel, LanguageItem } from "../../types";
 import { SECTION_KEYS } from "../../types";
+
+export interface ResolvedSkillGroup {
+  category: string;
+  skills: { name: string; level?: SkillLevel }[];
+}
+
+/** Skill groups to render: real groups if present, else one group from the flat list. */
+export function skillGroupsResolved(resume: BuilderResume): ResolvedSkillGroup[] {
+  const groups = (resume.skillGroups ?? []).filter((g) => (g.skills ?? []).length > 0);
+  if (groups.length) {
+    return groups.map((g) => ({
+      category: g.category,
+      skills: (g.skills ?? []).filter((s) => s.name),
+    }));
+  }
+  const flat = resume.skills ?? [];
+  return flat.length ? [{ category: "", skills: flat.map((n) => ({ name: n })) }] : [];
+}
+
+const TIER_ORDER: SkillLevel[] = ["expert", "proficient", "intermediate", "beginner"];
+
+/** Skills grouped by proficiency tier (for tiered/emoji templates). */
+export function skillsByTier(
+  resume: BuilderResume
+): { level: SkillLevel | "other"; names: string[] }[] {
+  const all = skillGroupsResolved(resume).flatMap((g) => g.skills);
+  const byTier = new Map<string, string[]>();
+  for (const s of all) {
+    const key = s.level ?? "other";
+    (byTier.get(key) ?? byTier.set(key, []).get(key)!).push(s.name);
+  }
+  const out: { level: SkillLevel | "other"; names: string[] }[] = [];
+  for (const t of TIER_ORDER) if (byTier.has(t)) out.push({ level: t, names: byTier.get(t)! });
+  if (byTier.has("other")) out.push({ level: "other", names: byTier.get("other")! });
+  return out;
+}
+
+/** Languages to render: items if present, else derived from the flat list. */
+export function languagesResolved(resume: BuilderResume): LanguageItem[] {
+  const items = (resume.languageItems ?? []).filter((l) => l.name);
+  if (items.length) return items;
+  return (resume.languages ?? []).map((n) => ({ id: n, name: n }));
+}
 
 /** Accent color tokens -> hex (templates render in fixed light/print colors). */
 export const ACCENT_HEX: Record<string, string> = {

@@ -3,6 +3,14 @@ import type { TemplateId, TemplateProps } from "../../types";
 import { ClassicTemplate } from "./ClassicTemplate";
 import { ModernTemplate } from "./ModernTemplate";
 import { CompactTemplate } from "./CompactTemplate";
+import { JakeTemplate } from "./JakeTemplate";
+import { CourseworkTemplate } from "./CourseworkTemplate";
+import { FaangPathTemplate } from "./FaangPathTemplate";
+import { BusinessProTemplate } from "./BusinessProTemplate";
+import { DeedyTemplate } from "./DeedyTemplate";
+import { ModernTechTemplate } from "./ModernTechTemplate";
+import { EmojiTemplate } from "./EmojiTemplate";
+import { TriHeaderTemplate } from "./TriHeaderTemplate";
 
 export type TemplateCategory = "ats" | "designer";
 
@@ -40,6 +48,70 @@ export const TEMPLATES: TemplateMeta[] = [
     category: "ats",
     atsSafe: true,
     Component: CompactTemplate,
+  },
+  {
+    id: "jake",
+    label: "Jake's",
+    description: "Clean LaTeX standard",
+    category: "ats",
+    atsSafe: true,
+    Component: JakeTemplate,
+  },
+  {
+    id: "coursework-classic",
+    label: "Coursework",
+    description: "Icon contacts · coursework",
+    category: "ats",
+    atsSafe: true,
+    Component: CourseworkTemplate,
+  },
+  {
+    id: "faangpath",
+    label: "FAANGPath",
+    description: "All-caps · leadership",
+    category: "ats",
+    atsSafe: true,
+    Component: FaangPathTemplate,
+  },
+  {
+    id: "deedy",
+    label: "Deedy",
+    description: "Dense academic",
+    category: "ats",
+    atsSafe: true,
+    Component: DeedyTemplate,
+  },
+  {
+    id: "emoji",
+    label: "Emoji",
+    description: "Friendly · skill tiers",
+    category: "ats",
+    atsSafe: true,
+    Component: EmojiTemplate,
+  },
+  {
+    id: "business-pro",
+    label: "Business Pro",
+    description: "Non-tech · polished",
+    category: "ats",
+    atsSafe: true,
+    Component: BusinessProTemplate,
+  },
+  {
+    id: "modern-tech",
+    label: "Modern Tech",
+    description: "Accent headings · icons",
+    category: "ats",
+    atsSafe: true,
+    Component: ModernTechTemplate,
+  },
+  {
+    id: "tri-header",
+    label: "Tri-Header",
+    description: "Three-column header",
+    category: "ats",
+    atsSafe: true,
+    Component: TriHeaderTemplate,
   },
 ];
 
