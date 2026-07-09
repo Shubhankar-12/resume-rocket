@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AIAnalyticsAPI } from "../api/aiAnalyticsAPI";
+import type { AnalyticsResponse } from "../types/analytics";
 
 export interface AiUsageSummary {
   calls: number;
@@ -28,7 +29,7 @@ export function useAiUsageSummary(): AiUsageSummary {
     AIAnalyticsAPI.getAnalytics({ from, to, groupBy: "day" })
       .then((r) => {
         if (!active) return;
-        const body = r.data.body as { totalCalls?: number; cacheHitRate?: number };
+        const body = (r.data.body ?? {}) as Partial<AnalyticsResponse>;
         setState({
           calls: body?.totalCalls ?? 0,
           cacheHitRate: body?.cacheHitRate ?? 0,
