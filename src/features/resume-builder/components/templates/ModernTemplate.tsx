@@ -1,5 +1,12 @@
 import type { TemplateProps } from "../../types";
-import { accentHex, dateRange, orderedSectionKeys, SECTION_LABEL } from "./shared";
+import {
+  accentHex,
+  dateRange,
+  flatLanguages,
+  flatSkills,
+  orderedSectionKeys,
+  SECTION_LABEL,
+} from "./shared";
 import { RichText } from "./RichText";
 import { ProjectLinks } from "./ProjectLinks";
 import { InlineLinks } from "./InlineLinks";
@@ -49,7 +56,7 @@ export function ModernTemplate({ resume }: TemplateProps) {
 
           {key === "summary" && <RichText html={resume.summary} className="text-gray-800" />}
 
-          {key === "skills" && <p className="text-gray-800">{resume.skills.join(", ")}</p>}
+          {key === "skills" && <p className="text-gray-800">{flatSkills(resume).join(", ")}</p>}
 
           {key === "experience" &&
             resume.experience.map((x) => (
@@ -124,7 +131,71 @@ export function ModernTemplate({ resume }: TemplateProps) {
               </div>
             ))}
 
-          {key === "languages" && <p className="text-gray-800">{resume.languages.join(", ")}</p>}
+          {key === "awards" &&
+            resume.awards.map((x) => (
+              <div key={x.id} className="mb-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-gray-900">{x.name}</span>
+                  {x.date && <span className="shrink-0 text-[12px] text-gray-500">{x.date}</span>}
+                </div>
+                {x.issuer && <div className="text-[12px] text-gray-500">{x.issuer}</div>}
+                {x.description && <p className="mt-1 text-gray-800">{x.description}</p>}
+              </div>
+            ))}
+
+          {key === "publications" &&
+            resume.publications.map((x) => (
+              <div key={x.id} className="mb-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-gray-900">{x.title}</span>
+                  {x.date && <span className="shrink-0 text-[12px] text-gray-500">{x.date}</span>}
+                </div>
+                {x.publisher && <div className="text-[12px] text-gray-500">{x.publisher}</div>}
+                {x.description && <p className="mt-1 text-gray-800">{x.description}</p>}
+                {x.url && (
+                  <p className="mt-1 text-[12px]">
+                    <InlineLinks links={[{ label: "", url: x.url }]} accent={accent} />
+                  </p>
+                )}
+              </div>
+            ))}
+
+          {key === "volunteer" &&
+            resume.volunteer.map((x) => (
+              <div key={x.id} className="mb-3.5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-gray-900">
+                    {x.role}
+                    {x.organization ? `, ${x.organization}` : ""}
+                  </span>
+                  <span className="shrink-0 text-[12px] text-gray-500">
+                    {dateRange(x.startDate, x.endDate, x.isPresent)}
+                  </span>
+                </div>
+                {x.location && <div className="text-[12px] text-gray-500">{x.location}</div>}
+                {x.description && (
+                  <RichText html={x.description} className="mt-1.5 text-gray-800" />
+                )}
+              </div>
+            ))}
+
+          {key === "activities" &&
+            resume.activities.map((x) => (
+              <div key={x.id} className="mb-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold text-gray-900">{x.title}</span>
+                  {x.date && <span className="shrink-0 text-[12px] text-gray-500">{x.date}</span>}
+                </div>
+                {x.organization && (
+                  <div className="text-[12px] text-gray-500">{x.organization}</div>
+                )}
+                {x.description && <p className="mt-1 text-gray-800">{x.description}</p>}
+              </div>
+            ))}
+
+          {key === "languages" && (
+            <p className="text-gray-800">{flatLanguages(resume).join(", ")}</p>
+          )}
 
           {key === "interests" && <p className="text-gray-800">{resume.interests.join(", ")}</p>}
         </section>

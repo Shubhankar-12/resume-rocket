@@ -1,13 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { BuilderLink, SectionEditorProps } from "../../../types";
+import { fileUploader } from "@/lib/utils";
 import { TextField } from "../fields";
 
 export function BasicsSection({ draft, update }: SectionEditorProps) {
   const { basics } = draft;
+  const [uploading, setUploading] = useState(false);
 
   const setLinks = (links: BuilderLink[]) => update({ basics: { ...basics, links } });
+
+  const onPhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const result = await fileUploader(file, "resume-photos");
+      if (result?.url) {
+        update({ basics: { ...basics, photoUrl: result.url } });
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const updateLink = (index: number, patch: Partial<BuilderLink>) =>
     setLinks(basics.links.map((link, i) => (i === index ? { ...link, ...patch } : link)));
@@ -18,6 +35,30 @@ export function BasicsSection({ draft, update }: SectionEditorProps) {
 
   return (
     <div className="space-y-4">
+      <div className="space-y-2">
+        <span className="block text-[11px] font-medium text-rr-text-muted">
+          Photo (optional, used by designer templates)
+        </span>
+        {basics.photoUrl ? (
+          <div className="flex items-center gap-3">
+            <img src={basics.photoUrl} className="h-16 w-16 rounded-full object-cover" alt="" />
+            <button
+              type="button"
+              onClick={() => update({ basics: { ...basics, photoUrl: "" } })}
+              className="inline-flex items-center gap-1 rounded-md border border-rr-border-muted px-2.5 py-1.5 text-xs font-medium text-rr-text-muted hover:text-rr-danger"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Remove
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input type="file" accept="image/*" onChange={onPhotoChange} disabled={uploading} />
+            {uploading && <span className="text-xs text-rr-text-muted">Uploading…</span>}
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <TextField

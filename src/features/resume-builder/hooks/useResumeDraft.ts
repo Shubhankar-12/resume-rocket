@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ResumeBuilderAPI } from "../api/resumeBuilderAPI";
+import { normalizeDraft } from "../lib/normalizeDraft";
 import type { BuilderResume, BuilderPatch } from "../types";
 
 export interface UseResumeDraftResult {
@@ -30,7 +31,8 @@ export function useResumeDraft(id: string): UseResumeDraftResult {
       setLoading(true);
       setError(null);
       const res = await ResumeBuilderAPI.get(id);
-      setDraft((res?.data?.body as BuilderResume) ?? null);
+      const body = res?.data?.body;
+      setDraft(body ? normalizeDraft(body) : null);
     } catch {
       setError("Failed to load resume");
     } finally {

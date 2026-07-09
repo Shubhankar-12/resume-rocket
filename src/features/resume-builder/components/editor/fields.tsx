@@ -6,6 +6,36 @@ import { X } from "lucide-react";
 const inputClass =
   "w-full rounded-md border border-rr-border-muted bg-rr-bg px-2.5 py-1.5 text-sm text-rr-text placeholder:text-rr-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rr-accent";
 
+export function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  label?: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      {label && (
+        <span className="mb-1 block text-[11px] font-medium text-rr-text-muted">{label}</span>
+      )}
+      <select className={inputClass} value={value} onChange={(e) => onChange(e.target.value)}>
+        {placeholder && <option value="">{placeholder}</option>}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 export function TextField({
   label,
   value,
@@ -64,7 +94,7 @@ export function TextArea({
 /** A comma/enter-to-add chip list (skills, languages, interests, technologies). */
 export function ChipList({
   label,
-  values,
+  values = [],
   onChange,
   placeholder = "Type and press Enter",
 }: {

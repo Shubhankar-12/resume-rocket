@@ -5,14 +5,17 @@
 export const TEMPLATE_IDS = ["classic", "modern", "compact"] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
-// Default order tells the candidate's story for a 6-8s recruiter scan:
-// pitch -> what they've done -> what they know -> proof -> credentials.
+// Default order tells the candidate's story for a 6-8s recruiter scan.
 export const SECTION_KEYS = [
   "summary",
   "experience",
   "skills",
   "projects",
   "education",
+  "awards",
+  "publications",
+  "volunteer",
+  "activities",
   "certifications",
   "languages",
   "interests",
@@ -22,6 +25,26 @@ export type SectionKey = (typeof SECTION_KEYS)[number];
 export interface BuilderLink {
   label: string;
   url: string;
+}
+
+// --- Skills (grouped + optional proficiency) ---
+export type SkillLevel = "expert" | "proficient" | "intermediate" | "beginner";
+export interface SkillItem {
+  name: string;
+  level?: SkillLevel;
+}
+export interface SkillGroup {
+  id: string;
+  category: string;
+  skills: SkillItem[];
+}
+
+// --- Languages (with optional proficiency) ---
+export type LanguageLevel = "native" | "fluent" | "professional" | "intermediate" | "basic";
+export interface LanguageItem {
+  id: string;
+  name: string;
+  level?: LanguageLevel;
 }
 
 export interface BuilderExperience {
@@ -45,6 +68,9 @@ export interface BuilderEducation {
   location: string;
   startDate: string;
   endDate: string;
+  gpa: string;
+  honors: string;
+  coursework: string[];
 }
 
 export interface BuilderProject {
@@ -63,6 +89,43 @@ export interface BuilderCertification {
   url: string;
 }
 
+export interface BuilderAward {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  description: string;
+}
+
+export interface BuilderPublication {
+  id: string;
+  title: string;
+  publisher: string;
+  date: string;
+  url: string;
+  description: string;
+}
+
+export interface BuilderVolunteer {
+  id: string;
+  role: string;
+  organization: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  isPresent: boolean;
+  /** Rich-text (sanitized HTML). */
+  description: string;
+}
+
+export interface BuilderActivity {
+  id: string;
+  title: string;
+  organization: string;
+  date: string;
+  description: string;
+}
+
 export interface BuilderBasics {
   name: string;
   headline: string;
@@ -70,6 +133,8 @@ export interface BuilderBasics {
   phone: string;
   location: string;
   links: BuilderLink[];
+  /** Used only by designer templates. */
+  photoUrl: string;
 }
 
 export interface BuilderResume {
@@ -81,12 +146,18 @@ export interface BuilderResume {
   basics: BuilderBasics;
   summary: string;
   skills: string[];
+  skillGroups: SkillGroup[];
   languages: string[];
+  languageItems: LanguageItem[];
   interests: string[];
   experience: BuilderExperience[];
   education: BuilderEducation[];
   projects: BuilderProject[];
   certifications: BuilderCertification[];
+  awards: BuilderAward[];
+  publications: BuilderPublication[];
+  volunteer: BuilderVolunteer[];
+  activities: BuilderActivity[];
   section_order: string[];
   status_field?: string;
   created_on?: string;
@@ -111,12 +182,18 @@ export type BuilderPatch = Partial<
     | "basics"
     | "summary"
     | "skills"
+    | "skillGroups"
     | "languages"
+    | "languageItems"
     | "interests"
     | "experience"
     | "education"
     | "projects"
     | "certifications"
+    | "awards"
+    | "publications"
+    | "volunteer"
+    | "activities"
     | "section_order"
   >
 >;

@@ -21,6 +21,10 @@ export const SECTION_LABEL: Record<SectionKey, string> = {
   experience: "Experience",
   education: "Education",
   projects: "Projects",
+  awards: "Awards",
+  publications: "Publications",
+  volunteer: "Volunteer",
+  activities: "Activities",
   certifications: "Certifications",
   languages: "Languages",
   interests: "Interests",
@@ -32,22 +36,47 @@ export function hasSectionContent(resume: BuilderResume, key: SectionKey): boole
     case "summary":
       return !!resume.summary?.trim();
     case "skills":
-      return (resume.skills ?? []).length > 0;
+      return (
+        (resume.skills ?? []).length > 0 ||
+        (resume.skillGroups ?? []).some((g) => (g.skills ?? []).length > 0)
+      );
     case "experience":
       return (resume.experience ?? []).length > 0;
     case "education":
       return (resume.education ?? []).length > 0;
     case "projects":
       return (resume.projects ?? []).length > 0;
+    case "awards":
+      return (resume.awards ?? []).length > 0;
+    case "publications":
+      return (resume.publications ?? []).length > 0;
+    case "volunteer":
+      return (resume.volunteer ?? []).length > 0;
+    case "activities":
+      return (resume.activities ?? []).length > 0;
     case "certifications":
       return (resume.certifications ?? []).length > 0;
     case "languages":
-      return (resume.languages ?? []).length > 0;
+      return (resume.languages ?? []).length > 0 || (resume.languageItems ?? []).length > 0;
     case "interests":
       return (resume.interests ?? []).length > 0;
     default:
       return false;
   }
+}
+
+/** Flat skill names from groups (preferred) or the legacy flat list. */
+export function flatSkills(resume: BuilderResume): string[] {
+  const fromGroups = (resume.skillGroups ?? []).flatMap((g) =>
+    (g.skills ?? []).map((s) => s.name).filter(Boolean)
+  );
+  return fromGroups.length ? fromGroups : (resume.skills ?? []);
+}
+
+/** Flat language names from items (preferred) or the legacy flat list. */
+export function flatLanguages(resume: BuilderResume): string[] {
+  const fromItems = (resume.languageItems ?? []).map((l) => l.name).filter(Boolean);
+  return fromItems.length ? fromItems : (resume.languages ?? []);
 }
 
 /** Section keys to render, in the draft's saved order, filtered to non-empty ones. */

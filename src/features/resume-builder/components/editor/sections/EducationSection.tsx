@@ -3,7 +3,7 @@
 import { Plus, Trash2 } from "lucide-react";
 
 import type { BuilderEducation, SectionEditorProps } from "../../../types";
-import { TextField } from "../fields";
+import { ChipList, TextField } from "../fields";
 import { MonthField } from "../MonthField";
 
 export function EducationSection({ draft, update }: SectionEditorProps) {
@@ -27,6 +27,9 @@ export function EducationSection({ draft, update }: SectionEditorProps) {
           location: "",
           startDate: "",
           endDate: "",
+          gpa: "",
+          honors: "",
+          coursework: [],
         },
       ],
     });
@@ -70,6 +73,18 @@ export function EducationSection({ draft, update }: SectionEditorProps) {
               onChange={(v) => setItem(item.id, { endDate: v })}
             />
           </div>
+
+          <TextField label="GPA" value={item.gpa} onChange={(v) => setItem(item.id, { gpa: v })} />
+          <TextField
+            label="Honors"
+            value={item.honors}
+            onChange={(v) => setItem(item.id, { honors: v })}
+          />
+          <ChipList
+            label="Relevant coursework"
+            values={item.coursework}
+            onChange={(v) => setItem(item.id, { coursework: v })}
+          />
 
           <div className="flex justify-end">
             <button
