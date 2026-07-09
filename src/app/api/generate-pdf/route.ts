@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+import puppeteer, { type Browser } from "puppeteer-core";
 import { PDFDocument } from "pdf-lib";
 
+export const runtime = "nodejs";
 export const maxDuration = 60; // Max execution time in seconds
 
 type RequestPayload = {
@@ -9,23 +11,35 @@ type RequestPayload = {
   fileName?: string;
 };
 
-function getChromeExecutablePath() {
-  if (process.env.VERCEL) {
-    // Vercel provides Chrome at this path
-    return "/opt/render/chrome/chrome";
-  } else if (process.platform === "linux") {
-    // Common Linux paths
+const isServerless =
+  !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.AWS_EXECUTION_ENV;
 
-    return process.env.GOOGLE_CHROME_PATH || "/usr/bin/google-chrome-stable";
-  } else if (process.platform === "darwin") {
-    // macOS
+/** System Chrome path for local development. */
+function localChromePath(): string | undefined {
+  if (process.env.GOOGLE_CHROME_PATH) return process.env.GOOGLE_CHROME_PATH;
+  if (process.platform === "darwin") {
     return "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-  } else if (process.platform === "win32") {
-    // Windows
+  }
+  if (process.platform === "win32") {
     return "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
   }
-  // Let Puppeteer find Chrome automatically
-  return undefined;
+  return "/usr/bin/google-chrome-stable";
+}
+
+/** Launch Chromium: @sparticuz/chromium on serverless, system Chrome locally. */
+async function launchBrowser(): Promise<Browser> {
+  if (isServerless) {
+    return puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  }
+  return puppeteer.launch({
+    headless: true,
+    executablePath: localChromePath(),
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -59,30 +73,23 @@ export async function POST(request: Request): Promise<NextResponse> {
  * Generate a PDF from a URL
  */
 async function generatePdf(url: string): Promise<Buffer> {
-  let browser;
+  let browser: Browser | undefined;
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      executablePath: getChromeExecutablePath(),
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    browser = await launchBrowser();
 
     const page = await browser.newPage();
-
     await page.setViewport({ width: 1280, height: 1024 });
 
     await page.goto(url, {
       waitUntil: "networkidle2",
-      timeout: 30000,
+      timeout: 45000,
     });
 
     await page.evaluate(() => {
       const images = document.querySelectorAll('img[loading="lazy"]');
-      images.forEach((img) => {
-        img.setAttribute("loading", "eager");
-      });
+      images.forEach((img) => img.setAttribute("loading", "eager"));
 
-      document.fonts.ready;
+      void document.fonts.ready;
 
       return new Promise<void>((resolve) => {
         if (document.readyState === "complete") {
@@ -107,21 +114,14 @@ async function generatePdf(url: string): Promise<Buffer> {
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: {
-        top: "20px",
-        right: "20px",
-        bottom: "20px",
-        left: "20px",
-      },
+      margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
       preferCSSPageSize: true,
       height: `${totalHeight + 100}px`,
     });
 
     return Buffer.from(pdfBuffer);
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    if (browser) await browser.close();
   }
 }
 
