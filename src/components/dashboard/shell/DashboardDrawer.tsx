@@ -20,7 +20,7 @@ export function DashboardDrawer({
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="flex w-72 flex-col p-0 lg:hidden">
+      <SheetContent side="left" className="flex w-72 flex-col gap-0 p-0 lg:hidden">
         {/* Brand header */}
         <div className="flex h-16 items-center gap-2 border-b border-rr-border-muted px-4">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rr-accent text-white">
