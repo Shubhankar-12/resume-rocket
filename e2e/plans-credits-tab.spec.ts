@@ -2,7 +2,12 @@ import { test, expect } from "@playwright/test";
 
 test.setTimeout(60_000);
 
-test.describe("plans page credit packs tab", () => {
+// The plans page was redesigned onto the landing (rr) system: the old
+// Subscriptions/Credit-packs TABS were removed in favor of a single stacked
+// layout (plans grid, then a "#credit-packs" section). `?tab=credits` now
+// scrolls to that section instead of switching a tab, and credit-pack CTAs are
+// labelled "Buy credits".
+test.describe("plans page credit packs (stacked layout)", () => {
   test.beforeEach(async ({ context, page }) => {
     await context.clearCookies();
     await context.addCookies([
@@ -90,18 +95,14 @@ test.describe("plans page credit packs tab", () => {
     });
   });
 
-  test("switches to credits tab and renders all 3 packs", async ({ page }) => {
+  test("renders all 3 credit packs stacked below the plans", async ({ page }) => {
     await page.goto("/plans");
 
-    const subsTab = page.getByRole("tab", { name: "Subscriptions" });
-    const creditsTab = page.getByRole("tab", { name: "Credit packs" });
+    // No tabs anymore — the currency toggle and packs are on one page.
+    await expect(page.getByRole("button", { name: "USD", exact: true })).toBeVisible({
+      timeout: 20000,
+    });
 
-    await expect(subsTab).toBeVisible({ timeout: 20000 });
-    await expect(creditsTab).toBeVisible();
-
-    await creditsTab.click();
-
-    await expect(page).toHaveURL(/[?&]tab=credits/);
     await expect(page.getByText("10 credits").first()).toBeVisible();
     await expect(page.getByText("25 credits")).toBeVisible();
     await expect(page.getByText("60 credits")).toBeVisible();
@@ -113,11 +114,8 @@ test.describe("plans page credit packs tab", () => {
   test("unauthenticated Buy click redirects to login with pack in next param", async ({ page }) => {
     await page.goto("/plans?tab=credits");
 
-    const creditsTab = page.getByRole("tab", { name: "Credit packs" });
-    await expect(creditsTab).toBeVisible({ timeout: 20000 });
-
-    const buyButtons = page.getByRole("button", { name: "Buy" });
-    await expect(buyButtons.first()).toBeVisible({ timeout: 10000 });
+    const buyButtons = page.getByRole("button", { name: "Buy credits" });
+    await expect(buyButtons.first()).toBeVisible({ timeout: 20000 });
     await buyButtons.first().click();
 
     // Unauthenticated — should land on /auth with ?next= pointing at the credits page.
