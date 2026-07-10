@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import Landing from "@/components/landing";
 import { buildSoftwareAppLd, buildFaqLd, LANDING_DESCRIPTION } from "@/components/landing/v2/seo";
+import { getIsLoggedIn } from "@/lib/auth/getIsLoggedIn";
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://resumerocket.app";
 
@@ -28,27 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-async function checkLoggedIn() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
-    if (!token) return false;
-    const decodedToken: { user?: { id?: string } } | null = jwt.decode(token) as {
-      user?: { id?: string };
-    } | null;
-    if (!decodedToken?.user?.id) return false;
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_USER_API}/api/v1/user?user_id=${decodedToken.user.id}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    if (!res.ok) return false;
-    const response = await res.json();
-    return Boolean(response.body);
-  } catch {
-    return false;
-  }
-}
-
 function MaintenanceFallback() {
   return (
     <main className="flex min-h-screen items-center justify-center px-4 text-center">
@@ -64,7 +42,7 @@ export default async function Page() {
   if (process.env.NEXT_PUBLIC_LANDING_VARIANT === "v1") {
     return <MaintenanceFallback />;
   }
-  const loggedIn = await checkLoggedIn();
+  const loggedIn = await getIsLoggedIn();
   return (
     <>
       <script

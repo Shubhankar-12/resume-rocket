@@ -11,10 +11,12 @@ import { formatPrice, toFeatureLines } from "./pricing-utils";
 export function PricingCard({
   plan,
   currentPlanId,
+  action,
 }: {
   plan: Plan;
   /** The signed-in user's active plan_id, if known — drives the "Current plan" state. */
   currentPlanId?: string | null;
+  action?: { onSelect: () => void; label: string; loading?: boolean; disabled?: boolean };
 }) {
   const meta = PLAN_META[plan.plan_id] ?? {
     name: plan.plan_id.replace(/_/g, " "),
@@ -35,6 +37,12 @@ export function PricingCard({
 
   const href = isFree ? "/auth?next=/dashboard" : "/plans";
   const ctaLabel = isCurrent ? "Current plan" : isFree ? "Get Started" : `Choose ${name}`;
+  const ctaClass = cn(
+    "mt-6 inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rr-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rr-bg",
+    emphasized
+      ? "bg-rr-accent text-white hover:bg-rr-accent-hover"
+      : "border border-rr-border text-rr-text hover:border-rr-accent/40 hover:bg-rr-accent-light"
+  );
 
   return (
     <div
@@ -113,16 +121,20 @@ export function PricingCard({
         >
           {ctaLabel}
         </span>
+      ) : action ? (
+        <button
+          type="button"
+          onClick={action.onSelect}
+          disabled={action.disabled || action.loading}
+          className={cn(ctaClass, "disabled:cursor-not-allowed disabled:opacity-60")}
+        >
+          {action.label}
+        </button>
       ) : (
         <Link
           href={href}
           onClick={() => captureEvent("pricing_teaser_clicked", { plan_id: plan.plan_id })}
-          className={cn(
-            "mt-6 inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rr-accent focus-visible:ring-offset-2 focus-visible:ring-offset-rr-bg",
-            emphasized
-              ? "bg-rr-accent text-white hover:bg-rr-accent-hover"
-              : "border border-rr-border text-rr-text hover:border-rr-accent/40 hover:bg-rr-accent-light"
-          )}
+          className={ctaClass}
         >
           {ctaLabel}
         </Link>
