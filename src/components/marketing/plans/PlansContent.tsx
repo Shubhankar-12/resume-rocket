@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BillingAPI } from "@/lib/api";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -25,15 +25,7 @@ export function PlansContent() {
   const searchParams = useSearchParams();
   const user = useAppSelector((s) => s.auth.user);
 
-  useEffect(() => {
-    if (searchParams.get("tab") === "credits") {
-      const el = document.getElementById("credit-packs");
-      el?.scrollIntoView();
-    }
-    // Only run on mount — this is a one-time deep-link scroll, not a
-    // reaction to every searchParams change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const didScrollRef = useRef(false);
 
   async function handleSubscribe(planId: string) {
     setSubscribingId(planId);
@@ -65,6 +57,23 @@ export function PlansContent() {
     (a, b) => (PLAN_META[a.plan_id]?.order ?? 999) - (PLAN_META[b.plan_id]?.order ?? 999)
   );
   const sortedPacks = [...packs].sort((a, b) => a.credits - b.credits);
+
+  useEffect(() => {
+    if (
+      searchParams.get("tab") === "credits" &&
+      !loading &&
+      sortedPacks.length > 0 &&
+      !didScrollRef.current
+    ) {
+      didScrollRef.current = true;
+      document
+        .getElementById("credit-packs")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    // Deep-link scroll should fire once, after data has loaded and the
+    // #credit-packs section is actually in the DOM.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, sortedPacks.length]);
 
   return (
     <>

@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { useState } from "react";
-import { flushSync } from "react-dom";
 import {
   Mail,
   Phone,
@@ -45,10 +44,8 @@ export function ContactContent() {
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    flushSync(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    });
+    setIsSubmitting(false);
+    setIsSubmitted(true);
 
     // Reset form after 3 seconds
     setTimeout(() => {
