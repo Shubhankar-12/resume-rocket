@@ -15,4 +15,16 @@ describe("Sheet", () => {
     expect(screen.getByText("Menu")).toBeInTheDocument();
     expect(screen.getByText("Drawer body")).toBeInTheDocument();
   });
+
+  it("defaults to side=right when no side is passed", () => {
+    render(
+      <Sheet open>
+        <SheetContent>
+          <SheetTitle>Notifications</SheetTitle>
+          <p>Default side body</p>
+        </SheetContent>
+      </Sheet>
+    );
+    expect(screen.getByRole("dialog")).toHaveClass("right-0");
+  });
 });
