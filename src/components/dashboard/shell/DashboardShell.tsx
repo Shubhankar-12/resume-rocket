@@ -8,7 +8,7 @@ import { useAppSelector } from "@/lib/store/slices/hooks";
 import { logout } from "@/lib/store/slices/authSlice";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
-import { MobileNav } from "./MobileNav";
+import { DashboardDrawer } from "./DashboardDrawer";
 import type { DashboardUser } from "./user";
 
 export function DashboardShell({ children }: { children: ReactNode }) {
@@ -16,6 +16,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const user = useAppSelector((s) => s.auth.user) as DashboardUser | null;
 
   function handleLogout() {
@@ -32,10 +33,20 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         onToggle={() => setCollapsed((c) => !c)}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <DashboardTopbar pathname={pathname} user={user} onLogout={handleLogout} />
-        <main className="flex-1 overflow-auto p-4 pb-24 md:p-6 md:pb-24 lg:pb-6">{children}</main>
+        <DashboardTopbar
+          pathname={pathname}
+          user={user}
+          onLogout={handleLogout}
+          onOpenDrawer={() => setDrawerOpen(true)}
+        />
+        <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>
-      <MobileNav pathname={pathname} />
+      <DashboardDrawer
+        pathname={pathname}
+        user={user}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+      />
     </div>
   );
 }
